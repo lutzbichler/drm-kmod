@@ -285,6 +285,19 @@ struct sdma_firmware_header_v1_1 {
 	uint32_t digest_size;
 };
 
+/* version_major=2, version_minor=0 */
+struct sdma_firmware_header_v2_0 {
+	struct common_firmware_header header;
+	uint32_t ucode_feature_version;
+	uint32_t ctx_ucode_size_bytes; /* context thread ucode size */
+	uint32_t ctx_jt_offset; /* context thread jt location */
+	uint32_t ctx_jt_size; /* context thread size of jt */
+	uint32_t ctl_ucode_offset;
+	uint32_t ctl_ucode_size_bytes; /* control thread ucode size */
+	uint32_t ctl_jt_offset; /* control thread jt location */
+	uint32_t ctl_jt_size; /* control thread size of jt */
+};
+
 /* gpu info payload */
 struct gpu_info_firmware_v1_0 {
 	uint32_t gc_num_se;
@@ -368,6 +381,7 @@ union amdgpu_firmware_header {
 	struct rlc_firmware_header_v2_3 rlc_v2_3;
 	struct sdma_firmware_header_v1_0 sdma;
 	struct sdma_firmware_header_v1_1 sdma_v1_1;
+	struct sdma_firmware_header_v2_0 sdma_v2_0;
 	struct gpu_info_firmware_header_v1_0 gpu_info;
 	struct dmcu_firmware_header_v1_0 dmcu;
 	struct dmcub_firmware_header_v1_0 dmcub;
@@ -390,6 +404,8 @@ enum AMDGPU_UCODE_ID {
 	AMDGPU_UCODE_ID_SDMA5,
 	AMDGPU_UCODE_ID_SDMA6,
 	AMDGPU_UCODE_ID_SDMA7,
+	AMDGPU_UCODE_ID_SDMA_UCODE_TH0,
+	AMDGPU_UCODE_ID_SDMA_UCODE_TH1,
 	AMDGPU_UCODE_ID_CP_CE,
 	AMDGPU_UCODE_ID_CP_PFP,
 	AMDGPU_UCODE_ID_CP_ME,
@@ -436,8 +452,8 @@ enum AMDGPU_UCODE_STATUS {
 
 enum amdgpu_firmware_load_type {
 	AMDGPU_FW_LOAD_DIRECT = 0,
-	AMDGPU_FW_LOAD_SMU,
 	AMDGPU_FW_LOAD_PSP,
+	AMDGPU_FW_LOAD_SMU,
 	AMDGPU_FW_LOAD_RLC_BACKDOOR_AUTO,
 };
 
