@@ -643,3 +643,11 @@ dma_fence_wait(struct dma_fence *fence, bool intr)
 
 	return (ret < 0 ? ret : 0);
 }
+
+void
+dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline)
+{
+	if (fence && fence->ops && fence->ops->set_deadline
+		&& !dma_fence_is_signaled(fence))
+		fence->ops->set_deadline(fence, deadline);
+}
