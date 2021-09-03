@@ -76,6 +76,7 @@ struct dma_fence_ops {
 	void (*fence_value_str)(struct dma_fence *fence, char *str, int size);
 	void (*timeline_value_str)(struct dma_fence *fence,
 				   char *str, int size);
+	void (*set_deadline)(struct dma_fence *fence, ktime_t deadline);
 };
 
 enum dma_fence_flag_bits {
@@ -128,6 +129,7 @@ void dma_fence_set_error(struct dma_fence *fence, int error);
 signed long dma_fence_wait(struct dma_fence *fence, bool intr);
 bool dma_fence_is_array(struct dma_fence *fence);
 bool dma_fence_is_chain(struct dma_fence *fence);
+void dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline);
 static inline bool
 dma_fence_is_container(struct dma_fence *fence)
 {
