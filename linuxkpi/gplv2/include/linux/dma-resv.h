@@ -401,11 +401,12 @@ int dma_resv_reserve_shared(struct dma_resv *obj, unsigned int num_fences);
 void dma_resv_add_shared_fence(struct dma_resv *obj, struct dma_fence *fence);
 void dma_resv_add_excl_fence(struct dma_resv *obj, struct dma_fence *fence);
 int dma_resv_get_fences(struct dma_resv *obj, bool write,
-                       unsigned int *num_fences, struct dma_fence ***fences);
+        unsigned int *num_fences, struct dma_fence ***fences);
+void dma_resv_replace_fences(struct dma_resv *obj, uint64_t context,
+		struct dma_fence *replacement);
 int dma_resv_copy_fences(struct dma_resv *dst, struct dma_resv *src);
 long dma_resv_wait_timeout(struct dma_resv *obj, bool wait_all, bool intr,
-			   unsigned long timeout);
+		unsigned long timeout);
 bool dma_resv_test_signaled(struct dma_resv *obj, bool test_all);
 void dma_resv_describe(struct dma_resv *obj, struct seq_file *seq);
-
 #endif /* _LINUX_RESERVATION_H */
