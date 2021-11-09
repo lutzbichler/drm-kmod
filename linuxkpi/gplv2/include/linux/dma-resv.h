@@ -134,6 +134,9 @@ struct dma_resv_iter {
 	/** @fence: the currently handled fence */
 	struct dma_fence *fence;
 
+	/** @fence_usage: the usage of the current fence */
+	enum dma_resv_usage fence_usage;
+
 	/** @seq: sequence number to check for modifications */
 	unsigned int seq;
 
@@ -154,6 +157,18 @@ struct dma_fence *dma_resv_iter_first_unlocked(struct dma_resv_iter *cursor);
 struct dma_fence *dma_resv_iter_next_unlocked(struct dma_resv_iter *cursor);
 struct dma_fence *dma_resv_iter_first(struct dma_resv_iter *cursor);
 struct dma_fence *dma_resv_iter_next(struct dma_resv_iter *cursor);
+
+/**
+ * dma_resv_iter_usage - Return the usage of the current fence
+ * @cursor: the cursor of the current position
+ *
+ * Returns the usage of the currently processed fence.
+ */
+static inline enum dma_resv_usage
+dma_resv_iter_usage(struct dma_resv_iter *cursor)
+{
+        return cursor->fence_usage;
+}
 
 /**
  * dma_resv_iter_begin - initialize a dma_resv_iter object
@@ -419,12 +434,13 @@ dma_resv_get_excl_unlocked(struct dma_resv *obj)
 void dma_resv_init(struct dma_resv *obj);
 void dma_resv_fini(struct dma_resv *obj);
 int dma_resv_reserve_fences(struct dma_resv *obj, unsigned int num_fences);
-void dma_resv_add_shared_fence(struct dma_resv *obj, struct dma_fence *fence);
-void dma_resv_add_excl_fence(struct dma_resv *obj, struct dma_fence *fence);
+void dma_resv_add_fence(struct dma_resv *obj, struct dma_fence *fence,
+			enum dma_resv_usage usage);
 int dma_resv_get_fences(struct dma_resv *obj, enum dma_resv_usage usage,
         unsigned int *num_fences, struct dma_fence ***fences);
 void dma_resv_replace_fences(struct dma_resv *obj, uint64_t context,
-	struct dma_fence *replacement);
+			     struct dma_fence *replacement,
+			     enum dma_resv_usage usage);
 int dma_resv_copy_fences(struct dma_resv *dst, struct dma_resv *src);
 long dma_resv_wait_timeout(struct dma_resv *obj, enum dma_resv_usage usage,
 	bool intr, unsigned long timeout);
