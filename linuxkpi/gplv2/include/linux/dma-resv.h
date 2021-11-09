@@ -96,6 +96,17 @@ enum dma_resv_usage {
 	 * an implicit read dependency.
 	 */
 	DMA_RESV_USAGE_READ,
+
+        /**
+         * @DMA_RESV_USAGE_BOOKKEEP: No implicit sync.
+         *
+         * This should be used by submissions which don't want to participate in
+         * implicit synchronization.
+         *
+         * The most common case are preemption fences as well as page table
+         * updates and their TLB flushes.
+         */
+        DMA_RESV_USAGE_BOOKKEEP
 };
 
 /**
