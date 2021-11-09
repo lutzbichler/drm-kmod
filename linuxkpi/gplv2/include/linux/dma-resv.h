@@ -55,6 +55,53 @@
 extern struct ww_class reservation_ww_class;
 
 /**
+ * enum dma_resv_usage - how the fences from a dma_resv obj are used
+ *
+ * This enum describes the different use cases for a dma_resv object and
+ * controls which fences are returned when queried.
+ *
+ * An important fact is that there is the order WRITE<READ and when the
+ * dma_resv object is asked for fences for one use case the fences for the
+ * lower use case are returned as well.
+ */
+enum dma_resv_usage {
+        /**
+         * @DMA_RESV_USAGE_WRITE: Implicit write synchronization.
+         *
+         * This should only be used for userspace command submissions which add
+         * an implicit write dependency.
+         */
+        DMA_RESV_USAGE_WRITE,
+
+        /**
+         * @DMA_RESV_USAGE_READ: Implicit read synchronization.
+         *
+         * This should only be used for userspace command submissions which add
+         * an implicit read dependency.
+         */
+        DMA_RESV_USAGE_READ,
+};
+
+/**
+ * dma_resv_usage_rw - helper for implicit sync
+ * @write: true if we create a new implicit sync write
+ *
+ * This returns the implicit synchronization usage for write or read accesses,
+ * see enum dma_resv_usage and &dma_buf.resv.
+ */
+static inline enum dma_resv_usage dma_resv_usage_rw(bool write)
+{
+        /* This looks confusing at first sight, but is indeed correct.
+         *
+         * The rational is that new write operations needs to wait for the
+         * existing read and write operations to finish.
+         * But a new read operation only needs to wait for the existing write
+         * operations to finish.
+         */
+        return write ? DMA_RESV_USAGE_READ : DMA_RESV_USAGE_WRITE;
+}
+
+/**
  * struct dma_resv - a reservation object manages fences for a buffer
  * @lock: update side lock
  * @seq: sequence count for managing RCU read-side synchronization
@@ -81,8 +128,8 @@ struct dma_resv_iter {
 	/** @obj: The dma_resv object we iterate over */
 	struct dma_resv *obj;
 
-	/** @all_fences: If all fences should be returned */
-	bool all_fences;
+	/** @usage: Return fences with this usage or lower. */
+	enum dma_resv_usage usage;
 
 	/** @fence: the currently handled fence */
 	struct dma_fence *fence;
@@ -116,10 +163,10 @@ struct dma_fence *dma_resv_iter_next(struct dma_resv_iter *cursor);
  */
 static inline void dma_resv_iter_begin(struct dma_resv_iter *cursor,
 				       struct dma_resv *obj,
-				       bool all_fences)
+				       enum dma_resv_usage usage)
 {
 	cursor->obj = obj;
-	cursor->all_fences = all_fences;
+	cursor->usage = usage;
 	cursor->fence = NULL;
 }
 
@@ -374,15 +421,15 @@ void dma_resv_fini(struct dma_resv *obj);
 int dma_resv_reserve_fences(struct dma_resv *obj, unsigned int num_fences);
 void dma_resv_add_shared_fence(struct dma_resv *obj, struct dma_fence *fence);
 void dma_resv_add_excl_fence(struct dma_resv *obj, struct dma_fence *fence);
-int dma_resv_get_fences(struct dma_resv *obj, bool write,
+int dma_resv_get_fences(struct dma_resv *obj, enum dma_resv_usage usage,
         unsigned int *num_fences, struct dma_fence ***fences);
 void dma_resv_replace_fences(struct dma_resv *obj, uint64_t context,
 	struct dma_fence *replacement);
 int dma_resv_copy_fences(struct dma_resv *dst, struct dma_resv *src);
-long dma_resv_wait_timeout(struct dma_resv *obj, bool wait_all, bool intr,
-	unsigned long timeout);
-bool dma_resv_test_signaled(struct dma_resv *obj, bool test_all);
+long dma_resv_wait_timeout(struct dma_resv *obj, enum dma_resv_usage usage,
+	bool intr, unsigned long timeout);
+bool dma_resv_test_signaled(struct dma_resv *obj, enum dma_resv_usage usage);
 void dma_resv_describe(struct dma_resv *obj, struct seq_file *seq);
-int dma_resv_get_singleton(struct dma_resv *obj, bool write,
+int dma_resv_get_singleton(struct dma_resv *obj, enum dma_resv_usage usage,
 	struct dma_fence **fence);
 #endif /* _LINUX_RESERVATION_H */
