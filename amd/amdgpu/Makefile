@@ -698,6 +698,7 @@ SRCS+=	amd_powerplay.c \
 	hardwaremanager.c \
 	hwmgr.c \
 	iceland_smumgr.c \
+	legacy_dpm.c \
 	navi10_ppt.c \
 	renoir_ppt.c \
 	polaris10_smumgr.c \
