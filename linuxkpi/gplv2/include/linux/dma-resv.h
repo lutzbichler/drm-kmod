@@ -67,6 +67,20 @@ struct dma_resv_list;
  * lower use case are returned as well.
  */
 enum dma_resv_usage {
+        /**
+         * @DMA_RESV_USAGE_KERNEL: For in kernel memory management only.
+         *
+         * This should only be used for things like copying or clearing memory
+         * with a DMA hardware engine for the purpose of kernel memory
+         * management.
+         *
+         * Drivers *always* must wait for those fences before accessing the
+         * resource protected by the dma_resv object. The only exception for
+         * that is when the resource is known to be locked down in place by
+         * pinning it previously.
+         */
+        DMA_RESV_USAGE_KERNEL,
+
 	/**
 	 * @DMA_RESV_USAGE_WRITE: Implicit write synchronization.
 	 *
