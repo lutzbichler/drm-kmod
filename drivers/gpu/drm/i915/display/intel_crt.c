@@ -34,6 +34,9 @@
 #include <drm/drm_probe_helper.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
 #include "intel_connector.h"
 #include "intel_crt.h"
 #include "intel_crtc.h"

@@ -9,6 +9,9 @@
 #include <drm/drm_plane_helper.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
 #include "intel_atomic_plane.h"
 #include "intel_de.h"
 #include "intel_display_types.h"

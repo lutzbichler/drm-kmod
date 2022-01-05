@@ -8,6 +8,9 @@
 #include "gem/i915_gem_context.h"
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
 
 #include "intel_breadcrumbs.h"
 #include "intel_context.h"

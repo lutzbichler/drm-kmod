@@ -29,6 +29,10 @@
 #include <linux/debugfs.h>
 #include <linux/seq_file.h>
 
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
+
 #include "intel_atomic.h"
 #include "intel_de.h"
 #include "intel_display_types.h"

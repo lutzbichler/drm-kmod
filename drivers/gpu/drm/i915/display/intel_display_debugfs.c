@@ -7,6 +7,9 @@
 #include <drm/drm_fourcc.h>
 
 #include "i915_debugfs.h"
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
 #include "intel_de.h"
 #include "intel_display_debugfs.h"
 #include "intel_display_power.h"
