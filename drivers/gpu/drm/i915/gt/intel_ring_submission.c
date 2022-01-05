@@ -8,6 +8,9 @@
 #include "gen6_ppgtt.h"
 #include "gen7_renderclear.h"
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_irq.h"
+#endif
 #include "i915_mitigations.h"
 #include "intel_breadcrumbs.h"
 #include "intel_context.h"
