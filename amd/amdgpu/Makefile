@@ -14,6 +14,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn21 \
 	${SRCDIR}/display/dc/dml/dcn30 \
 	${SRCDIR}/display/dc/dml/dcn301 \
+	${SRCDIR}/display/dc/dml/dcn302 \
 	${SRCDIR}/display/dc/dml/dcn31 \
 	${SRCDIR}/display/dc/dml/dsc
 .endif
@@ -550,7 +551,8 @@ SRCS+=	dcn301_init.c \
 	dmub_dcn301.c
 
 # display/dc/dcn302
-SRCS+=	dcn302_init.c \
+SRCS+=	dcn302_fpu.c \
+	dcn302_init.c \
 	dcn302_hwseq.c \
 	dcn302_resource.c \
 	irq_service_dcn302.c \
