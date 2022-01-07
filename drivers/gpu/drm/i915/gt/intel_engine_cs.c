@@ -7,6 +7,7 @@
 
 #include "gem/i915_gem_context.h"
 
+#include "i915_cmd_parser.h"
 #include "i915_drv.h"
 #ifdef __FreeBSD__
 #include "i915_irq.h"
