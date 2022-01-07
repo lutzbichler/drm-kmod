@@ -10,6 +10,7 @@ KMOD=	amdgpu
 
 .if !empty(KCONFIG:MDRM_AMD_DC_DCN*)
 _dml=	${SRCDIR}/display/dc/dml \
+	${SRCDIR}/display/dc/dml/calcs \
 	${SRCDIR}/display/dc/dml/dcn20 \
 	${SRCDIR}/display/dc/dml/dcn21 \
 	${SRCDIR}/display/dc/dml/dcn30 \
