@@ -47,6 +47,7 @@ SRCS=	\
 	i915_vgpu.c \
 	i915_ttm_buddy_manager.c \
 	i915_vma.c \
+	i915_vma_resource.c \
 	i915_vma_snapshot.c \
 	intel_acpi.c \
 	intel_atomic.c \
