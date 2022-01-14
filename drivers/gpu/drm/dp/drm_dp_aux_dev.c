@@ -143,9 +143,6 @@ static loff_t auxdev_llseek(struct file *file, loff_t offset, int whence)
 	return fixed_size_llseek(file, offset, whence, AUX_MAX_OFFSET);
 }
 
-#ifdef __linux__
-// XXX Missing {read,write}_iter
-// Disabled in drm_os_config.h
 static ssize_t auxdev_read_iter(struct kiocb *iocb, struct iov_iter *to)
 {
 	struct drm_dp_aux_dev *aux_dev = iocb->ki_filp->private_data;
@@ -231,7 +228,6 @@ static ssize_t auxdev_write_iter(struct kiocb *iocb, struct iov_iter *from)
 
 	return res;
 }
-#endif
 
 static int auxdev_release(struct inode *inode, struct file *file)
 {
@@ -244,10 +240,8 @@ static int auxdev_release(struct inode *inode, struct file *file)
 static const struct file_operations auxdev_fops = {
 	.owner		= THIS_MODULE,
 	.llseek		= auxdev_llseek,
-#ifdef __linux__
 	.read_iter	= auxdev_read_iter,
 	.write_iter	= auxdev_write_iter,
-#endif
 	.open		= auxdev_open,
 	.release	= auxdev_release,
 };
@@ -295,11 +289,7 @@ void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
 	mutex_unlock(&aux_idr_mutex);
 
 	atomic_dec(&aux_dev->usecount);
-#ifdef __linux__
 	wait_var_event(&aux_dev->usecount, !atomic_read(&aux_dev->usecount));
-#else
-	wait_on_atomic_t(&aux_dev->usecount, TASK_UNINTERRUPTIBLE);
-#endif
 
 	minor = aux_dev->index;
 	if (aux_dev->dev)
@@ -344,21 +334,9 @@ int drm_dp_aux_dev_init(void)
 	if (IS_ERR(drm_dp_aux_dev_class)) {
 		return PTR_ERR(drm_dp_aux_dev_class);
 	}
-#ifdef __FreeBSD__
-	(void)drm_dp_aux_groups;
-#else
 	drm_dp_aux_dev_class->dev_groups = drm_dp_aux_groups;
-#endif
-
-#ifdef __FreeBSD__
-	res = register_chrdev_p(DRM_MAJOR+1, "aux", &auxdev_fops,
-	    DRM_DEV_UID, DRM_DEV_GID, DRM_DEV_MODE);
-	if (res == 0)
-		res = DRM_MAJOR+1;
-#else
 
 	res = register_chrdev(0, "aux", &auxdev_fops);
-#endif	
 	if (res < 0)
 		goto out;
 	drm_dev_major = res;

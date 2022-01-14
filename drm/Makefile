@@ -1,5 +1,7 @@
 # $FreeBSD$
 
+SUBDIR=	dp
+
 SRCDIR=	${.CURDIR:H}/drivers/gpu/drm
 
 .PATH:	${SRCDIR} ${SRCDIR}/scheduler
@@ -24,9 +26,6 @@ SRCS=	drm_atomic.c \
 	drm_crtc.c \
 	drm_crtc_helper.c \
 	drm_damage_helper.c \
-	drm_dp_dual_mode_helper.c \
-	drm_dp_helper.c \
-	drm_dp_mst_topology.c \
 	drm_drv.c \
 	drm_dsc.c \
 	drm_dumb_buffers.c \
@@ -89,10 +88,6 @@ SRCS+=	drm_ioc32.c
 SRCS+=	\
 	drm_debugfs.c \
 	drm_debugfs_crc.c
-.endif
-
-.if !empty(KCONFIG:MDRM_DP_AUX_CHARDEV)
-SRCS+=	drm_dp_aux_dev.c
 .endif
 
 .if !empty(KCONFIG:MDRM_DP_AUX_BUS)
