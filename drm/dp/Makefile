@@ -12,6 +12,10 @@ SRCS=   drm_dp.c \
 	drm_dp_helper_mod.c \
         drm_dp_mst_topology.c
 
+.if !empty(KCONFIG:MDRM_DP_AUX_BUS)
+SRCS+=  drm_dp_aux_bus.c
+.endif
+
 .if !empty(KCONFIG:MDRM_DP_AUX_CHARDEV)
 SRCS+=  drm_dp_aux_dev.c
 .endif
