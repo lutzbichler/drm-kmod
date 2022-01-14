@@ -90,10 +90,6 @@ SRCS+=	\
 	drm_debugfs_crc.c
 .endif
 
-.if !empty(KCONFIG:MDRM_DP_AUX_BUS)
-SRCS+=	drm_dp_aux_bus.c
-.endif
-
 .if !empty(KCONFIG:MDRM_MIPI_DSI)
 SRCS+=	drm_mipi_dsi.c
 .endif
