@@ -2,6 +2,8 @@
 #ifndef _DRM_DP_HELPER_INTERNAL_H_
 #define _DRM_DP_HELPER_INTERNAL_H_
 
+struct drm_dp_aux;
+
 /* drm_dp_aux_dev.c */
 #ifdef CONFIG_DRM_DP_AUX_CHARDEV
 int drm_dp_aux_dev_init(void);

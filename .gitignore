@@ -28,6 +28,11 @@ drm/i386
 drm/x86
 drm/machine
 drm/export_syms
+drm/dp/*h
+drm/dp/i386
+drm/dp/x86
+drm/dp/machine
+drm/dp/export_syms
 dummygfx/*_if*.h
 dummygfx/opt*.h
 dummygfx/i386
