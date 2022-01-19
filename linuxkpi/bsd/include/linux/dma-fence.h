@@ -85,6 +85,27 @@ enum dma_fence_flag_bits {
 	DMA_FENCE_FLAG_USER_BITS, /* must always be last member */
 };
 
+extern const struct dma_fence_ops dma_fence_array_ops;
+extern const struct dma_fence_ops dma_fence_chain_ops;
+
+static inline bool
+dma_fence_is_array(struct dma_fence *fence)
+{
+	return (fence->ops == &dma_fence_array_ops);
+}
+
+static inline bool
+dma_fence_is_chain(struct dma_fence *fence)
+{
+	return (fence->ops == &dma_fence_chain_ops);
+}
+
+static inline bool
+dma_fence_is_container(struct dma_fence *fence)
+{
+	return (dma_fence_is_array(fence) || dma_fence_is_chain(fence));
+}
+
 void dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
     spinlock_t *lock, u64 context, u64 seqno);
 void dma_fence_release(struct kref *kref);

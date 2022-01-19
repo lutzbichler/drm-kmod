@@ -158,22 +158,13 @@ dma_fence_array_create(int num_fences,
 }
 
 /*
- * check if a fence is from the array subsclass
- */
-bool dma_fence_is_array(struct dma_fence *fence)
-{
-
-	return (fence->ops == &dma_fence_array_ops);
-}
-
-/*
  * cast a fence to a dma_fence_array
  */
 struct dma_fence_array *
 to_dma_fence_array(struct dma_fence *fence)
 {
 
-	if (fence->ops != &dma_fence_array_ops)
+	if (!fence != !dma_fence_is_array(fence))
 		return NULL;
 
 	return (container_of(fence, struct dma_fence_array, base));
