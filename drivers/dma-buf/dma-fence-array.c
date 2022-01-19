@@ -154,6 +154,9 @@ dma_fence_array_create(int num_fences,
 	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
 	array->fences = fences;
 
+	while (num_fences--)
+		WARN_ON(dma_fence_is_container(fences[num_fences]));
+
 	return (array);
 }
 
