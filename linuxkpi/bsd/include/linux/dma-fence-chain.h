@@ -68,4 +68,18 @@ dma_fence_chain_free(struct dma_fence_chain *chain)
 	free(chain, M_DMABUF);
 }
 
+static inline struct dma_fence *
+dma_fence_chain_contained(struct dma_fence *fence)
+{
+	struct dma_fence_chain *chain;
+	struct dma_fence *f;
+
+	if ((chain = to_dma_fence_chain(fence)) == NULL)
+		f = fence;
+	else
+		f = chain->fence;
+
+	return (f);
+}
+
 #endif /* _LINUX_DMA_FENCE_CHAIN_H_ */
