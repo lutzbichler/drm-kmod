@@ -172,3 +172,33 @@ to_dma_fence_array(struct dma_fence *fence)
 
 	return (container_of(fence, struct dma_fence_array, base));
 }
+
+struct dma_fence *
+dma_fence_array_first(struct dma_fence *fence)
+{
+	struct dma_fence_array *array;
+
+	if (!fence)
+		return (NULL);
+
+	array = to_dma_fence_array(fence);
+	if (!array)
+		return (fence);
+
+	return (array->fences[0]);
+}
+
+struct dma_fence *
+dma_fence_array_next(struct dma_fence *fence, unsigned int index)
+{
+	struct dma_fence_array *array;
+
+	if (!fence)
+		return (NULL);
+
+	array = to_dma_fence_array(fence);
+	if (!array || index >= array->num_fences)
+		return (NULL);
+
+	return (array->fences[index]);
+}
