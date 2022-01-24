@@ -30,6 +30,10 @@
 #include <linux/dma-fence.h>
 #include <linux/irq_work.h>
 
+#define dma_fence_array_for_each(fence, index, head)			\
+	for (index = 0, fence = dma_fence_array_first(head); fence;	\
+	     ++(index), fence = dma_fence_array_next(head, index))
+
 struct dma_fence_array_cb {
 	struct dma_fence_cb cb;
 	struct dma_fence_array *array;
@@ -48,5 +52,8 @@ struct dma_fence_array *to_dma_fence_array(struct dma_fence *fence);
 struct dma_fence_array *dma_fence_array_create(int num_fences,
     struct dma_fence **fences, u64 context, unsigned seqno,
     bool signal_on_any);
+struct dma_fence *dma_fence_array_first(struct dma_fence *fence);
+struct dma_fence *dma_fence_array_next(struct dma_fence *fence,
+	unsigned int index);
 
 #endif /* _LINUX_DMA_FENCE_ARRAY_H_ */
