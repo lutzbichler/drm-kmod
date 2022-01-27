@@ -4,6 +4,9 @@
  */
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_context.h"
 #include "intel_engine_pm.h"
 #include "intel_engine_regs.h"

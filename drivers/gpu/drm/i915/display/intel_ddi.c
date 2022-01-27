@@ -29,6 +29,9 @@
 #include <drm/drm_scdc_helper.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_audio.h"
 #include "intel_backlight.h"
 #include "intel_combo_phy.h"

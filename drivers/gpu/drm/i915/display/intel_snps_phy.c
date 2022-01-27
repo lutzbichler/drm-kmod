@@ -5,6 +5,9 @@
 
 #include <linux/util_macros.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_ddi.h"
 #include "intel_ddi_buf_trans.h"
 #include "intel_de.h"

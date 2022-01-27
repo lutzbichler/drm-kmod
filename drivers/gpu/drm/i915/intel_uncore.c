@@ -28,6 +28,9 @@
 
 #include "i915_drv.h"
 #include "i915_iosf_mbi.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_trace.h"
 #include "i915_vgpu.h"
 #include "intel_pm.h"

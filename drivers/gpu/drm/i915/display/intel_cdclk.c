@@ -23,6 +23,9 @@
 
 #include <linux/time.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_atomic.h"
 #include "intel_atomic_plane.h"
 #include "intel_audio.h"

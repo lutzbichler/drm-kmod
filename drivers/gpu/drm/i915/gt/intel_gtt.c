@@ -11,6 +11,9 @@
 #include <drm/drm_cache.h>
 
 #include "gem/i915_gem_lmem.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_trace.h"
 #include "intel_gt.h"
 #include "intel_gt_regs.h"

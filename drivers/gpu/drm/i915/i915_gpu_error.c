@@ -49,6 +49,9 @@
 #include "i915_drv.h"
 #include "i915_gpu_error.h"
 #include "i915_memcpy.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_scatterlist.h"
 
 #define ALLOW_FAIL (__GFP_KSWAPD_RECLAIM | __GFP_RETRY_MAYFAIL | __GFP_NOWARN)

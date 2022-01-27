@@ -28,6 +28,9 @@
 #include <drm/drm_atomic_helper.h>
 #include <drm/drm_mipi_dsi.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "icl_dsi.h"
 #include "intel_atomic.h"
 #include "intel_backlight.h"

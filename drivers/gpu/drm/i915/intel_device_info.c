@@ -28,6 +28,9 @@
 #include "display/intel_cdclk.h"
 #include "display/intel_de.h"
 #include "intel_device_info.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_drv.h"
 
 #define PLATFORM_NAME(x) [INTEL_##x] = #x

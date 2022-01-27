@@ -32,6 +32,9 @@
 #include <drm/drm_crtc.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_connector.h"
 #include "intel_de.h"
 #include "intel_display_types.h"

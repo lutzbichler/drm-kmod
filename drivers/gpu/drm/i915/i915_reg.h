@@ -115,7 +115,6 @@
  *  #define GEN8_BAR                    _MMIO(0xb888)
  */
 
-#define VLV_DISPLAY_BASE		0x180000
 #define VLV_MIPI_BASE			VLV_DISPLAY_BASE
 #define BXT_MIPI_BASE			0x60000
 
@@ -194,7 +193,6 @@
 #define _MASKED_BIT_DISABLE(a)	(_MASKED_FIELD((a), 0))
 
 #define   XEHP_DIS_BBL_SYSPIPE				REG_BIT(11)
-#define GEN12_SFC_DONE_MAX		4
 
 #define GU_CNTL				_MMIO(0x101010)
 #define   LMEM_INIT			REG_BIT(7)

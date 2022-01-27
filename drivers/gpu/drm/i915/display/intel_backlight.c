@@ -6,6 +6,9 @@
 #include <linux/kernel.h>
 #include <linux/pwm.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_backlight.h"
 #include "intel_connector.h"
 #include "intel_de.h"

@@ -3,6 +3,9 @@
  * Copyright © 2020 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_atomic.h"
 #include "intel_crtc.h"
 #include "intel_ddi.h"

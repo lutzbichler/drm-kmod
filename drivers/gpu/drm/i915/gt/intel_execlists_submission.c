@@ -109,6 +109,9 @@
 #include <linux/interrupt.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_trace.h"
 #include "i915_vgpu.h"
 #include "gen8_engine_cs.h"
