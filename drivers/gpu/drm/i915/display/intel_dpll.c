@@ -5,6 +5,9 @@
 
 #include <linux/kernel.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_crtc.h"
 #include "intel_de.h"
 #include "intel_display.h"

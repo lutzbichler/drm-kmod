@@ -27,6 +27,9 @@
 #include <drm/dp/drm_dp_dual_mode_helper.h>
 #include <drm/drm_edid.h>
 
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_de.h"
 #include "intel_display_types.h"
 #include "intel_dp.h"

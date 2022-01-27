@@ -40,6 +40,9 @@
 #include <drm/drm_rect.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_vgpu.h"
 #include "i9xx_plane.h"
 #include "intel_atomic_plane.h"

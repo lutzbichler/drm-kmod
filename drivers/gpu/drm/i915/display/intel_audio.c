@@ -28,6 +28,9 @@
 #include <drm/i915_component.h>
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_atomic.h"
 #include "intel_audio.h"
 #include "intel_cdclk.h"

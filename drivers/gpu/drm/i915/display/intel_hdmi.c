@@ -40,6 +40,9 @@
 
 #include "i915_debugfs.h"
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_atomic.h"
 #include "intel_connector.h"
 #include "intel_ddi.h"

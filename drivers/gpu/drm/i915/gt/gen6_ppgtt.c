@@ -6,6 +6,9 @@
 #include <linux/log2.h>
 
 #include "gen6_ppgtt.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_scatterlist.h"
 #include "i915_trace.h"
 #include "i915_vgpu.h"

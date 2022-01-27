@@ -8,6 +8,9 @@
 #include "gen8_engine_cs.h"
 #include "i915_drv.h"
 #include "i915_perf.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_engine.h"
 #include "intel_engine_regs.h"
 #include "intel_gpu_commands.h"

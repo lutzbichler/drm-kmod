@@ -28,6 +28,9 @@
 #include "intel_guc_submission.h"
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_trace.h"
 
 /**

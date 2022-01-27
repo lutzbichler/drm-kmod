@@ -27,6 +27,9 @@
 #include "display/intel_dp.h"
 
 #include "i915_drv.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "intel_atomic.h"
 #include "intel_crtc.h"
 #include "intel_de.h"
