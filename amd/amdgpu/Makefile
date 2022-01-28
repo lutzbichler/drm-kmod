@@ -97,6 +97,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/irq/dcn302 \
 	${SRCDIR}/display/dc/irq/dcn303 \
 	${SRCDIR}/display/dc/irq/dcn31 \
+	${SRCDIR}/display/dc/link \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
@@ -652,8 +653,14 @@ SRCS+=	irq_service.c \
 	irq_service_dcn20.c \
 	irq_service_dcn21.c
 
+# display/dc/link
+SRCS+=	link_hwss_dio.c \
+	link_hwss_dpia.c \
+	link_hwss_hpo_frl.c
+
 # display/dc/virtual
 SRCS+=	virtual_link_encoder.c \
+	virtual_link_hwss.c \
 	virtual_stream_encoder.c
 
 # display/modules/*
@@ -787,6 +794,7 @@ CFLAGS+= -I${SRCDIR}/display/dc
 CFLAGS+= -I${SRCDIR}/display/dc/clk_mgr/
 CFLAGS+= -I${SRCDIR}/display/dc/inc
 CFLAGS+= -I${SRCDIR}/display/dc/inc/hw
+CFLAGS+= -I${SRCDIR}/display/dc/link
 CFLAGS+= -I${SRCDIR}/display/dmub/inc
 CFLAGS+= -I${SRCDIR}/display/include
 CFLAGS+= -I${SRCDIR}/display/modules/inc
