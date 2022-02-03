@@ -25,6 +25,7 @@
 #include "amdgpu_display.h"
 #include "hwmgr.h"
 #include "amdgpu_smu.h"
+#include "amdgpu_dpm_internal.h"
 
 #ifdef __FreeBSD__
 #include "amdgpu_dpm_internal.h"
