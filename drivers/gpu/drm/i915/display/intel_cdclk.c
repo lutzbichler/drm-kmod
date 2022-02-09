@@ -23,6 +23,7 @@
 
 #include <linux/time.h>
 
+#include "hsw_ips.h"
 #ifdef __FreeBSD__
 #include "i915_reg.h"
 #endif
