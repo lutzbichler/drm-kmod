@@ -28,7 +28,8 @@
 #include <drm/drm_print.h>
 
 #include "i915_params.h"
-#include "i915_drv.h"
+#include "i915_driver.h"
+#include "i915_utils.h"
 
 #ifdef __FreeBSD__
 SYSCTL_NODE(_hw, OID_AUTO, i915kms,
