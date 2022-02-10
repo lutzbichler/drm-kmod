@@ -3,6 +3,11 @@
  * Copyright © 2021 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/pagevec.h>
+#endif
+#include <linux/shmem_fs.h>
+
 #include <drm/ttm/ttm_bo_driver.h>
 #include <drm/ttm/ttm_placement.h>
 
