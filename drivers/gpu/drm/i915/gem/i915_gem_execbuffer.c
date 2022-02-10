@@ -25,13 +25,14 @@
 
 #include "i915_cmd_parser.h"
 #include "i915_drv.h"
-#ifdef __FreeBSD__
-#include "i915_reg.h"
-#endif
+#include "i915_file_private.h"
 #include "i915_gem_clflush.h"
 #include "i915_gem_context.h"
 #include "i915_gem_evict.h"
 #include "i915_gem_ioctls.h"
+#ifdef __FreeBSD__
+#include "i915_reg.h"
+#endif
 #include "i915_trace.h"
 #include "i915_user_extensions.h"
 
