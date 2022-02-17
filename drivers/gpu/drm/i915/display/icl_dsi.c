@@ -32,6 +32,7 @@
 #include "i915_reg.h"
 #endif
 #include "icl_dsi.h"
+#include "icl_dsi_regs.h"
 #include "intel_atomic.h"
 #include "intel_backlight.h"
 #include "intel_combo_phy.h"
