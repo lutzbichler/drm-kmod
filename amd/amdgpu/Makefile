@@ -11,6 +11,7 @@ KMOD=	amdgpu
 .if !empty(KCONFIG:MDRM_AMD_DC_DCN*)
 _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/calcs \
+	${SRCDIR}/display/dc/dml/dcn10 \
 	${SRCDIR}/display/dc/dml/dcn20 \
 	${SRCDIR}/display/dc/dml/dcn21 \
 	${SRCDIR}/display/dc/dml/dcn30 \
@@ -454,6 +455,7 @@ SRCS+=	dcn10_cm_common.c \
 	dcn10_dpp.c \
 	dcn10_dpp_cm.c \
 	dcn10_dpp_dscl.c \
+	dcn10_fpu.c \
 	dcn10_hubbub.c \
 	dcn10_hubp.c \
 	dcn10_hw_sequencer.c \
@@ -862,6 +864,7 @@ FPUFLAGS= -msse
 CFLAGS.dcn_calcs.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn_calc_auto.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn_calc_math.c= ${FPUFLAGS} -mstack-alignment=4 -Wno-tautological-compare
+CFLAGS.dcn10_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn20_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn20_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn21_resource.c= ${FPUFLAGS} -mstack-alignment=4
