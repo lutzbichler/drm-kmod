@@ -587,6 +587,7 @@ SRCS+=	dcn31_afmt.c \
 	dcn31_clk_mgr.c \
 	dcn31_dccg.c \
 	dcn31_dio_link_encoder.c \
+	dcn31_fpu.c \
 	dcn31_hpo_dp_link_encoder.c \
 	dcn31_hpo_dp_stream_encoder.c \
 	dcn31_hubp.c \
@@ -869,6 +870,7 @@ CFLAGS.dcn21_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn30_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn301_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn301_resource.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dcn31_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn31_resource.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_mode_lib.c= ${FPUFLAGS} -mstack-alignment=4
