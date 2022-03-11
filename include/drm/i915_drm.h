@@ -26,7 +26,7 @@
 #ifndef _I915_DRM_H_
 #define _I915_DRM_H_
 
-#include <uapi/drm/i915_drm.h>
+#include <linux/types.h>
 
 /* For use by IPS driver */
 unsigned long i915_read_mch_val(void);
@@ -36,7 +36,11 @@ bool i915_gpu_busy(void);
 bool i915_gpu_turbo_disable(void);
 
 /* Exported from arch/x86/kernel/early-quirks.c */
+#ifdef __linux__
 extern struct resource intel_graphics_stolen_res;
+#elif defined(__FreeBSD__)
+extern struct linux_resource intel_graphics_stolen_res;
+#endif
 
 /*
  * The Bridge device's PCI config space has information about the

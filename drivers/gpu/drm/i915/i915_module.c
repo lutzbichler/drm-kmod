@@ -5,6 +5,9 @@
  */
 
 #include <drm/drm_drv.h>
+#ifdef __FreeBSD__
+#include <drm/i915_drm.h> // for intel_graphics_stolen_res
+#endif
 
 #include "gem/i915_gem_context.h"
 #include "gem/i915_gem_object.h"
