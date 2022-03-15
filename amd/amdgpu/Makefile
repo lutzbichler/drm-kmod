@@ -205,9 +205,10 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_vcn.c \
 	amdgpu_vf_error.c \
 	amdgpu_virt.c \
-	amdgpu_vm.c \
 	amdgpu_vkms.c \
+	amdgpu_vm.c \
 	amdgpu_vm_cpu.c \
+	amdgpu_vm_pt.c \
 	amdgpu_vm_sdma.c \
 	amdgpu_vram_mgr.c \
 	amdgpu_xgmi.c \
