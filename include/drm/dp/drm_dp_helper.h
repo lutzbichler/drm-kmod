@@ -361,6 +361,7 @@ struct drm_panel;
 # define DP_PSR_IS_SUPPORTED                1
 # define DP_PSR2_IS_SUPPORTED		    2	    /* eDP 1.4 */
 # define DP_PSR2_WITH_Y_COORD_IS_SUPPORTED  3	    /* eDP 1.4a */
+# define DP_PSR2_WITH_Y_COORD_ET_SUPPORTED  4       /* eDP 1.5, adopted eDP 1.4b SCR */
 
 #define DP_PSR_CAPS                         0x071   /* XXX 1.2? */
 # define DP_PSR_NO_TRAIN_ON_EXIT            1
