@@ -32,6 +32,7 @@
 #include <linux/types.h>
 #include <linux/workqueue.h>
 #include <linux/sched/clock.h>
+#include <asm/hypervisor.h>
 
 struct drm_i915_private;
 struct timer_list;
@@ -424,5 +425,16 @@ static inline bool timer_expired(const struct timer_list *t)
 {
 	return timer_active(t) && !timer_pending(t);
 }
+
+static inline bool i915_run_as_guest(void)
+{
+#ifdef __linux__
+	return !hypervisor_is_type(X86_HYPER_NATIVE);
+#elif defined(__FreeBSD__)
+	return false;
+#endif
+}
+
+bool i915_vtd_active(struct drm_i915_private *i915);
 
 #endif /* !__I915_UTILS_H */
