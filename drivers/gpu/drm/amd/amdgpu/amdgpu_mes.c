@@ -29,6 +29,7 @@
 #define AMDGPU_MES_MAX_NUM_OF_QUEUES_PER_PROCESS 1024
 #define AMDGPU_ONE_DOORBELL_SIZE 8
 
+#ifdef __linux__
 static int amdgpu_mes_doorbell_process_slice(struct amdgpu_device *adev)
 {
 	return roundup(AMDGPU_ONE_DOORBELL_SIZE *
@@ -717,6 +718,7 @@ amdgpu_mes_ring_to_queue_props(struct amdgpu_device *adev,
 	props->paging = false;
 	props->ring = ring;
 }
+#endif
 
 #define DEFINE_AMDGPU_MES_CTX_GET_OFFS_ENG(_eng)			\
 do {									\
