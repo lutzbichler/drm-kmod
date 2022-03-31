@@ -32,7 +32,10 @@
 #include <linux/types.h>
 #include <linux/workqueue.h>
 #include <linux/sched/clock.h>
+
+#ifdef CONFIG_X86
 #include <asm/hypervisor.h>
+#endif
 
 struct drm_i915_private;
 struct timer_list;
@@ -428,9 +431,9 @@ static inline bool timer_expired(const struct timer_list *t)
 
 static inline bool i915_run_as_guest(void)
 {
-#ifdef __linux__
+#if defined(__linux__) && IS_ENABLED(CONFIG_X86)
 	return !hypervisor_is_type(X86_HYPER_NATIVE);
-#elif defined(__FreeBSD__)
+#else
 	return false;
 #endif
 }
