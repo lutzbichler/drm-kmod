@@ -296,6 +296,7 @@ SRCS+=	amdgpu_afmt.c \
 	si_smc.c \
 	si.c \
 	soc15.c \
+	soc21.c \
 	smuio_v9_0.c \
 	smuio_v11_0.c \
 	smuio_v11_0_6.c \
@@ -948,6 +949,7 @@ CWARNFLAGS.sienna_cichlid_ppt.c=		-Wno-missing-prototypes -Wno-uninitialized
 CWARNFLAGS.smuio_v9_0.c=			-Wno-missing-prototypes
 CWARNFLAGS.smuio_v11_0.c=			-Wno-missing-prototypes
 CWARNFLAGS.smuio_v13_0.c=			-Wno-missing-prototypes
+CWARNFLAGS.soc21.c=				-Wno-missing-prototypes
 CWARNFLAGS.umc_v6_7.c=				-Wno-unused-but-set-variable -Wno-unused-function
 CWARNFLAGS.vangogh_ppt.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.vcn_v3_0.c=				-Wno-missing-prototypes -Wno-unused-but-set-variable
