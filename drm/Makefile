@@ -25,11 +25,12 @@ SRCS=	drm_atomic.c \
 	drm_crtc.c \
 	drm_crtc_helper.c \
 	drm_damage_helper.c \
+	drm_displayid.c \
 	drm_drv.c \
 	drm_dumb_buffers.c \
 	drm_edid.c \
-	drm_displayid.c \
 	drm_encoder.c \
+	drm_exec.c \
 	drm_fbdev_generic.c \
 	drm_file.c \
 	drm_flip_work.c \
