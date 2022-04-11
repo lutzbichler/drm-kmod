@@ -114,6 +114,9 @@ struct amdgpu_mes {
 	uint64_t			query_status_fence_gpu_addr;
 	uint64_t			*query_status_fence_ptr;
 
+	/* initialize kiq pipe */
+	int                             (*kiq_hw_init)(struct amdgpu_device *adev);
+
 	/* ip specific functions */
 	const struct amdgpu_mes_funcs   *funcs;
 };
@@ -205,6 +208,8 @@ struct mes_remove_queue_input {
 	uint32_t	doorbell_offset;
 	uint64_t	gang_context_addr;
 };
+
+#define amdgpu_mes_kiq_hw_init(adev) (adev)->mes.kiq_hw_init((adev))
 
 struct mes_suspend_gang_input {
 	bool		suspend_all_gangs;
