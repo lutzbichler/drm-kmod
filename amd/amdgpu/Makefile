@@ -258,6 +258,7 @@ SRCS+=	amdgpu_afmt.c \
 	hdp_v5_0.c \
 	hdp_v6_0.c \
 	ih_v6_0.c \
+	imu_v11_0.c \
 	aldebaran_reg_init.c \
 	aldebaran.c \
 	iceland_ih.c \
@@ -930,6 +931,7 @@ CWARNFLAGS.amdgpu_psp.c=			-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_ras.c=			-Wno-missing-prototypes -Wno-unused-function -Wno-undefined-inline -Wno-sometimes-uninitialized
 CWARNFLAGS.amdgpu_sched.c=			-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_ttm.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.amdgpu_ucode.c=			-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_virt.c=			-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_vram_mgr.c=			-Wno-unused-variable
 CWARNFLAGS.aldebaran_ppt.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
@@ -945,6 +947,7 @@ CWARNFLAGS.gfx_v7_0.c=				-Wno-unused-const-variable
 CWARNFLAGS.gfx_v9_0.c=				-Wno-missing-prototypes
 CWARNFLAGS.gfx_v9_4_2.c=			-Wno-missing-prototypes
 CWARNFLAGS.gfx_v10_0.c=				-Wno-missing-prototypes -Wno-unused-but-set-variable -Wno-unused-const-variable -Wno-sometimes-uninitialized
+CWARNFLAGS.imu_v11_0.c=				-Wno-missing-prototypes
 CWARNFLAGS.jpeg_v2_5.c=				-Wno-unused-but-set-variable
 CWARNFLAGS.jpeg_v3_0.c=				-Wno-unused-but-set-variable
 CWARNFLAGS.kv_dpm.c=				-Wno-unused-but-set-variable
