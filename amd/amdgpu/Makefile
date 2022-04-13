@@ -243,6 +243,7 @@ SRCS+=	amdgpu_afmt.c \
 	gfx_v9_4.c \
 	gfx_v9_4_2.c \
 	gfx_v10_0.c \
+	gfx_v11_0.c \
 	gfxhub_v1_0.c \
 	gfxhub_v1_1.c \
 	gfxhub_v2_0.c \
@@ -948,6 +949,7 @@ CWARNFLAGS.gfx_v7_0.c=				-Wno-unused-const-variable
 CWARNFLAGS.gfx_v9_0.c=				-Wno-missing-prototypes
 CWARNFLAGS.gfx_v9_4_2.c=			-Wno-missing-prototypes
 CWARNFLAGS.gfx_v10_0.c=				-Wno-missing-prototypes -Wno-unused-but-set-variable -Wno-unused-const-variable -Wno-sometimes-uninitialized
+CWARNFLAGS.gfx_v11_0.c=				-Wno-missing-prototypes -Wno-sometimes-uninitialized
 CWARNFLAGS.imu_v11_0.c=				-Wno-missing-prototypes
 CWARNFLAGS.jpeg_v2_5.c=				-Wno-unused-but-set-variable
 CWARNFLAGS.jpeg_v3_0.c=				-Wno-unused-but-set-variable
