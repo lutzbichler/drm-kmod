@@ -1,6 +1,6 @@
 # $FreeBSD$
 
-SUBDIR=	dp
+SUBDIR=	display
 
 SRCDIR=	${.CURDIR:H}/drivers/gpu/drm
 
