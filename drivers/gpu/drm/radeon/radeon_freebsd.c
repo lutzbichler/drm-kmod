@@ -4,7 +4,7 @@ __FBSDID("$FreeBSD$");
 #include <sys/param.h>
 #include <sys/module.h>
 
-MODULE_DEPEND(radeonkms, drm_dp_helper, 1, 1, 1);
+MODULE_DEPEND(radeonkms, drm_display_helper, 1, 1, 1);
 MODULE_DEPEND(radeonkms, drmn, 2, 2, 2);
 MODULE_DEPEND(radeonkms, ttm, 1, 1, 1);
 MODULE_DEPEND(radeonkms, linuxkpi, 1, 1, 1);

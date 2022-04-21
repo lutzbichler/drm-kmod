@@ -4,7 +4,7 @@ __FBSDID("$FreeBSD$");
 #include <sys/param.h>
 #include <sys/module.h>
 
-MODULE_DEPEND(amdgpu, drm_dp_helper, 1, 1, 1);
+MODULE_DEPEND(amdgpu, drm_display_helper, 1, 1, 1);
 MODULE_DEPEND(amdgpu, drmn, 2, 2, 2);
 MODULE_DEPEND(amdgpu, ttm, 1, 1, 1);
 MODULE_DEPEND(amdgpu, linuxkpi, 1, 1, 1);

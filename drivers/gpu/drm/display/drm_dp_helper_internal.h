@@ -1,10 +1,10 @@
-/* Public domain */
-#ifndef _DRM_DP_HELPER_INTERNAL_H_
-#define _DRM_DP_HELPER_INTERNAL_H_
+/* SPDX-License-Identifier: MIT */
+
+#ifndef DRM_DP_HELPER_INTERNAL_H
+#define DRM_DP_HELPER_INTERNAL_H
 
 struct drm_dp_aux;
 
-/* drm_dp_aux_dev.c */
 #ifdef CONFIG_DRM_DP_AUX_CHARDEV
 int drm_dp_aux_dev_init(void);
 void drm_dp_aux_dev_exit(void);
@@ -30,5 +30,4 @@ static inline void drm_dp_aux_unregister_devnode(struct drm_dp_aux *aux)
 }
 #endif
 
-#endif /* _DRM_DP_HELPER_INTERNAL_H_ */
-
+#endif

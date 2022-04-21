@@ -6,11 +6,12 @@ SRCDIR= ${.CURDIR:H:H}/drivers/gpu/drm
 
 .include "../../kconfig.mk"
 
-KMOD=   drm_dp_helper
-SRCS=   drm_dp.c \
-        drm_dp_dual_mode_helper.c \
-	drm_dp_helper_mod.c \
-        drm_dp_mst_topology.c
+KMOD=   drm_display_helper
+SRCS=	drm_display_helper_mod.c \
+	drm_dp_dual_mode_helper.c \
+	drm_dp_helper.c \
+        drm_dp_mst_topology.c \
+	drm_dsc_helper.c
 
 .if !empty(KCONFIG:MDRM_DP_AUX_BUS)
 SRCS+=  drm_dp_aux_bus.c

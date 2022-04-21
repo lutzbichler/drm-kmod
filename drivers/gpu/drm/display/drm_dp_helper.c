@@ -31,9 +31,9 @@
 #include <linux/string_helpers.h>
 
 #include <drm/display/drm_dp_helper.h>
+#include <drm/display/drm_dp_mst_helper.h>
 #include <drm/drm_print.h>
 #include <drm/drm_vblank.h>
-#include <drm/display/drm_dp_mst_helper.h>
 #include <drm/drm_panel.h>
 
 #include "drm_dp_helper_internal.h"
@@ -207,16 +207,6 @@ bool drm_dp_128b132b_link_training_failed(const u8 link_status[DP_LINK_STATUS_SI
 	return status & DP_128B132B_LT_FAILED;
 }
 EXPORT_SYMBOL(drm_dp_128b132b_link_training_failed);
-
-u8 drm_dp_get_adjust_request_post_cursor(const u8 link_status[DP_LINK_STATUS_SIZE],
-					 unsigned int lane)
-{
-	unsigned int offset = DP_ADJUST_REQUEST_POST_CURSOR2;
-	u8 value = dp_link_status(link_status, offset);
-
-	return (value >> (lane << 1)) & 0x3;
-}
-EXPORT_SYMBOL(drm_dp_get_adjust_request_post_cursor);
 
 static int __8b10b_clock_recovery_delay_us(const struct drm_dp_aux *aux, u8 rd_interval)
 {
@@ -538,6 +528,31 @@ unlock:
 }
 
 /**
+ * drm_dp_dpcd_probe() - probe a given DPCD address with a 1-byte read access
+ * @aux: DisplayPort AUX channel (SST)
+ * @offset: address of the register to probe
+ *
+ * Probe the provided DPCD address by reading 1 byte from it. The function can
+ * be used to trigger some side-effect the read access has, like waking up the
+ * sink, without the need for the read-out value.
+ *
+ * Returns 0 if the read access suceeded, or a negative error code on failure.
+ */
+int drm_dp_dpcd_probe(struct drm_dp_aux *aux, unsigned int offset)
+{
+	u8 buffer;
+	int ret;
+
+	ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset, &buffer, 1);
+	WARN_ON(ret == 0);
+
+	drm_dp_dump_access(aux, DP_AUX_NATIVE_READ, offset, &buffer, ret);
+
+	return ret < 0 ? ret : 0;
+}
+EXPORT_SYMBOL(drm_dp_dpcd_probe);
+
+/**
  * drm_dp_dpcd_read() - read a series of bytes from the DPCD
  * @aux: DisplayPort AUX channel (SST or MST)
  * @offset: address of the (first) register to read
@@ -569,10 +584,9 @@ ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
 	 * monitor doesn't power down exactly after the throw away read.
 	 */
 	if (!aux->is_remote) {
-		ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, DP_DPCD_REV,
-					 buffer, 1);
-		if (ret != 1)
-			goto out;
+		ret = drm_dp_dpcd_probe(aux, DP_DPCD_REV);
+		if (ret < 0)
+			return ret;
 	}
 
 	if (aux->is_remote)
@@ -581,7 +595,6 @@ ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
 		ret = drm_dp_dpcd_access(aux, DP_AUX_NATIVE_READ, offset,
 					 buffer, size);
 
-out:
 	drm_dp_dump_access(aux, DP_AUX_NATIVE_READ, offset, buffer, ret);
 	return ret;
 }
@@ -3760,11 +3773,12 @@ static int dp_aux_backlight_update_status(struct backlight_device *bd)
 	return ret;
 }
 
+#if IS_ENABLED(CONFIG_DRM_KMS_HELPER) && (IS_BUILTIN(CONFIG_BACKLIGHT_CLASS_DEVICE) || \
+        (IS_MODULE(CONFIG_DRM_KMS_HELPER) && IS_MODULE(CONFIG_BACKLIGHT_CLASS_DEVICE)))
 static const struct backlight_ops dp_aux_bl_ops = {
 	.update_status = dp_aux_backlight_update_status,
 };
 
-#ifdef __linux__
 /**
  * drm_panel_dp_aux_backlight - create and use DP AUX backlight
  * @panel: DRM panel

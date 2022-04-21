@@ -7,6 +7,8 @@
  */
 #include <linux/limits.h>
 
+#include <drm/display/drm_dsc_helper.h>
+
 #include "i915_drv.h"
 #ifdef __FreeBSD__
 #include "i915_reg.h"

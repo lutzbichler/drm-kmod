@@ -145,7 +145,7 @@ MODULE_LICENSE("GPL and additional rights");
 /* BSD stuff */
 #ifdef __FreeBSD__
 LKPI_DRIVER_MODULE(i915kms, i915_init, i915_exit);
-MODULE_DEPEND(i915kms, drm_dp_helper, 1, 1, 1);
+MODULE_DEPEND(i915kms, drm_display_helper, 1, 1, 1);
 MODULE_DEPEND(i915kms, drmn, 2, 2, 2);
 MODULE_DEPEND(i915kms, ttm, 1, 1, 1);
 MODULE_DEPEND(i915kms, agp, 1, 1, 1);
