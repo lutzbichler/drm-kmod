@@ -1011,6 +1011,9 @@ struct amdgpu_device {
 	struct ip_discovery_top         *ip_top;
 
 	struct mutex			benchmark_mutex;
+
+	bool                            scpm_enabled;
+	uint32_t                        scpm_status;
 };
 
 static inline struct amdgpu_device *drm_to_adev(struct drm_device *ddev)
