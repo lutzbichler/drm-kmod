@@ -545,6 +545,7 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	dcn30_clk_mgr.c \
 	dcn30_clk_mgr_smu_msg.c \
 	dcn30_dccg.c \
+	dcn30_fpu.c \
 	dcn30_optc.c \
 	dcn30_mpc.c \
 	dcn30_cm_common.c \
@@ -894,6 +895,7 @@ CFLAGS.dcn10_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn20_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn20_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn21_resource.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dcn30_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn30_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn301_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn301_resource.c= ${FPUFLAGS} -mstack-alignment=4
