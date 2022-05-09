@@ -33,6 +33,7 @@
 
 #include <linux/module.h>
 #include <linux/dma-mapping.h>
+#include <linux/debugfs.h>
 #include <linux/highmem.h>
 #include <linux/sched/mm.h>
 
@@ -41,9 +42,9 @@
 #endif
 
 #include <drm/ttm/ttm_pool.h>
-#include <drm/ttm/ttm_bo_driver.h>
 #include <drm/ttm/ttm_tt.h>
-#ifdef __FreeBSD__
+#include <drm/ttm/ttm_bo.h>
+ #ifdef __FreeBSD__
 #include <drm/ttm/ttm_sysctl_freebsd.h>
 #endif
 
