@@ -60,8 +60,8 @@ struct dccg {
 	const struct dccg_funcs *funcs;
 	int pipe_dppclk_khz[MAX_PIPES];
 	int ref_dppclk;
-	int dtbclk_khz[MAX_PIPES];/* TODO needs to be removed */
-	int audio_dtbclk_khz;/* TODO needs to be removed */
+	//int dtbclk_khz[MAX_PIPES];/* TODO needs to be removed */
+	//int audio_dtbclk_khz;/* TODO needs to be removed */
 	int ref_dtbclk_khz;/* TODO needs to be removed */
 };
 
