@@ -390,7 +390,6 @@ SRCS+=	dc_debug.c \
 	dc_hw_sequencer.c \
 	dc_link_ddc.c \
 	dc_link_dp.c \
-	dc_link_hwss.c \
 	dc_link.c \
 	dc_resource.c \
 	dc_sink.c \
@@ -707,6 +706,7 @@ SRCS+=	irq_service.c \
 SRCS+=	link_dp_trace.c \
 	link_hwss_dio.c \
 	link_hwss_dpia.c \
+	link_hwss_hpo_dp.c \
 	link_hwss_hpo_frl.c
 
 # display/dc/virtual
