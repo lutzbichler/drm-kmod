@@ -231,11 +231,12 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_vcn.c \
 	amdgpu_vf_error.c \
 	amdgpu_virt.c \
-	amdgpu_vm.c \
 	amdgpu_vkms.c \
+	amdgpu_vm.c \
 	amdgpu_vm_cpu.c \
 	amdgpu_vm_pt.c \
 	amdgpu_vm_sdma.c \
+	amdgpu_vpe.c \
 	amdgpu_vram_mgr.c \
 	amdgpu_xcp.c \
 	amdgpu_xgmi.c \
@@ -389,7 +390,8 @@ SRCS+=	amdgpu_afmt.c \
 	vega10_reg_init.c \
 	vega20_ih.c \
 	vega20_reg_init.c \
-	vi.c
+	vi.c \
+	vpe_v6_1.c
 
 # amdxcp
 SRCS+=	amdgpu_xcp_drv.c
