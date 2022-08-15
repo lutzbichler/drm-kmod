@@ -2499,6 +2499,8 @@ static int amdgpu_device_init_schedulers(struct amdgpu_device *adev)
 		}
 	}
 
+	amdgpu_xcp_update_partition_sched_list(adev);
+
 	return 0;
 }
 
