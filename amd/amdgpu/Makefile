@@ -207,7 +207,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_sa.c \
 	amdgpu_sched.c \
 	amdgpu_sdma.c \
-	sienna_cichlid.c \
+	amdgpu_ring_mux.c \
 	amdgpu_sync.c \
 	amdgpu_trace_points.c \
 	amdgpu_ttm.c \
@@ -323,6 +323,7 @@ SRCS+=	amdgpu_afmt.c \
 	sdma_v5_0.c \
 	sdma_v5_2.c \
 	sdma_v6_0.c \
+	sienna_cichlid.c \
 	si_dma.c \
 	si_dpm.c \
 	si_ih.c \
