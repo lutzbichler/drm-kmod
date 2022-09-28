@@ -16,12 +16,14 @@
 #include "intel_pxp_tee.h"
 #include "intel_pxp_tee_interface.h"
 
+#ifdef __linux__
 static inline struct intel_pxp *i915_dev_to_pxp(struct device *i915_kdev)
 {
 	struct drm_i915_private *i915 = kdev_to_i915(i915_kdev);
 
 	return &to_gt(i915)->pxp;
 }
+#endif
 
 static int intel_pxp_tee_io_message(struct intel_pxp *pxp,
 				    void *msg_in, u32 msg_in_size,
@@ -122,6 +124,7 @@ unlock:
  *
  * Return: return 0 if successful.
  */
+#ifdef __linux__
 static int i915_pxp_tee_component_bind(struct device *i915_kdev,
 				       struct device *tee_kdev, void *data)
 {
@@ -168,6 +171,7 @@ static const struct component_ops i915_pxp_tee_component_ops = {
 	.bind   = i915_pxp_tee_component_bind,
 	.unbind = i915_pxp_tee_component_unbind,
 };
+#endif
 
 static int alloc_streaming_command(struct intel_pxp *pxp)
 {
@@ -232,8 +236,10 @@ static void free_streaming_command(struct intel_pxp *pxp)
 int intel_pxp_tee_component_init(struct intel_pxp *pxp)
 {
 	int ret;
+#ifdef __linux__
 	struct intel_gt *gt = pxp_to_gt(pxp);
 	struct drm_i915_private *i915 = gt->i915;
+#endif
 
 	mutex_init(&pxp->tee_mutex);
 
@@ -241,30 +247,37 @@ int intel_pxp_tee_component_init(struct intel_pxp *pxp)
 	if (ret)
 		return ret;
 
+#ifdef __linux__
 	ret = component_add_typed(i915->drm.dev, &i915_pxp_tee_component_ops,
 				  I915_COMPONENT_PXP);
 	if (ret < 0) {
 		drm_err(&i915->drm, "Failed to add PXP component (%d)\n", ret);
 		goto out_free;
 	}
+#endif
 
 	pxp->pxp_component_added = true;
 
 	return 0;
-
+#ifdef __linux__
 out_free:
 	free_streaming_command(pxp);
 	return ret;
+#endif
 }
 
 void intel_pxp_tee_component_fini(struct intel_pxp *pxp)
 {
+#ifdef __linux__
 	struct drm_i915_private *i915 = pxp_to_gt(pxp)->i915;
+#endif
 
 	if (!pxp->pxp_component_added)
 		return;
 
+#ifdef __linux__
 	component_del(i915->drm.dev, &i915_pxp_tee_component_ops);
+#endif
 	pxp->pxp_component_added = false;
 
 	free_streaming_command(pxp);
