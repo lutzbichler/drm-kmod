@@ -79,7 +79,7 @@ void i915_gem_stolen_remove_node(struct drm_i915_private *i915,
 
 static bool valid_stolen_size(struct drm_i915_private *i915, struct resource *dsm)
 {
-	return (dsm->start != 0 || HAS_BAR2_SMEM_STOLEN(i915)) && dsm->end > dsm->start;
+	return (dsm->start != 0 || HAS_LMEMBAR_SMEM_STOLEN(i915)) && dsm->end > dsm->start;
 }
 
 static int adjust_stolen(struct drm_i915_private *i915,
@@ -151,9 +151,9 @@ static int request_smem_stolen(struct drm_i915_private *i915,
 	 * address range since it's local to the gpu.
 	 *
 	 * Starting MTL, in IGFX devices the stolen memory is exposed via
-	 * BAR2 and shall be considered similar to stolen lmem.
+	 * LMEMBAR and shall be considered similar to stolen lmem.
 	 */
-	if (HAS_LMEM(i915) || HAS_BAR2_SMEM_STOLEN(i915))
+	if (HAS_LMEM(i915) || HAS_LMEMBAR_SMEM_STOLEN(i915))
 		return 0;
 
 #ifdef __FreeBSD__
@@ -410,7 +410,7 @@ static void icl_get_stolen_reserved(struct drm_i915_private *i915,
 		MISSING_CASE(reg_val & GEN8_STOLEN_RESERVED_SIZE_MASK);
 	}
 
-	if (HAS_BAR2_SMEM_STOLEN(i915))
+	if (HAS_LMEMBAR_SMEM_STOLEN(i915))
 		/* the base is initialized to stolen top so subtract size to get base */
 		*base -= *size;
 	else
@@ -887,7 +887,7 @@ i915_gem_stolen_lmem_setup(struct drm_i915_private *i915, u16 type,
 
 	/* Use DSM base address instead for stolen memory */
 	dsm_base = intel_uncore_read64(uncore, GEN12_DSMBASE) & GEN12_BDSM_MASK;
-	if (HAS_BAR2_SMEM_STOLEN(i915) || IS_DG1(i915)) {
+	if (HAS_LMEMBAR_SMEM_STOLEN(i915) || IS_DG1(i915)) {
 		lmem_size = pci_resource_len(pdev, GEN12_LMEM_BAR);
 	} else {
 		resource_size_t lmem_range;
@@ -897,7 +897,7 @@ i915_gem_stolen_lmem_setup(struct drm_i915_private *i915, u16 type,
 		lmem_size *= SZ_1G;
 	}
 
-	if (HAS_BAR2_SMEM_STOLEN(i915)) {
+	if (HAS_LMEMBAR_SMEM_STOLEN(i915)) {
 		/*
 		 * MTL dsm size is in GGC register.
 		 * Also MTL uses offset to DSMBASE in ptes, so i915
@@ -926,7 +926,7 @@ i915_gem_stolen_lmem_setup(struct drm_i915_private *i915, u16 type,
 	if (pci_resource_len(pdev, 2) < dsm_size) {
 		io_start = 0;
 		io_size = 0;
-	} else if (HAS_BAR2_SMEM_STOLEN(i915)) {
+	} else if (HAS_LMEMBAR_SMEM_STOLEN(i915)) {
 		io_start = pci_resource_start(pdev, 2) + SZ_8M;
 	} else {
 		io_start = pci_resource_start(pdev, GEN12_LMEM_BAR) + dsm_base;
