@@ -310,7 +310,11 @@ err_delete:
  */
 int
 drm_client_buffer_vmap(struct drm_client_buffer *buffer,
-		       struct iosys_map *map_copy)
+#ifdef __linux__
+		   struct iosys_map *map_copy)
+#elif defined(__FreeBSD__)
+		   struct iosys_map *map_copy, bool unlocked)
+#endif
 {
 	struct iosys_map *map = &buffer->map;
 	int ret;
@@ -323,7 +327,14 @@ drm_client_buffer_vmap(struct drm_client_buffer *buffer,
 	 * fd_install step out of the driver backend hooks, to make that
 	 * final step optional for internal users.
 	 */
-	ret = drm_gem_vmap(buffer->gem, map);
+#ifdef __FreeBSD__
+	if (unlocked)
+#endif	
+	ret = drm_gem_vmap_unlocked(buffer->gem, map);
+#ifdef __FreeBSD__
+	else
+		ret = drm_gem_vmap(buffer->gem, map);
+#endif	
 	if (ret)
 		return ret;
 
@@ -341,11 +352,22 @@ EXPORT_SYMBOL(drm_client_buffer_vmap);
  * function is only required by clients that manage their buffer mappings
  * by themselves.
  */
+#ifdef __linux__
 void drm_client_buffer_vunmap(struct drm_client_buffer *buffer)
+#elif defined(__FreeBSD__)
+void drm_client_buffer_vunmap(struct drm_client_buffer *buffer, bool unlocked)
+#endif
 {
 	struct iosys_map *map = &buffer->map;
 
-	drm_gem_vunmap(buffer->gem, map);
+#ifdef __FreeBSD__
+	if (unlocked)
+#endif
+	drm_gem_vunmap_unlocked(buffer->gem, map);
+#ifdef __FreeBSD__
+	else
+		drm_gem_vunmap(buffer->gem, map);
+#endif
 }
 EXPORT_SYMBOL(drm_client_buffer_vunmap);
 

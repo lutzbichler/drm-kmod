@@ -442,14 +442,22 @@ static int drm_fb_helper_damage_blit(struct drm_fb_helper *fb_helper,
 	 */
 	mutex_lock(&fb_helper->lock);
 
+#ifdef __linux__
 	ret = drm_client_buffer_vmap(buffer, &map);
+#elif defined(__FreeBSD__)
+	ret = drm_client_buffer_vmap(buffer, &map, false);
+#endif	
 	if (ret)
 		goto out;
 
 	dst = map;
 	drm_fb_helper_damage_blit_real(fb_helper, clip, &dst);
 
+#ifdef __linux__
 	drm_client_buffer_vunmap(buffer);
+#elif defined(__FreeBSD__)
+	drm_client_buffer_vunmap(buffer, false);
+#endif	
 
 out:
 	mutex_unlock(&fb_helper->lock);
@@ -2202,7 +2210,11 @@ static void drm_fbdev_cleanup(struct drm_fb_helper *fb_helper)
 	if (shadow)
 		vfree(shadow);
 	else if (fb_helper->buffer)
+#ifdef __linux__
 		drm_client_buffer_vunmap(fb_helper->buffer);
+#elif defined(__FreeBSD__)	
+		drm_client_buffer_vunmap(fb_helper->buffer, true);
+#endif		
 
 	drm_client_framebuffer_delete(fb_helper->buffer);
 }
@@ -2518,7 +2530,11 @@ static int drm_fb_helper_generic_probe(struct drm_fb_helper *fb_helper,
 #endif
 	} else {
 		/* buffer is mapped for HW framebuffer */
+#ifdef __linux__		
 		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
+#elif defined(__FreeBSD__)
+		ret = drm_client_buffer_vmap(fb_helper->buffer, &map, true);
+#endif		
 		if (ret)
 			return ret;
 		if (map.is_iomem) {
