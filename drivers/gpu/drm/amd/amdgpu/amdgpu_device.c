@@ -3850,7 +3850,7 @@ fence_driver_init:
 	 * from a generic structure set by both drivers.
 	 */
 	register_fictitious_range(
-	    adev_to_drm(adev)->mode_config.fb_base,
+	    adev->gmc.aper_base,
 	    adev->gmc.aper_size);
 #endif
 
@@ -4040,7 +4040,7 @@ void amdgpu_device_fini_hw(struct amdgpu_device *adev)
 
 #ifdef __FreeBSD__
 	unregister_fictitious_range(
-	    adev_to_drm(adev)->mode_config.fb_base,
+	    adev->gmc.aper_base,
 	    adev->gmc.aper_size);
 #endif
 
