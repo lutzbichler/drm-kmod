@@ -619,4 +619,17 @@ trace_dcn_fpu(bool begin, const char *function, const int line, const int recurs
 	    begin ? "begin" : "end", recursion_depth, function, line);
 }
 
+/* TRACE_EVENT(dcn_optc_lock_unlock_state, */
+/*	    TP_PROTO(const struct optc *optc_state, int instance, bool lock, const char *function, const int line), */
+
+static inline void
+trace_dcn_optc_lock_unlock_state(const void *optc_state, int instance, bool lock, 
+	const char *function, const int line)
+{
+	CTR5(KTR_DRM,
+		"dcn_optc_lock_unlock_state "
+		"state=%x instance=%d %s function=%s line=%d",
+		optc_state, instance, (lock ? "locked" : "unlocked"), function, line);
+}
+
 #endif /* _AMDGPU_DM_TRACE_FREEBSD_H_ */
