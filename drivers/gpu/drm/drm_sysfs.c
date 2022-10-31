@@ -27,6 +27,7 @@
 #include <linux/device.h>
 #include <linux/err.h>
 
+#include <drm/drm_accel.h>
 #include <drm/drm_connector.h>
 #include <drm/drm_device.h>
 #include <drm/drm_print.h>
