@@ -786,6 +786,7 @@ SRCS+=	irq_service.c \
 SRCS+=	link_dp_trace.c \
 	link_hwss_dio.c \
 	link_hwss_dpia.c \
+	link_dp_dpia_bw.c \
 	link_hwss_hpo_dp.c
 
 # display/dc/virtual
