@@ -16,6 +16,8 @@ struct drm_writeback_job {
 	struct drm_framebuffer *fb;
 };
 
+struct drm_encoder_helper_funcs;
+
 static inline struct drm_writeback_connector *
 drm_connector_to_writeback(struct drm_connector *connector)
 {
@@ -44,5 +46,17 @@ drm_writeback_set_fb(struct drm_connector_state *cs, struct drm_framebuffer *fb)
 {
 	return 0;
 }
+
+static inline int
+drm_writeback_connector_init(struct drm_device *dev,
+	struct drm_writeback_connector *wbc,
+	const struct drm_connector_funcs *funcs,
+	const struct drm_encoder_helper_funcs *helper,
+	const u32 *fmts, int nf, u32 pc)
+{
+
+	return (0);
+}
+
 
 #endif
