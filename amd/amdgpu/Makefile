@@ -1194,6 +1194,7 @@ CWARNFLAGS.dcn30_hwseq.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn30_resource.c=		-Wno-initializer-overrides -Wno-missing-prototypes
 CWARNFLAGS.dcn30_afmt.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn30_init.c=		-Wno-missing-prototypes
+CWARNFLAGS.dcn30_optc.c=		-Wno-missing-prototypes
 CWARNFLAGS.dcn301_init.c=		-Wno-missing-prototypes
 CWARNFLAGS.dcn301_panel_cntl.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.dcn301_resource.c=		-Wno-initializer-overrides -Wno-missing-prototypes
