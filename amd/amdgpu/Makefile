@@ -450,6 +450,7 @@ SRCS+=	dce_abm.c \
 	dce_stream_encoder.c \
 	dce_transform.c \
 	dmub_abm.c \
+	dmub_abm_lcd.c \
 	dmub_psr.c \
 	dmub_hw_lock_mgr.c \
 	dmub_outbox.c
@@ -1298,6 +1299,7 @@ CWARNFLAGS.dcn_calcs.c+=		-Wno-missing-prototypes
 CWARNFLAGS.dc_dmub_srv.c=		-Wno-unused-but-set-variable -Wno-missing-prototypes
 CWARNFLAGS.dmub_psr.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.dmub_abm.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.dmub_abm_lcd.c=		-Wno-missing-prototypes
 CWARNFLAGS.dmub_hw_lock_mgr.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.virtual_link_hwss.c=		-Wno-missing-prototypes
 
