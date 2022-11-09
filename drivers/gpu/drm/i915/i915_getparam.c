@@ -188,7 +188,7 @@ int i915_getparam_ioctl(struct drm_device *dev, void *data,
 #endif
 		break;
 	default:
-		DRM_DEBUG("Unknown parameter %d\n", param->param);
+		drm_dbg(&i915->drm, "Unknown parameter %d\n", param->param);
 		return -EINVAL;
 	}
 
