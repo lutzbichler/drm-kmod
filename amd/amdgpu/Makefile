@@ -685,8 +685,7 @@ SRCS+=	dcn32_clk_mgr.c \
 	dcn32_clk_mgr_smu_msg.c
 
 # display/dc/core
-SRCS+=	dc_link_dpia.c \
-	dc_vm_helper.c
+SRCS+=	dc_vm_helper.c	
 
 # display/dc/clk_mgr
 SRCS+=	rn_clk_mgr.c \
@@ -785,6 +784,7 @@ SRCS+=	irq_service.c \
 # display/dc/link/*
 SRCS+=	link_ddc.c \
 	link_dpcd.c \
+	link_dp_dpia.c \
 	link_dp_dpia_bw.c \
 	link_dp_trace.c \
 	link_hpd.c \
