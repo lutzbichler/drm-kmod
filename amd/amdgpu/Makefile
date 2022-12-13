@@ -414,7 +414,6 @@ SRCS+=	dc_debug.c \
 	dc_sink.c \
 	dc_stream.c \
 	dc_link_enc_cfg.c \
-	dc_link_dpcd.c \
 	dc_surface.c \
 	dc.c \
 	dc_stat.c
@@ -785,6 +784,7 @@ SRCS+=	irq_service.c \
 
 # display/dc/link/*
 SRCS+=	link_ddc.c \
+	link_dpcd.c \
 	link_dp_dpia_bw.c \
 	link_dp_trace.c \
 	link_hpd.c \
