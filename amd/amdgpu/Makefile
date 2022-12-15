@@ -784,6 +784,7 @@ SRCS+=	irq_service.c \
 # display/dc/link/*
 SRCS+=	link_ddc.c \
 	link_dpcd.c \
+	link_dp_capability.c \
 	link_dp_dpia.c \
 	link_dp_dpia_bw.c \
 	link_dp_phy.c \
@@ -1279,6 +1280,9 @@ CWARNFLAGS.display_mode_vba_314.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.display_mode_vba_32.c=	-Wno-enum-conversion -Wno-unused-const-variable
 CWARNFLAGS.display_mode_vba_util_32.c=	-Wno-enum-conversion -Wno-missing-prototypes -Wno-unused-local-typedef
 CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
+
+# display/dc/link
+CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable
 
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
