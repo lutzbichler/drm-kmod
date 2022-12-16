@@ -114,7 +114,9 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/irq/dcn314 \
 	${SRCDIR}/display/dc/irq/dcn315 \
 	${SRCDIR}/display/dc/irq/dcn32 \
-	${SRCDIR}/display/dc/link \
+	${SRCDIR}/display/dc/link/accessories \
+	${SRCDIR}/display/dc/link/hwss \
+	${SRCDIR}/display/dc/link/protocols \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
@@ -782,24 +784,28 @@ SRCS+=	irq_service.c \
 	irq_service_dcn315.c \
 	irq_service_dcn32.c
 
-# display/dc/link/*
+# display/dc/link/accessories/*
+SRCS+=	link_dp_trace.c
+
+# display/dc/link/hwss/*
+SRCS+=	link_hwss_dio.c \
+	link_hwss_dpia.c \
+	link_hwss_hpo_dp.c
+
+# display/dc/link/protocols/*
 SRCS+=	link_ddc.c \
-	link_dpcd.c \
 	link_dp_capability.c \
 	link_dp_dpia.c \
 	link_dp_dpia_bw.c \
 	link_dp_phy.c \
-	link_dp_trace.c \
 	link_dp_training.c \
 	link_dp_training_128b_132b.c \
 	link_dp_training_8b_10b.c \
 	link_dp_training_auxless.c \
 	link_dp_training_dpia.c \
 	link_dp_training_fixed_vs_pe_retimer.c \
-	link_hpd.c \
-	link_hwss_dio.c \
-	link_hwss_dpia.c \
-	link_hwss_hpo_dp.c
+	link_dpcd.c \
+	link_hpd.c
 
 # display/dc/virtual
 SRCS+=	virtual_link_encoder.c \
@@ -1283,8 +1289,8 @@ CWARNFLAGS.display_mode_vba_32.c=	-Wno-enum-conversion -Wno-unused-const-variabl
 CWARNFLAGS.display_mode_vba_util_32.c=	-Wno-enum-conversion -Wno-missing-prototypes -Wno-unused-local-typedef
 CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
 
-# display/dc/link
-CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable
+# display/dc/link/accessories
+CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
