@@ -805,6 +805,7 @@ SRCS+=	link_ddc.c \
 	link_dp_training_dpia.c \
 	link_dp_training_fixed_vs_pe_retimer.c \
 	link_dpcd.c \
+	link_edp_panel_control.c \
 	link_hpd.c
 
 # display/dc/virtual
@@ -1291,6 +1292,9 @@ CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
 
 # display/dc/link/accessories
 CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
+
+# display/dc/link/protocols
+CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable	
 
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
