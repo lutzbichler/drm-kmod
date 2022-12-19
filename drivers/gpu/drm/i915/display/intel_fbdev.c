@@ -288,9 +288,9 @@ static int intelfb_create(struct drm_fb_helper *helper,
 #ifdef __FreeBSD__
 	/*
 	 * After the if() above, we can register the fictitious memory range
-	 * based on the info->apertures->ranges[0] values.
+	 * based on the info->fix.smem_[start|len] values.
 	 *
-	 * This was handled in register_framebuffer() in the past, also based
+	 * This was handled in register_framebuffer() in the past, based
 	 * on the values of info->apertures->ranges[0]. However, the `amdgpu`
 	 * driver stopped setting them when it got rid of its specific
 	 * framebuffer initialization to use the generic drm_fb_helper code.
@@ -299,9 +299,7 @@ static int intelfb_create(struct drm_fb_helper *helper,
 	 * values passed to register_fictitious_range() below are unavailable
 	 * from a generic structure set by both drivers.
 	 */
-	register_fictitious_range(
-	    info->apertures->ranges[0].base,
-	    info->apertures->ranges[0].size);
+	register_fictitious_range(info->fix.smem_start, info->fix.smem_len);
 #endif
 
 	vaddr = i915_vma_pin_iomap(vma);
@@ -367,8 +365,8 @@ static void intel_fbdev_destroy(struct intel_fbdev *ifbdev)
 
 #ifdef __FreeBSD__
 	unregister_fictitious_range(
-	    ifbdev->helper.info->apertures->ranges[0].base,
-	    ifbdev->helper.info->apertures->ranges[0].size);
+	    ifbdev->helper.info->fix.smem_start,
+	    ifbdev->helper.info->fix.smem_len);
 #endif
 
 	drm_fb_helper_fini(&ifbdev->helper);
