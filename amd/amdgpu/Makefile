@@ -785,7 +785,8 @@ SRCS+=	irq_service.c \
 	irq_service_dcn32.c
 
 # display/dc/link/accessories/*
-SRCS+=	link_dp_trace.c
+SRCS+=	link_dp_cts.c \
+	link_dp_trace.c
 
 # display/dc/link/hwss/*
 SRCS+=	link_hwss_dio.c \
