@@ -10,6 +10,7 @@
 #include "i915_irq.h"
 #include "intel_crtc.h"
 #include "intel_display_types.h"
+#include "intel_vblank.h"
 
 static inline void
 trace_intel_pipe_enable(struct intel_crtc *crtc)
