@@ -114,6 +114,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/irq/dcn314 \
 	${SRCDIR}/display/dc/irq/dcn315 \
 	${SRCDIR}/display/dc/irq/dcn32 \
+	${SRCDIR}/display/dc/link \
 	${SRCDIR}/display/dc/link/accessories \
 	${SRCDIR}/display/dc/link/hwss \
 	${SRCDIR}/display/dc/link/protocols \
@@ -783,9 +784,17 @@ SRCS+=	irq_service.c \
 	irq_service_dcn315.c \
 	irq_service_dcn32.c
 
+# display/dc/link
+SRCS+=	link_detection.c \
+	link_dpms.c \
+	link_factory.c \
+	link_resource.c \
+	link_validation.c
+
 # display/dc/link/accessories/*
 SRCS+=	link_dp_cts.c \
-	link_dp_trace.c
+	link_dp_trace.c \
+	link_fpga.c
 
 # display/dc/link/hwss/*
 SRCS+=	link_hwss_dio.c \
@@ -1291,6 +1300,9 @@ CWARNFLAGS.display_mode_vba_314.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.display_mode_vba_32.c=	-Wno-enum-conversion -Wno-unused-const-variable
 CWARNFLAGS.display_mode_vba_util_32.c=	-Wno-enum-conversion -Wno-missing-prototypes -Wno-unused-local-typedef
 CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
+
+# display/dc/link
+CWARNFLAGS.link_detection.c=		-Wno-unused-but-set-variable
 
 # display/dc/link/accessories
 CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
