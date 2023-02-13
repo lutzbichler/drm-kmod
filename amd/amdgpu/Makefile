@@ -88,6 +88,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/gpio/dcn30 \
 	${SRCDIR}/display/dc/gpio/dcn315 \
 	${SRCDIR}/display/dc/gpio/dcn32 \
+	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
 	${SRCDIR}/display/dc/i2caux/dce110 \
@@ -123,6 +124,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/modules \
 	${SRCDIR}/display/modules/color \
 	${SRCDIR}/display/modules/freesync \
+	${SRCDIR}/display/modules/hdcp \
 	${SRCDIR}/display/modules/inc \
 	${SRCDIR}/display/modules/info_packet \
 	${SRCDIR}/display/modules/power \
@@ -373,6 +375,7 @@ SRCS+=	amdgpu_dm_color.c \
 	amdgpu_dm_crc.c \
 	amdgpu_dm_crtc.c \
 	amdgpu_dm_debugfs.c \
+	amdgpu_dm_hdcp.c \
 	amdgpu_dm_helpers.c \
 	amdgpu_dm_irq.c \
 	amdgpu_dm_mst_types.c \
@@ -772,6 +775,9 @@ SRCS+=	gpio_base.c \
 	hw_translate_dcn315.c \
 	hw_translate_dcn32.c
 
+# display/dc/hdcp
+SRCS+=	hdcp_msg.c
+
 # display/dc/irq/*
 SRCS+=	irq_service.c \
 	irq_service_dce110.c \
@@ -827,6 +833,14 @@ SRCS+=	virtual_link_encoder.c \
 SRCS+=	color_gamma.c \
 	color_table.c \
 	freesync.c \
+	hdcp.c \
+	hdcp_ddc.c \
+	hdcp_log.c \
+	hdcp_psp.c \
+	hdcp1_execution.c \
+	hdcp1_transition.c \
+	hdcp2_execution.c \
+	hdcp2_transition.c \
 	info_packet.c \
 	power_helpers.c
 
@@ -963,6 +977,7 @@ CFLAGS+= -I${SRCDIR}/display/dc/inc
 CFLAGS+= -I${SRCDIR}/display/dc/inc/hw
 CFLAGS+= -I${SRCDIR}/display/dmub/inc
 CFLAGS+= -I${SRCDIR}/display/include
+CFLAGS+= -I${SRCDIR}/display/modules/hdcp
 CFLAGS+= -I${SRCDIR}/display/modules/inc
 CFLAGS+= -I${SRCDIR}/include
 CFLAGS+= -I${SRCDIR}/include/asic_reg
@@ -1312,6 +1327,7 @@ CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 
 # display/dc/link/protocols
 CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable	
+CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
