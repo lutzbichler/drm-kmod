@@ -948,7 +948,6 @@ static ssize_t dp_dsc_passthrough_set(struct file *f, const char __user *buf,
 	return 0;
 }
 
-#ifdef CONFIG_DRM_AMD_DC_HDCP
 /*
  * Returns the HDCP capability of the Display (1.4 for now).
  *
@@ -985,7 +984,6 @@ static int hdcp_sink_capability_show(struct seq_file *m, void *data)
 
 	return 0;
 }
-#endif
 
 /*
  * Returns whether the connected display is internal and not hotpluggable.
@@ -2594,9 +2592,7 @@ DEFINE_SHOW_ATTRIBUTE(dp_dsc_fec_support);
 DEFINE_SHOW_ATTRIBUTE(dmub_fw_state);
 DEFINE_SHOW_ATTRIBUTE(dmub_tracebuffer);
 DEFINE_SHOW_ATTRIBUTE(dp_lttpr_status);
-#ifdef CONFIG_DRM_AMD_DC_HDCP
 DEFINE_SHOW_ATTRIBUTE(hdcp_sink_capability);
-#endif
 DEFINE_SHOW_ATTRIBUTE(internal_display);
 DEFINE_SHOW_ATTRIBUTE(psr_capability);
 DEFINE_SHOW_ATTRIBUTE(dp_is_mst_connector);
@@ -2727,9 +2723,7 @@ static const struct {
 		{"phy_settings", &dp_phy_settings_debugfs_fop},
 		{"lttpr_status", &dp_lttpr_status_fops},
 		{"test_pattern", &dp_phy_test_pattern_fops},
-#ifdef CONFIG_DRM_AMD_DC_HDCP
 		{"hdcp_sink_capability", &hdcp_sink_capability_fops},
-#endif
 		{"sdp_message", &sdp_message_fops},
 		{"aux_dpcd_address", &dp_dpcd_address_debugfs_fops},
 		{"aux_dpcd_size", &dp_dpcd_size_debugfs_fops},
@@ -2750,14 +2744,13 @@ static const struct {
 		{"is_dpia_link", &is_dpia_link_fops}
 };
 
-#ifdef CONFIG_DRM_AMD_DC_HDCP
 static const struct {
 	char *name;
 	const struct file_operations *fops;
 } hdmi_debugfs_entries[] = {
 		{"hdcp_sink_capability", &hdcp_sink_capability_fops}
 };
-#endif
+
 /*
  * Force YUV420 output if available from the given mode
  */
@@ -3016,7 +3009,6 @@ void connector_debugfs_init(struct amdgpu_dm_connector *connector)
 	connector->debugfs_dpcd_address = 0;
 	connector->debugfs_dpcd_size = 0;
 
-#ifdef CONFIG_DRM_AMD_DC_HDCP
 	if (connector->base.connector_type == DRM_MODE_CONNECTOR_HDMIA) {
 		for (i = 0; i < ARRAY_SIZE(hdmi_debugfs_entries); i++) {
 			debugfs_create_file(hdmi_debugfs_entries[i].name,
@@ -3024,7 +3016,6 @@ void connector_debugfs_init(struct amdgpu_dm_connector *connector)
 					    hdmi_debugfs_entries[i].fops);
 		}
 	}
-#endif
 }
 
 #ifdef CONFIG_DRM_AMD_SECURE_DISPLAY
