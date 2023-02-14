@@ -63,21 +63,13 @@ KCONFIG+=	64BIT \
 		COMPAT \
 		X86_64
 
-KCONFIG+=	DRM_AMD_DC_DCN \
-		DRM_AMD_DC_DCN3_0 \
-		DRM_AMD_DC_DCN3_01 \
-		DRM_AMD_DC_DCN3_02 \
-		DRM_AMD_DC_DCN3_1
+KCONFIG+=	DRM_AMD_DC_FP
 .endif
 .endif
 
 .if ${MACHINE_ARCH:Mpowerpc64*} != ""
 KCONFIG+=	64BIT \
 		PPC64
-		
-# DCN is only compile-tested.
-KCONFIG+=	DRM_AMD_DC_DCN \
-		DRM_AMD_DC_DCN3_0
 .endif
 
 .if ${MACHINE_CPUARCH} == "riscv"
