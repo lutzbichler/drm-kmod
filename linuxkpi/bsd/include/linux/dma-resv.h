@@ -481,5 +481,7 @@ long dma_resv_wait_timeout(struct dma_resv *obj, enum dma_resv_usage usage,
 			   bool intr, unsigned long timeout);
 bool dma_resv_test_signaled(struct dma_resv *obj, enum dma_resv_usage usage);
 void dma_resv_describe(struct dma_resv *obj, struct seq_file *seq);
+void dma_resv_set_deadline(struct dma_resv *obj, enum dma_resv_usage usage,
+                           ktime_t deadline);
 
 #endif /* _LINUX_RESERVATION_H */
