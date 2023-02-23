@@ -1322,6 +1322,7 @@ CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
 
 # display/dc/link
 CWARNFLAGS.link_detection.c=		-Wno-unused-but-set-variable
+CWARNFLAGS.link_validation.c=		-Wno-missing-prototypes
 
 # display/dc/link/accessories
 CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
