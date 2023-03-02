@@ -921,6 +921,7 @@ SRCS+=	amd_powerplay.c \
 	smu_v13_0_10.c \
 	smu_v13_0_4_ppt.c \
 	smu_v13_0_5_ppt.c \
+	smu_v13_0_6_ppt.c \
 	smu_v13_0_7_ppt.c \
 	smu_helper.c \
 	smumgr.c \
@@ -1327,6 +1328,12 @@ CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable	
 CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 
+# modules/*
+CWARNFLAGS.freesync.c=                  -Wno-unused-but-set-variable
+
+# pm/*
+CWARNFLAGS.smu_v13_0_6_ppt.c=           -Wno-uninitialized
+
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.ci_smumgr.c=			-Wno-unused-but-set-variable
@@ -1347,6 +1354,3 @@ CWARNFLAGS.vega10_processpptables.c=	-Wno-missing-prototypes
 CWARNFLAGS.vega12_hwmgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.vega20_hwmgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.vegam_smumgr.c=		-Wno-missing-prototypes
-
-# modules/*
-CWARNFLAGS.freesync.c=			-Wno-unused-but-set-variable
