@@ -183,7 +183,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_gfx.c \
 	amdgpu_gmc.c \
 	amdgpu_gtt_mgr.c \
-	amdgpu_preempt_mgr.c \
+	amdgpu_hdp.c \
 	amdgpu_i2c.c \
 	amdgpu_ib.c \
 	amdgpu_ids.c \
@@ -201,6 +201,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_object.c \
 	amdgpu_pll.c \
 	amdgpu_pm.c \
+	amdgpu_preempt_mgr.c \
 	amdgpu_dma_buf.c \
 	amdgpu_psp.c \
 	amdgpu_psp_ta.c \
