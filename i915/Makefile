@@ -132,6 +132,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_dvo.c \
 	intel_global_state.c \
 	intel_gmbus.c \
+	intel_hdcp_gsc.c \
 	intel_hdmi.c \
 	intel_hti.c \
 	intel_lspcon.c \
@@ -364,6 +365,7 @@ CWARNFLAGS.intel_fbdev.c=	-Wno-initializer-overrides
 CWARNFLAGS.intel_freebsd.c=	-Wno-unused-function
 CWARNFLAGS.i915_gem_context.c=	-Wno-unused-function
 CWARNFLAGS.intel_guc_capture.c=	-Wno-unused-but-set-variable
+CWARNFLAGS.intel_hdcp_gsc.c=	-Wno-missing-prototypes
 CWARNFLAGS.intel_hdmi.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.intel_hotplug.c=	-Wno-uninitialized
 CWARNFLAGS.intel_pm.c=		-Wno-incompatible-pointer-types-discards-qualifiers
