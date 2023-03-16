@@ -5,6 +5,15 @@
 #include <drm/drm_framebuffer.h>
 #include <drm/drm_modeset_helper.h>
 
+struct drm_gem_object *
+drm_gem_fb_get_obj(struct drm_framebuffer *fb, unsigned int plane)
+{
+	if (plane < 4)
+		return (fb->obj[plane]);
+
+	return (NULL);
+}
+
 void
 drm_gem_fb_destroy(struct drm_framebuffer *fb)
 {
