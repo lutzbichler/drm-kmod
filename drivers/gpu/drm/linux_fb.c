@@ -45,6 +45,7 @@ __FBSDID("$FreeBSD$");
 #include <dev/vt/vt.h>
 #include <dev/vt/hw/fb/vt_fb.h>
 
+#include <drm/drm_fb_helper.h>
 #include <linux/fb.h>
 #undef fb_info
 #include <drm/drm_os_freebsd.h>
@@ -195,6 +196,7 @@ static int
 __register_framebuffer(struct linux_fb_info *fb_info)
 {
 	int i, err;
+	struct drm_fb_helper *fb_helper;
 
 	vt_freeze_main_vd(fb_info->apertures);
 
@@ -209,9 +211,17 @@ __register_framebuffer(struct linux_fb_info *fb_info)
 				     VM_MEMATTR_UNCACHEABLE);
 #endif
 
+	fb_helper =
+	    ((struct vt_kms_softc *)fb_info->fbio.fb_priv)->fb_helper;
+	fb_info->fbio.fb_video_dev =
+	    device_get_parent(fb_helper->dev->dev->bsddev);
+	fb_info->fbio.fb_name =
+	    device_get_nameunit(fb_helper->dev->dev->bsddev);
+
 	fb_info->fbio.fb_type = FBTYPE_PCIMISC;
 	fb_info->fbio.fb_height = fb_info->var.yres;
 	fb_info->fbio.fb_width = fb_info->var.xres;
+	fb_info->fbio.fb_bpp = fb_info->var.bits_per_pixel;
 	fb_info->fbio.fb_depth = fb_info->var.bits_per_pixel;
 	fb_info->fbio.fb_cmsize = 0;
 	fb_info->fbio.fb_stride = fb_info->fix.line_length;
