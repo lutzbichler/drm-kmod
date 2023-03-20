@@ -10,16 +10,6 @@
 
 #include <drm/drm_fbdev_generic.h>
 
-static bool drm_fbdev_use_shadow_fb(struct drm_fb_helper *fb_helper)
-{
-	struct drm_device *dev = fb_helper->dev;
-	struct drm_framebuffer *fb = fb_helper->fb;
-
-	return dev->mode_config.prefer_shadow_fbdev ||
-	       dev->mode_config.prefer_shadow ||
-	       fb->funcs->dirty;
-}
-
 /* @user: 1=userspace, 0=fbcon */
 static int drm_fbdev_fb_open(struct fb_info *info, int user)
 {
@@ -49,125 +39,52 @@ static int drm_fbdev_fb_release(struct fb_info *info, int user)
 static void drm_fbdev_fb_destroy(struct fb_info *info)
 {
 	struct drm_fb_helper *fb_helper = info->par;
-	void *shadow = NULL;
+	void *shadow = info->screen_buffer;
 
 	if (!fb_helper->dev)
 		return;
 
 #ifdef __linux__
-	if (info->fbdefio)
-		fb_deferred_io_cleanup(info);
+	fb_deferred_io_cleanup(info);
 #endif
-	if (drm_fbdev_use_shadow_fb(fb_helper))
-		shadow = info->screen_buffer;
-
 	drm_fb_helper_fini(fb_helper);
 
-	if (shadow)
-		vfree(shadow);
-	else if (fb_helper->buffer)
-#ifdef __linux__
-		drm_client_buffer_vunmap(fb_helper->buffer);
-#elif defined(__FreeBSD__)
-		drm_client_buffer_vunmap(fb_helper->buffer, true);
-#endif
-
+	vfree(shadow);
 	drm_client_framebuffer_delete(fb_helper->buffer);
-	drm_client_release(&fb_helper->client);
 
+	drm_client_release(&fb_helper->client);
 	drm_fb_helper_unprepare(fb_helper);
 	kfree(fb_helper);
 }
 
+#if __FreeBSD__
 static int drm_fbdev_fb_mmap(struct fb_info *info, struct vm_area_struct *vma)
 {
 	struct drm_fb_helper *fb_helper = info->par;
 
-#ifdef __linux__
-	if (drm_fbdev_use_shadow_fb(fb_helper))
-		return fb_deferred_io_mmap(info, vma);
-	else if (fb_helper->dev->driver->gem_prime_mmap)
-#elif defined (__FreeBSD__)
 	if (fb_helper->dev->driver->gem_prime_mmap)
-#endif
 		return fb_helper->dev->driver->gem_prime_mmap(fb_helper->buffer->gem, vma);
 	else
 		return -ENODEV;
 }
-
-static bool drm_fbdev_use_iomem(struct fb_info *info)
-{
-	struct drm_fb_helper *fb_helper = info->par;
-	struct drm_client_buffer *buffer = fb_helper->buffer;
-
-	return !drm_fbdev_use_shadow_fb(fb_helper) && buffer->map.is_iomem;
-}
-
-static ssize_t drm_fbdev_fb_read(struct fb_info *info, char __user *buf,
-				 size_t count, loff_t *ppos)
-{
-	ssize_t ret;
-
-	if (drm_fbdev_use_iomem(info))
-		ret = drm_fb_helper_cfb_read(info, buf, count, ppos);
-	else
-		ret = drm_fb_helper_sys_read(info, buf, count, ppos);
-
-	return ret;
-}
-
-static ssize_t drm_fbdev_fb_write(struct fb_info *info, const char __user *buf,
-				  size_t count, loff_t *ppos)
-{
-	ssize_t ret;
-
-	if (drm_fbdev_use_iomem(info))
-		ret = drm_fb_helper_cfb_write(info, buf, count, ppos);
-	else
-		ret = drm_fb_helper_sys_write(info, buf, count, ppos);
-
-	return ret;
-}
-
-static void drm_fbdev_fb_fillrect(struct fb_info *info,
-				  const struct fb_fillrect *rect)
-{
-	if (drm_fbdev_use_iomem(info))
-		drm_fb_helper_cfb_fillrect(info, rect);
-	else
-		drm_fb_helper_sys_fillrect(info, rect);
-}
-
-static void drm_fbdev_fb_copyarea(struct fb_info *info,
-				  const struct fb_copyarea *area)
-{
-	if (drm_fbdev_use_iomem(info))
-		drm_fb_helper_cfb_copyarea(info, area);
-	else
-		drm_fb_helper_sys_copyarea(info, area);
-}
-
-static void drm_fbdev_fb_imageblit(struct fb_info *info,
-				   const struct fb_image *image)
-{
-	if (drm_fbdev_use_iomem(info))
-		drm_fb_helper_cfb_imageblit(info, image);
-	else
-		drm_fb_helper_sys_imageblit(info, image);
-}
+#endif
 
 static const struct fb_ops drm_fbdev_fb_ops = {
 	.owner		= THIS_MODULE,
-	DRM_FB_HELPER_DEFAULT_OPS,
 	.fb_open	= drm_fbdev_fb_open,
 	.fb_release	= drm_fbdev_fb_release,
-	.fb_destroy	= drm_fbdev_fb_destroy,
+	.fb_read	= drm_fb_helper_sys_read,
+	.fb_write	= drm_fb_helper_sys_write,
+	DRM_FB_HELPER_DEFAULT_OPS,
+	.fb_fillrect	= drm_fb_helper_sys_fillrect,
+	.fb_copyarea	= drm_fb_helper_sys_copyarea,
+	.fb_imageblit	= drm_fb_helper_sys_imageblit,
+#ifdef __linux__
+	.fb_mmap	= fb_deferred_io_mmap,
+#elif defined(__FreeBSD__)
 	.fb_mmap	= drm_fbdev_fb_mmap,
-	.fb_read	= drm_fbdev_fb_read,
-	.fb_write	= drm_fbdev_fb_write,
-	.fb_fillrect	= drm_fbdev_fb_fillrect,
-	.fb_copyarea	= drm_fbdev_fb_copyarea,
-	.fb_imageblit	= drm_fbdev_fb_imageblit,
+#endif
+	.fb_destroy	= drm_fbdev_fb_destroy,
 };
 
 #ifdef __linux__
@@ -189,7 +106,6 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
 	struct drm_framebuffer *fb;
 	struct fb_info *info;
 	u32 format;
-	struct iosys_map map;
 	int ret;
 
 	drm_dbg_kms(dev, "surface width(%d), height(%d) and bpp(%d)\n",
@@ -217,44 +133,23 @@ static int drm_fbdev_fb_probe(struct drm_fb_helper *fb_helper,
 
 	drm_fb_helper_fill_info(info, fb_helper, sizes);
 
-	if (drm_fbdev_use_shadow_fb(fb_helper)) {
-		info->screen_buffer = vzalloc(info->screen_size);
-		if (!info->screen_buffer)
-			return -ENOMEM;
-		info->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
+	info->screen_buffer = vzalloc(info->screen_size);
+	if (!info->screen_buffer)
+		return -ENOMEM;
+	info->flags |= FBINFO_VIRTFB | FBINFO_READS_FAST;
+
+	info->fix.smem_start = page_to_phys(vmalloc_to_page(info->screen_buffer));
 
 #ifdef __linux__
-		info->fbdefio = &drm_fbdev_defio;
-		fb_deferred_io_init(info);
-#endif
-	} else {
-		/* buffer is mapped for HW framebuffer */
-#ifdef __linux__
-		ret = drm_client_buffer_vmap(fb_helper->buffer, &map);
-#elif defined(__FreeBSD__)
-		ret = drm_client_buffer_vmap(fb_helper->buffer, &map, true);
-#endif
-		if (ret)
-			return ret;
-		if (map.is_iomem) {
-			info->screen_base = map.vaddr_iomem;
-		} else {
-			info->screen_buffer = map.vaddr;
-			info->flags |= FBINFO_VIRTFB;
-		}
+	/* Set a default deferred I/O handler */
+	fb_helper->fbdefio.delay = HZ / 20;
+	fb_helper->fbdefio.deferred_io = drm_fb_helper_deferred_io;
 
-		/*
-		 * Shamelessly leak the physical address to user-space. As
-		 * page_to_phys() is undefined for I/O memory, warn in this
-		 * case.
-		 */
-#if IS_ENABLED(CONFIG_DRM_FBDEV_LEAK_PHYS_SMEM)
-		if (fb_helper->hint_leak_smem_start && info->fix.smem_start == 0 &&
-		    !drm_WARN_ON_ONCE(dev, map.is_iomem))
-			info->fix.smem_start =
-				page_to_phys(virt_to_page(info->screen_buffer));
+	info->fbdefio = &fb_helper->fbdefio;
+	ret = fb_deferred_io_init(info);
+	if (ret)
+		return ret;
 #endif
-	}
 
 	return 0;
 }
@@ -346,18 +241,13 @@ static int drm_fbdev_fb_dirty(struct drm_fb_helper *helper, struct drm_clip_rect
 	struct drm_device *dev = helper->dev;
 	int ret;
 
-	if (!drm_fbdev_use_shadow_fb(helper))
-		return 0;
-
 	/* Call damage handlers only if necessary */
 	if (!(clip->x1 < clip->x2 && clip->y1 < clip->y2))
 		return 0;
 
-	if (helper->buffer) {
-		ret = drm_fbdev_damage_blit(helper, clip);
-		if (drm_WARN_ONCE(dev, ret, "Damage blitter failed: ret=%d\n", ret))
-			return ret;
-	}
+	ret = drm_fbdev_damage_blit(helper, clip);
+	if (drm_WARN_ONCE(dev, ret, "Damage blitter failed: ret=%d\n", ret))
+		return ret;
 
 	if (helper->fb->funcs->dirty) {
 		ret = helper->fb->funcs->dirty(helper->fb, NULL, 0, 0, clip, 1);
@@ -443,12 +333,9 @@ static const struct drm_client_funcs drm_fbdev_client_funcs = {
  * suspend/resume need to call drm_fb_helper_set_suspend_unlocked() themselves.
  * Simple drivers might use drm_mode_config_helper_suspend().
  *
- * Drivers that set the dirty callback on their framebuffer will get a shadow
- * fbdev buffer that is blitted onto the real buffer. This is done in order to
- * make deferred I/O work with all kinds of buffers. A shadow buffer can be
- * requested explicitly by setting struct drm_mode_config.prefer_shadow or
- * struct drm_mode_config.prefer_shadow_fbdev to true beforehand. This is
- * required to use generic fbdev emulation with SHMEM helpers.
+ * In order to provide fixed mmap-able memory ranges, generic fbdev emulation
+ * uses a shadow buffer in system memory. The implementation blits the shadow
+ * fbdev buffer onto the real buffer in regular intervals.
  *
  * This function is safe to call even when there are no connectors present.
  * Setup will be retried on the next hotplug event.
