@@ -317,15 +317,20 @@ EXPORT_SYMBOL(aperture_remove_conflicting_devices);
  */
 int aperture_remove_conflicting_pci_devices(struct pci_dev *pdev, const char *name)
 {
-#ifdef __linux__
 	bool primary = false;
-#endif	
 	resource_size_t base, size;
-	int bar, ret;
-
 #ifdef __linux__
+	int bar, ret;
+#elif defined(__FreeBSD__)
+	int bar;
+#endif
+
 	if (pdev == vga_default_device())
 		primary = true;
+
+#ifdef __linux__
+	if (primary)
+		sysfb_disable();
 #endif
 
 	for (bar = 0; bar < PCI_STD_NUM_BARS; ++bar) {
@@ -334,12 +339,9 @@ int aperture_remove_conflicting_pci_devices(struct pci_dev *pdev, const char *na
 
 		base = pci_resource_start(pdev, bar);
 		size = pci_resource_len(pdev, bar);
-		ret = aperture_remove_conflicting_devices(base, size, name);
-		if (ret)
-			return ret;
+		aperture_detach_devices(base, size);
 	}
 
-#ifdef __linux__
 	if (primary) {
 		/*
 		 * If this is the primary adapter, there could be a VGA device
@@ -352,11 +354,12 @@ int aperture_remove_conflicting_pci_devices(struct pci_dev *pdev, const char *na
 		 * WARNING: Apparently we must kick fbdev drivers before vgacon,
 		 * otherwise the vga fbdev driver falls over.
 		 */
+#ifdef __linux__
 		ret = vga_remove_vgacon(pdev);
 		if (ret)
 			return ret;
-	}
 #endif
+	}
 
 	return 0;
 
