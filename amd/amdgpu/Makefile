@@ -1358,7 +1358,9 @@ CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.freesync.c=                  -Wno-unused-but-set-variable
 
 # pm/*
+CWARNFLAGS.smu_v13_0_0_ppt.c=           -Wno-unused-variable
 CWARNFLAGS.smu_v13_0_6_ppt.c=           -Wno-uninitialized -Wno-missing-prototypes -Wno-initializer-overrides
+CWARNFLAGS.smu_v13_0_7_ppt.c=		-Wno-unused-variable
 
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
