@@ -63,6 +63,7 @@ SRCS=	\
 	intel_connector.c \
 	intel_crtc.c \
 	intel_cursor.c \
+	intel_cx0_phy.c \
 	intel_device_info.c \
 	intel_display.c \
 	intel_display_power.c \
