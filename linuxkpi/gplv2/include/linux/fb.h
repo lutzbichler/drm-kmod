@@ -188,6 +188,11 @@ struct linux_fb_info *framebuffer_alloc(size_t size, struct device *dev);
 void framebuffer_release(struct linux_fb_info *info);
 #define	fb_set_suspend(x, y)	0
 
+ssize_t fb_io_read(struct linux_fb_info *info, char __user *buf, size_t count,
+	loff_t *ppos);
+ssize_t fb_io_write(struct linux_fb_info *info, const char __user *buf, size_t count,
+	loff_t *ppos);
+
 static inline bool
 is_firmware_framebuffer(struct apertures_struct *a __unused)
 {

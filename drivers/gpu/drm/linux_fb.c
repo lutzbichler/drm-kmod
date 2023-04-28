@@ -468,3 +468,99 @@ fb_sys_write(struct linux_fb_info *info, const char __user *buf,
 	panic("fb_sys_write() not implemented");
 	return (0);
 }
+
+static inline ssize_t
+read_screen(struct linux_fb_info *info, char __user *buf, size_t count, loff_t pos)
+{
+       const char *src = info->screen_buffer + pos;
+
+       if (copy_to_user(buf, src, count))
+               return -EFAULT;
+
+       return count;
+}
+
+ssize_t
+fb_io_read(struct linux_fb_info *info, char __user *buf, size_t count, loff_t *ppos)
+{
+       loff_t pos = *ppos;
+       size_t total_size;
+       ssize_t ret;
+
+       if (info->screen_size)
+               total_size = info->screen_size;
+       else
+               total_size = info->fix.smem_len;
+
+       if (pos >= total_size)
+               return 0;
+       if (count >= total_size)
+               count = total_size;
+       if (total_size - count < pos)
+               count = total_size - pos;
+
+       if (info->fbops->fb_sync)
+               info->fbops->fb_sync(info);
+
+       ret = read_screen(info, buf, count, pos);
+       if (ret > 0)
+               *ppos += ret;
+
+       return ret;
+}
+
+static inline ssize_t
+write_screen(struct linux_fb_info *info, const char __user *buf, size_t count,
+	loff_t pos)
+{
+       char *dst = info->screen_buffer + pos;
+
+       if (copy_from_user(dst, buf, count))
+               return -EFAULT;
+
+       return count;
+}
+
+ssize_t
+fb_io_write(struct linux_fb_info *info, const char __user *buf, size_t count,
+	loff_t *ppos)
+{
+       loff_t pos = *ppos;
+       size_t total_size;
+       ssize_t ret;
+       int err = 0;
+
+       if (info->screen_size)
+               total_size = info->screen_size;
+       else
+               total_size = info->fix.smem_len;
+
+       if (pos > total_size)
+               return -EFBIG;
+       if (count > total_size) {
+               err = -EFBIG;
+               count = total_size;
+       }
+       if (total_size - count < pos) {
+               if (!err)
+                       err = -ENOSPC;
+               count = total_size - pos;
+       }
+
+       if (info->fbops->fb_sync)
+               info->fbops->fb_sync(info);
+
+       /*
+        * Copy to framebuffer even if we already logged an error. Emulates
+        * the behavior of the original fbdev implementation.
+        */
+       ret = write_screen(info, buf, count, pos);
+       if (ret < 0)
+               return ret; /* return last error, if any */
+       else if (!ret)
+               return err; /* return previous error, if any */
+
+       *ppos += ret;
+
+       return ret;
+}
