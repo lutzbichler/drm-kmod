@@ -226,6 +226,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_ttm.c \
 	amdgpu_ucode.c \
 	amdgpu_umc.c \
+	amdgpu_umsch_mm.c \
 	amdgpu_uvd.c \
 	amdgpu_vce.c \
 	amdgpu_vcn.c \
@@ -372,6 +373,7 @@ SRCS+=	amdgpu_afmt.c \
 	umc_v6_7.c \
 	umc_v8_10.c \
 	umc_v8_7.c \
+	umsch_mm_v4_0.c \
 	uvd_v3_1.c \
 	uvd_v4_2.c \
 	uvd_v5_0.c \
