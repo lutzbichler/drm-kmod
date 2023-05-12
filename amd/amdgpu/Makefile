@@ -636,7 +636,8 @@ SRCS+=	dcn314_dccg.c \
 	dcn314_hwseq.c \
 	dcn314_init.c \
 	dcn314_optc.c \
-	dcn314_resource.c
+	dcn314_resource.c \
+	dmub_dcn314.c
 
 # display/dc/dcn315
 SRCS+=	dcn315_resource.c
