@@ -6,7 +6,7 @@
 #include <linux/pci.h>
 #include <linux/vgaarb.h>
 
-#if defined(__FreeBSD__)
+#ifdef __FreeBSD__
 #include <asm-generic/io.h>
 #endif
 

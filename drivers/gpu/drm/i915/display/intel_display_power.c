@@ -303,16 +303,15 @@ void intel_display_power_set_target_dc_state(struct drm_i915_private *dev_priv,
 
 	if (state == dev_priv->dmc.target_dc_state)
 		goto unlock;
- 
+
 	dc_off_enabled = intel_power_well_is_enabled(dev_priv, power_well);
 	/*
 	 * If DC off power well is disabled, need to enable and disable the
 	 * DC off power well to effect target DC state.
 	 */
-
 	if (!dc_off_enabled)
 		intel_power_well_enable(dev_priv, power_well);
- 
+
 	dev_priv->dmc.target_dc_state = state;
 
 	if (!dc_off_enabled)

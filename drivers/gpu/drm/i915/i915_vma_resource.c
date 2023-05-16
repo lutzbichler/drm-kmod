@@ -51,7 +51,7 @@ INTERVAL_TREE_DEFINE(struct i915_vma_resource, rb,
 struct i915_vma_resource *i915_vma_resource_alloc(void)
 {
 	struct i915_vma_resource *vma_res =
-		kzalloc(sizeof(*vma_res), GFP_KERNEL);
+		kmem_cache_zalloc(slab_vma_resources, GFP_KERNEL);
 
 	return vma_res ? vma_res : ERR_PTR(-ENOMEM);
 }

@@ -238,12 +238,12 @@ void intel_device_info_subplatform_init(struct drm_i915_private *i915)
 	} else if (find_devid(devid, subplatform_portf_ids,
 			      ARRAY_SIZE(subplatform_portf_ids))) {
 		mask = BIT(INTEL_SUBPLATFORM_PORTF);
+	} else if (find_devid(devid, subplatform_uy_ids,
+			   ARRAY_SIZE(subplatform_uy_ids))) {
+		mask = BIT(INTEL_SUBPLATFORM_UY);
 	} else if (find_devid(devid, subplatform_n_ids,
 				ARRAY_SIZE(subplatform_n_ids))) {
 		mask = BIT(INTEL_SUBPLATFORM_N);
-	} else if (find_devid(devid, subplatform_uy_ids,
-			   ARRAY_SIZE(subplatform_uy_ids))) {
-		mask = BIT(INTEL_SUBPLATFORM_UY);		
 	} else if (find_devid(devid, subplatform_rpl_ids,
 			      ARRAY_SIZE(subplatform_rpl_ids))) {
 		mask = BIT(INTEL_SUBPLATFORM_RPL);
@@ -257,27 +257,6 @@ void intel_device_info_subplatform_init(struct drm_i915_private *i915)
 			      ARRAY_SIZE(subplatform_g12_ids))) {
 		mask = BIT(INTEL_SUBPLATFORM_G12);
 	}
-
-#ifdef __linux__
-	if (IS_TIGERLAKE(i915)) {
-		struct pci_dev *root, *pdev = to_pci_dev(i915->drm.dev);
-
-		root = list_first_entry(&pdev->bus->devices, typeof(*root), bus_list);
-
-		drm_WARN_ON(&i915->drm, mask);
-		drm_WARN_ON(&i915->drm, (root->device & TGL_ROOT_DEVICE_MASK) !=
-			    TGL_ROOT_DEVICE_ID);
-
-		switch (root->device & TGL_ROOT_DEVICE_SKU_MASK) {
-		case TGL_ROOT_DEVICE_SKU_ULX:
-			mask = BIT(INTEL_SUBPLATFORM_ULX);
-			break;
-		case TGL_ROOT_DEVICE_SKU_ULT:
-			mask = BIT(INTEL_SUBPLATFORM_ULT);
-			break;
-		}
-	}
-#endif
 
 	GEM_BUG_ON(mask & ~INTEL_SUBPLATFORM_MASK);
 

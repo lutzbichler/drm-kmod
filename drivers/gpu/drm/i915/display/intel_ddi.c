@@ -28,7 +28,7 @@
 #include <linux/string_helpers.h>
 
 #include <drm/drm_privacy_screen_consumer.h>
-#include <drm/drm_scdc_helper.h>
+#include <drm/display/drm_scdc_helper.h>
 
 #include "i915_drv.h"
 #ifdef __FreeBSD__

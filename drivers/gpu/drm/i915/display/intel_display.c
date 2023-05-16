@@ -9595,11 +9595,7 @@ int intel_modeset_init_noirq(struct drm_i915_private *i915)
 
 	i915->modeset_wq = alloc_ordered_workqueue("i915_modeset", 0);
 	i915->flip_wq = alloc_workqueue("i915_flip", WQ_HIGHPRI |
-#ifdef __linux__
 					WQ_UNBOUND, WQ_UNBOUND_MAX_ACTIVE);
-#elif defined(__FreeBSD__)
-					WQ_UNBOUND, 512);
-#endif
 
 	i915->window2_delay = 0; /* No DSB so no window2 delay */
 

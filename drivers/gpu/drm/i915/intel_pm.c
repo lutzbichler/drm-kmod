@@ -3011,7 +3011,7 @@ int ilk_wm_max_level(const struct drm_i915_private *dev_priv)
 
 static void intel_print_wm_latency(struct drm_i915_private *dev_priv,
 				   const char *name,
-				   const u16 *wm)
+				   const u16 wm[])
 {
 	int level, max_level = ilk_wm_max_level(dev_priv);
 
@@ -4057,17 +4057,6 @@ static int intel_compute_sagv_mask(struct intel_atomic_state *state)
 		intel_calc_active_pipes(state, old_bw_state->active_pipes);
 
 	if (new_bw_state->active_pipes != old_bw_state->active_pipes) {
-		ret = intel_atomic_lock_global_state(&new_bw_state->base);
-		if (ret)
-			return ret;
-	}
-
-	if (intel_can_enable_sagv(dev_priv, new_bw_state) !=
-	    intel_can_enable_sagv(dev_priv, old_bw_state)) {
-		ret = intel_atomic_serialize_global_state(&new_bw_state->base);
-		if (ret)
-			return ret;
-	} else if (new_bw_state->pipe_sagv_reject != old_bw_state->pipe_sagv_reject) {
 		ret = intel_atomic_lock_global_state(&new_bw_state->base);
 		if (ret)
 			return ret;

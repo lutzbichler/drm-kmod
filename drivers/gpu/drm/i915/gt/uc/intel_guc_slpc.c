@@ -13,7 +13,7 @@
 #include "gt/intel_gt.h"
 #include "gt/intel_gt_regs.h"
 #include "gt/intel_rps.h"
- 
+
 static inline struct intel_guc *slpc_to_guc(struct intel_guc_slpc *slpc)
 {
 	return container_of(slpc, struct intel_guc, slpc);
