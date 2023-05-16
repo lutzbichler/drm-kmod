@@ -12,6 +12,9 @@ MODULE_VERSION(drm_display_helper, 1);
 MODULE_DEPEND(drm_display_helper, drmn, 2, 2, 2);
 MODULE_DEPEND(drm_display_helper, linuxkpi, 1, 1, 1);
 MODULE_DEPEND(drm_display_helper, linuxkpi_gplv2, 1, 1, 1);
+#if __FreeBSD_version >= 1400085
+MODULE_DEPEND(drmn, linuxkpi_hdmi, 1, 1, 1);
+#endif
 #ifdef CONFIG_DEBUG_FS
 MODULE_DEPEND(drm_display_helper, lindebugfs, 1, 1, 1);
 #endif
