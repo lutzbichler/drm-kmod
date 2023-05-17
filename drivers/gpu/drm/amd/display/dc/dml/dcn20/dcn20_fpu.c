@@ -1615,8 +1615,8 @@ static bool dcn20_validate_bandwidth_internal(struct dc *dc, struct dc_state *co
 #endif
 
 	DC_LOGGER_INIT(dc->ctx->logger);
- 
-        BW_VAL_TRACE_COUNT();
+
+	BW_VAL_TRACE_COUNT();
 
 	out = dcn20_fast_validate_bw(dc, context, pipes, &pipe_cnt, pipe_split_from, &vlevel, fast_validate);
 

@@ -21,6 +21,11 @@
  *
  */
 
+#ifdef __FreeBSD__
+#include <linux/wait.h>
+#include <linux/workqueue.h>
+#endif
+
 #include "amdgpu_mes.h"
 #include "amdgpu.h"
 #include "soc15_common.h"

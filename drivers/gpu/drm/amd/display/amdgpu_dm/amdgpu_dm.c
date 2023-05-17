@@ -75,6 +75,7 @@
 #include <linux/dmi.h>
 
 #include <drm/display/drm_dp_mst_helper.h>
+#include <drm/display/drm_hdmi_helper.h>
 #include <drm/drm_atomic.h>
 #include <drm/drm_atomic_uapi.h>
 #include <drm/drm_atomic_helper.h>
@@ -2694,23 +2695,6 @@ static int dm_resume(void *handle)
 		 */
 		link_enc_cfg_copy(adev->dm.dc->current_state, dc_state);
 
-		if (dc_enable_dmub_notifications(adev->dm.dc))
-			amdgpu_dm_outbox_init(adev);
-
-		/*
-		 * The dc->current_state is backed up into dm->cached_dc_state
-		 * before we commit 0 streams.
-		 *
-		 * DC will clear link encoder assignments on the real state
-		 * but the changes won't propagate over to the copy we made
-		 * before the 0 streams commit.
-		 *
-		 * DC expects that link encoder assignments are *not* valid
-		 * when committing a state, so as a workaround it needs to be
-		 * cleared here.
-		 */
-		link_enc_cfg_init(dm->dc, dc_state);
-
 		r = dm_dmub_hw_init(adev);
 		if (r)
 			DRM_ERROR("DMUB interface failed to initialize: status=%d\n", r);
@@ -2753,10 +2737,6 @@ static int dm_resume(void *handle)
 	dm_state->context = dc_create_state(dm->dc);
 	/* TODO: Remove dc_state->dccg, use dc->dccg directly. */
 	dc_resource_state_construct(dm->dc, dm_state->context);
-
-	/* Re-enable outbox interrupts for DPIA. */
-	if (dc_enable_dmub_notifications(adev->dm.dc))
-		amdgpu_dm_outbox_init(adev);
 
 	/* Before powering on DC we need to re-initialize DMUB. */
 	dm_dmub_hw_resume(adev);
@@ -6924,10 +6904,6 @@ static void amdgpu_dm_connector_unregister(struct drm_connector *connector)
 {
 	struct amdgpu_dm_connector *amdgpu_dm_connector = to_amdgpu_dm_connector(connector);
 
-#ifdef __FreeBSD__
-	if (amdgpu_dm_connector->dm_dp_aux.aux.dev == NULL)
-		return;
-#endif
 	drm_dp_aux_unregister(&amdgpu_dm_connector->dm_dp_aux.aux);
 }
 

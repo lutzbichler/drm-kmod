@@ -24,10 +24,6 @@
 #ifndef __AMDGPU_MES_H__
 #define __AMDGPU_MES_H__
 
-#ifdef __FreeBSD__
-#include "amdgpu_ring.h"
-#endif
-
 #include "amdgpu_irq.h"
 #include "kgd_kfd_interface.h"
 #include "amdgpu_gfx.h"
@@ -123,29 +119,6 @@ struct amdgpu_mes {
 	const struct amdgpu_mes_funcs   *funcs;
 };
 
-struct amdgpu_mes_queue_properties {
-	int 			queue_type;
-	uint64_t                hqd_base_gpu_addr;
-	uint64_t                rptr_gpu_addr;
-	uint64_t                wptr_gpu_addr;
-	uint32_t                queue_size;
-	uint64_t                eop_gpu_addr;
-	uint32_t                hqd_pipe_priority;
-	uint32_t                hqd_queue_priority;
-	bool 			paging;
-	struct amdgpu_ring 	*ring;
-	/* out */
-	uint64_t       		doorbell_off;
-};
-
-struct amdgpu_mes_gang_properties {
-	uint32_t 	priority;
-	uint32_t 	gang_quantum;
-	uint32_t 	inprocess_gang_priority;
-	uint32_t 	priority_level;
-	int 		global_priority_level;
-};
-
 struct amdgpu_mes_process {
 	int			pasid;
 	struct			amdgpu_vm *vm;
@@ -186,6 +159,29 @@ struct amdgpu_mes_queue {
 	int 				queue_type;
 	int 				paging;
 	struct amdgpu_ring 		*ring;
+};
+
+struct amdgpu_mes_queue_properties {
+	int 			queue_type;
+	uint64_t                hqd_base_gpu_addr;
+	uint64_t                rptr_gpu_addr;
+	uint64_t                wptr_gpu_addr;
+	uint32_t                queue_size;
+	uint64_t                eop_gpu_addr;
+	uint32_t                hqd_pipe_priority;
+	uint32_t                hqd_queue_priority;
+	bool 			paging;
+	struct amdgpu_ring 	*ring;
+	/* out */
+	uint64_t       		doorbell_off;
+};
+
+struct amdgpu_mes_gang_properties {
+	uint32_t 	priority;
+	uint32_t 	gang_quantum;
+	uint32_t 	inprocess_gang_priority;
+	uint32_t 	priority_level;
+	int 		global_priority_level;
 };
 
 struct mes_add_queue_input {

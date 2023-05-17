@@ -2422,6 +2422,8 @@ void amdgpu_ttm_debugfs_init(struct amdgpu_device *adev)
 #ifdef __linux__
 	debugfs_create_file("amdgpu_iomem", 0444, root, adev,
 			    &amdgpu_ttm_iomem_fops);
+	debugfs_create_file("ttm_page_pool", 0444, root, adev,
+			    &amdgpu_ttm_page_pool_fops);
 #endif
 	ttm_resource_manager_create_debugfs(ttm_manager_type(&adev->mman.bdev,
 							     TTM_PL_VRAM),

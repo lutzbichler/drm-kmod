@@ -954,7 +954,6 @@ validate_out:
 	return out;
 }
 
-
 /*
  * Some of the functions further below use the FPU, so we need to wrap this
  * with DC_FP_START()/DC_FP_END(). Use the same approach as for
