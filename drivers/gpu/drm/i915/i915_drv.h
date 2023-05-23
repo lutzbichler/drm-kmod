@@ -816,41 +816,11 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 #define NEEDS_WaRsDisableCoarsePowerGating(i915)			\
 	(IS_SKL_GT3(i915) || IS_SKL_GT4(i915))
 
-#define HAS_GMBUS_IRQ(i915) (DISPLAY_VER(i915) >= 4)
-#define HAS_GMBUS_BURST_READ(i915) (DISPLAY_VER(i915) >= 11 || \
-					IS_GEMINILAKE(i915) || \
-					IS_KABYLAKE(i915))
-
 /* With the 945 and later, Y tiling got adjusted so that it was 32 128-byte
  * rows, which changed the alignment requirements and fence programming.
  */
 #define HAS_128_BYTE_Y_TILING(i915) (GRAPHICS_VER(i915) != 2 && \
 					 !(IS_I915G(i915) || IS_I915GM(i915)))
-#define SUPPORTS_TV(i915)		(DISPLAY_INFO(i915)->supports_tv)
-#define I915_HAS_HOTPLUG(i915)	(DISPLAY_INFO(i915)->has_hotplug)
- 
-#define HAS_FW_BLC(i915)	(DISPLAY_VER(i915) > 2)
-#define HAS_FBC(i915)	(DISPLAY_RUNTIME_INFO(i915)->fbc_mask != 0)
-#define HAS_CUR_FBC(i915)	(!HAS_GMCH(i915) && DISPLAY_VER(i915) >= 7)
-
-#define HAS_DPT(i915)	(DISPLAY_VER(i915) >= 13)
-
-#define HAS_IPS(i915)	(IS_HSW_ULT(i915) || IS_BROADWELL(i915))
-
-#define HAS_DP_MST(i915)	(DISPLAY_INFO(i915)->has_dp_mst)
-#define HAS_DP20(i915)	(IS_DG2(i915) || DISPLAY_VER(i915) >= 14)
-
-#define HAS_DOUBLE_BUFFERED_M_N(i915)	(DISPLAY_VER(i915) >= 9 || IS_BROADWELL(i915))
-
-#define HAS_CDCLK_CRAWL(i915)	 (DISPLAY_INFO(i915)->has_cdclk_crawl)
-#define HAS_CDCLK_SQUASH(i915)	 (DISPLAY_INFO(i915)->has_cdclk_squash)
-#define HAS_DDI(i915)		 (DISPLAY_INFO(i915)->has_ddi)
-#define HAS_FPGA_DBG_UNCLAIMED(i915) (DISPLAY_INFO(i915)->has_fpga_dbg)
-#define HAS_PSR(i915)		 (DISPLAY_INFO(i915)->has_psr)
-#define HAS_PSR_HW_TRACKING(i915) \
-	(DISPLAY_INFO(i915)->has_psr_hw_tracking)
-#define HAS_PSR2_SEL_FETCH(i915)	 (DISPLAY_VER(i915) >= 12)
-#define HAS_TRANSCODER(i915, trans)	 ((DISPLAY_RUNTIME_INFO(i915)->cpu_transcoder_mask & BIT(trans)) != 0)
 
 #define HAS_RC6(i915)		 (INTEL_INFO(i915)->has_rc6)
 #define HAS_RC6p(i915)		 (INTEL_INFO(i915)->has_rc6p)
