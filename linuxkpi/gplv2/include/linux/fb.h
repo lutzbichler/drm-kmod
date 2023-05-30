@@ -165,9 +165,32 @@ static inline struct apertures_struct *alloc_apertures(unsigned int max_num) {
      *  `Generic' versions of the frame buffer device operations
      */
 
+extern ssize_t fb_io_read(struct linux_fb_info *info, char __user *buf, size_t count,
+	loff_t *ppos);
+extern ssize_t fb_io_write(struct linux_fb_info *info, const char __user *buf, size_t count,
+	loff_t *ppos);
+
 extern void cfb_fillrect(struct linux_fb_info *info, const struct fb_fillrect *rect);
 extern void cfb_copyarea(struct linux_fb_info *info, const struct fb_copyarea *area);
 extern void cfb_imageblit(struct linux_fb_info *info, const struct fb_image *image);
+
+#define __FB_DEFAULT_IO_OPS_RDWR \
+	.fb_read	= fb_io_read, \
+	.fb_write	= fb_io_write
+
+#define __FB_DEFAULT_IO_OPS_DRAW \
+	.fb_fillrect	= cfb_fillrect, \
+	.fb_copyarea	= cfb_copyarea, \
+	.fb_imageblit	= cfb_imageblit
+
+#define __FB_DEFAULT_IO_OPS_MMAP \
+	.fb_mmap	= NULL // default implementation
+
+#define FB_DEFAULT_IO_OPS \
+	__FB_DEFAULT_IO_OPS_RDWR, \
+	__FB_DEFAULT_IO_OPS_DRAW, \
+	__FB_DEFAULT_IO_OPS_MMAP
+
 /*
  * Drawing operations where framebuffer is in system RAM
  */
@@ -187,11 +210,6 @@ int remove_conflicting_pci_framebuffers(struct pci_dev *pdev, const char *name);
 struct linux_fb_info *framebuffer_alloc(size_t size, struct device *dev);
 void framebuffer_release(struct linux_fb_info *info);
 #define	fb_set_suspend(x, y)	0
-
-ssize_t fb_io_read(struct linux_fb_info *info, char __user *buf, size_t count,
-	loff_t *ppos);
-ssize_t fb_io_write(struct linux_fb_info *info, const char __user *buf, size_t count,
-	loff_t *ppos);
 
 static inline bool
 is_firmware_framebuffer(struct apertures_struct *a __unused)
