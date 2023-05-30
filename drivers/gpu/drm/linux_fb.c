@@ -41,6 +41,7 @@ __FBSDID("$FreeBSD$");
 #include <dev/vt/vt.h>
 #include "vt_drmfb.h"
 
+#include <drm/drm_drv.h>
 #include <drm/drm_fb_helper.h>
 #include <linux/fb.h>
 #undef fb_info
@@ -563,4 +564,14 @@ fb_io_write(struct linux_fb_info *info, const char __user *buf, size_t count,
        *ppos += ret;
 
        return ret;
+}
+
+int fb_deferred_io_mmap(struct linux_fb_info *info, struct vm_area_struct *vma)
+{
+	struct drm_fb_helper *fb_helper = info->par;
+
+	if (fb_helper->dev->driver->gem_prime_mmap)
+		return fb_helper->dev->driver->gem_prime_mmap(fb_helper->buffer->gem, vma);
+	else
+		return -ENODEV;
 }
