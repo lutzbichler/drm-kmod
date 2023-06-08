@@ -584,34 +584,14 @@ gen11_dsi_setup_dphy_timings(struct intel_encoder *encoder,
 	enum port port;
 	enum phy phy;
 
-	/* Program T-INIT master registers */
-	for_each_dsi_port(port, intel_dsi->ports) {
-		tmp = intel_de_read(dev_priv, ICL_DSI_T_INIT_MASTER(port));
-		tmp &= ~DSI_T_INIT_MASTER_MASK;
-		tmp |= intel_dsi->init_count;
-		intel_de_write(dev_priv, ICL_DSI_T_INIT_MASTER(port), tmp);
-	}
-
 	/* Program DPHY clock lanes timings */
-	for_each_dsi_port(port, intel_dsi->ports) {
+	for_each_dsi_port(port, intel_dsi->ports)
 		intel_de_write(dev_priv, DPHY_CLK_TIMING_PARAM(port),
 			       intel_dsi->dphy_reg);
-
-		/* shadow register inside display core */
-		intel_de_write(dev_priv, DSI_CLK_TIMING_PARAM(port),
-			       intel_dsi->dphy_reg);
-	}
-
 	/* Program DPHY data lanes timings */
-	for_each_dsi_port(port, intel_dsi->ports) {
+	for_each_dsi_port(port, intel_dsi->ports)
 		intel_de_write(dev_priv, DPHY_DATA_TIMING_PARAM(port),
 			       intel_dsi->dphy_data_lane_reg);
-
-		/* shadow register inside display core */
-		intel_de_write(dev_priv, DSI_DATA_TIMING_PARAM(port),
-			       intel_dsi->dphy_data_lane_reg);
-	}
-
 	/*
 	 * If DSI link operating at or below an 800 MHz,
 	 * TA_SURE should be override and programmed to
@@ -620,23 +600,10 @@ gen11_dsi_setup_dphy_timings(struct intel_encoder *encoder,
 	 */
 	if (DISPLAY_VER(dev_priv) == 11) {
 		if (afe_clk(encoder, crtc_state) <= 800000) {
-			for_each_dsi_port(port, intel_dsi->ports) {
-				tmp = intel_de_read(dev_priv,
-						    DPHY_TA_TIMING_PARAM(port));
-				tmp &= ~TA_SURE_MASK;
-				tmp |= TA_SURE_OVERRIDE | TA_SURE(0);
-				intel_de_write(dev_priv,
-					       DPHY_TA_TIMING_PARAM(port),
-					       tmp);
-
-				/* shadow register inside display core */
-				tmp = intel_de_read(dev_priv,
-						    DSI_TA_TIMING_PARAM(port));
-				tmp &= ~TA_SURE_MASK;
-				tmp |= TA_SURE_OVERRIDE | TA_SURE(0);
-				intel_de_write(dev_priv,
-					       DSI_TA_TIMING_PARAM(port), tmp);
-			}
+			for_each_dsi_port(port, intel_dsi->ports)
+				intel_de_rmw(dev_priv, DPHY_TA_TIMING_PARAM(port),
+					     TA_SURE_MASK,
+					     TA_SURE_OVERRIDE | TA_SURE(0));
 		}
 	}
 
@@ -645,6 +612,41 @@ gen11_dsi_setup_dphy_timings(struct intel_encoder *encoder,
 			tmp = intel_de_read(dev_priv, ICL_DPHY_CHKN(phy));
 			tmp |= ICL_DPHY_CHKN_AFE_OVER_PPI_STRAP;
 			intel_de_write(dev_priv, ICL_DPHY_CHKN(phy), tmp);
+		}
+	}
+}
+
+static void
+gen11_dsi_setup_timings(struct intel_encoder *encoder,
+			const struct intel_crtc_state *crtc_state)
+{
+	struct drm_i915_private *dev_priv = to_i915(encoder->base.dev);
+	struct intel_dsi *intel_dsi = enc_to_intel_dsi(encoder);
+	enum port port;
+
+	/* Program T-INIT master registers */
+	for_each_dsi_port(port, intel_dsi->ports)
+		intel_de_rmw(dev_priv, ICL_DSI_T_INIT_MASTER(port),
+			     DSI_T_INIT_MASTER_MASK, intel_dsi->init_count);
+
+	/* shadow register inside display core */
+	for_each_dsi_port(port, intel_dsi->ports)
+		intel_de_write(dev_priv, DSI_CLK_TIMING_PARAM(port),
+			       intel_dsi->dphy_reg);
+
+	/* shadow register inside display core */
+	for_each_dsi_port(port, intel_dsi->ports)
+		intel_de_write(dev_priv, DSI_DATA_TIMING_PARAM(port),
+			       intel_dsi->dphy_data_lane_reg);
+
+	/* shadow register inside display core */
+	if (DISPLAY_VER(dev_priv) == 11) {
+		if (afe_clk(encoder, crtc_state) <= 800000) {
+			for_each_dsi_port(port, intel_dsi->ports) {
+				intel_de_rmw(dev_priv, DSI_TA_TIMING_PARAM(port),
+					     TA_SURE_MASK,
+					     TA_SURE_OVERRIDE | TA_SURE(0));
+			}
 		}
 	}
 }
@@ -1164,11 +1166,13 @@ gen11_dsi_enable_port_and_phy(struct intel_encoder *encoder,
 	/* step 4c: configure voltage swing and skew */
 	gen11_dsi_voltage_swing_program_seq(encoder);
 
+	/* setup D-PHY timings */
+	gen11_dsi_setup_dphy_timings(encoder, crtc_state);
+
 	/* enable DDI buffer */
 	gen11_dsi_enable_ddi_buffer(encoder);
 
-	/* setup D-PHY timings */
-	gen11_dsi_setup_dphy_timings(encoder, crtc_state);
+	gen11_dsi_setup_timings(encoder, crtc_state);
 
 	/* Since transcoder is configured to take events from GPIO */
 	gen11_dsi_config_util_pin(encoder, true);
