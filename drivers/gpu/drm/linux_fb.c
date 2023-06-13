@@ -570,8 +570,5 @@ int fb_deferred_io_mmap(struct linux_fb_info *info, struct vm_area_struct *vma)
 {
 	struct drm_fb_helper *fb_helper = info->par;
 
-	if (fb_helper->dev->driver->gem_prime_mmap)
-		return fb_helper->dev->driver->gem_prime_mmap(fb_helper->buffer->gem, vma);
-	else
-		return -ENODEV;
+	return drm_gem_prime_mmap(fb_helper->buffer->gem, vma);
 }
