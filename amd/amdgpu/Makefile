@@ -234,7 +234,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_vram_mgr.c \
 	amdgpu_xcp.c \
 	amdgpu_xgmi.c \
-	aqua_vanjaram_reg_init.c \
+	aqua_vanjaram.c \
 	arct_reg_init.c \
 	athub_v1_0.c \
 	athub_v2_0.c \
@@ -1107,7 +1107,7 @@ CWARNFLAGS.amdgpu_vram_mgr.c=			-Wno-unused-variable
 CWARNFLAGS.amdgpu_xgmi.c=			-Wno-unused-variable
 CWARNFLAGS.aldebaran_ppt.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.aldebaran.c=				-Wno-unused-variable
-CWARNFLAGS.aqua_vanjaram_reg_init.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
+CWARNFLAGS.aqua_vanjaram.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.arcturus_ppt.c=			-Wno-uninitialized
 CWARNFLAGS.dimgrey_cavefish_reg_init.c=		-Wno-missing-prototypes
 CWARNFLAGS.yellow_carp_ppt.c=			-Wno-sometimes-uninitialized
