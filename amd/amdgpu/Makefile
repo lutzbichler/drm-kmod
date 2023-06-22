@@ -824,8 +824,10 @@ SRCS+=	link_dp_cts.c \
 
 # display/dc/link/hwss/*
 SRCS+=	link_hwss_dio.c \
+	link_hwss_dio_fixed_vs_pe_retimer.c \
 	link_hwss_dpia.c \
-	link_hwss_hpo_dp.c
+	link_hwss_hpo_dp.c \
+	link_hwss_hpo_fixed_vs_pe_retimer_dp.c
 
 # display/dc/link/protocols/*
 SRCS+=	link_ddc.c \
