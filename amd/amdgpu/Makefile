@@ -434,6 +434,7 @@ SRCS+=	amdgpu_aca.c \
 	mmhub_v3_0_1.c \
 	mmhub_v3_0_2.c \
 	mmhub_v3_3.c \
+	mmhub_v4_1_0.c \
 	mmhub_v9_4.c \
 	mxgpu_ai.c \
 	mxgpu_nv.c \
