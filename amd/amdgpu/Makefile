@@ -481,7 +481,7 @@ SRCS+=	amdgpu_aca.c \
 	si.c \
 	soc15.c \
 	soc21.c \
-	smu_v13_0_10.c \
+	soc24.c \
 	smuio_v9_0.c \
 	smuio_v11_0.c \
 	smuio_v11_0_6.c \
@@ -1187,6 +1187,7 @@ SRCS+=	amd_powerplay.c \
 	smu_v11_0_i2c.c \
 	smu_v12_0.c \
 	smu_v13_0.c \
+	smu_v13_0_10.c \
 	smu_v13_0_0_ppt.c \
 	smu_v13_0_4_ppt.c \
 	smu_v13_0_5_ppt.c \
