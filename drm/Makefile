@@ -69,6 +69,7 @@ SRCS=	drm_atomic.c \
 	drm_vblank.c \
 	drm_vblank_work.c \
 	drm_vma_manager.c \
+	drm_writeback.c \
 	linux_fb.c \
 	vt_drmfb.c
 
