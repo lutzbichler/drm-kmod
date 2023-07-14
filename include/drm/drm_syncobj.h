@@ -54,7 +54,13 @@ struct drm_syncobj {
 	 */
 	struct list_head cb_list;
 	/**
-	 * @lock: Protects &cb_list and write-locks &fence.
+	 * @ev_fd_list: List of registered eventfd.
+	 */
+#ifdef __linux__
+	struct list_head ev_fd_list;
+#endif
+	/**
+	 * @lock: Protects &cb_list and &ev_fd_list, and write-locks &fence.
 	 */
 	spinlock_t lock;
 	/**
