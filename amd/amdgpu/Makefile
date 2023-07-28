@@ -22,7 +22,8 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn32 \
 	${SRCDIR}/display/dc/dml/dcn321 \
 	${SRCDIR}/display/dc/dml/dcn35 \
-	${SRCDIR}/display/dc/dml/dsc
+	${SRCDIR}/display/dc/dml/dsc \
+	${SRCDIR}/display/dc/dml2
 .endif
 
 .PATH:	${SRCDIR}/acp \
@@ -773,6 +774,17 @@ SRCS+=	display_mode_lib.c \
 	display_rq_dlg_calc_21.c \
 	dml1_display_rq_dlg_calc.c
 
+# display/dc/dml2
+SRCS+=	display_mode_core.c \
+	display_mode_util.c \
+	dml2_dc_resource_mgmt.c \
+	dml2_mall_phantom.c \
+	dml2_policy.c \
+	dml2_translation_helper.c \
+	dml2_utils.c \
+	dml2_wrapper.c \
+	dml_display_rq_dlg_calc.c
+
 # display/dc/dml/dcn10
 SRCS+=	dcn10_fpu.c
 
@@ -1095,7 +1107,9 @@ CFLAGS.dcn32_resource_helpers.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn321_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn35_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 
+CFLAGS.display_mode_core.c=	${FPUFLAGS} -mstack-alignment=4	
 CFLAGS.display_mode_lib.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.display_mode_util.c=	${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_20.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_21.c= ${FPUFLAGS} -mstack-alignment=4
@@ -1105,12 +1119,14 @@ CFLAGS.display_mode_vba_314.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_util_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_pipe_clocks.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_helpers.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_20.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_21.c= ${FPUFLAGS} -mstack-alignment=4 -Wno-missing-prototypes
 CFLAGS.display_rq_dlg_calc_314.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_32.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.soc_bounding_box.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_rq_dlg_calc_20v2.c= ${FPUFLAGS} -mstack-alignment=4
