@@ -242,7 +242,7 @@ struct drm_panel {
 #endif
 
 	/**
-	 * @followers_lock:
+	 * @follower_lock:
 	 *
 	 * Lock for followers list.
 	 */
