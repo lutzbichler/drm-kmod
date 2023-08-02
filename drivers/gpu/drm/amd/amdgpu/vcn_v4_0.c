@@ -1138,11 +1138,11 @@ static int vcn_v4_0_start(struct amdgpu_device *adev)
 				if (status & 2)
 					break;
 				mdelay(10);
-				if (amdgpu_emu_mode==1)
+				if (amdgpu_emu_mode == 1)
 					msleep(1);
 			}
 
-			if (amdgpu_emu_mode==1) {
+			if (amdgpu_emu_mode == 1) {
 				r = -1;
 				if (status & 2) {
 					r = 0;
@@ -1958,7 +1958,7 @@ static int vcn_v4_0_set_powergating_state(void *handle, enum amd_powergating_sta
 		return 0;
 	}
 
-	if(state == adev->vcn.cur_state)
+	if (state == adev->vcn.cur_state)
 		return 0;
 
 	if (state == AMD_PG_STATE_GATE)
@@ -1966,7 +1966,7 @@ static int vcn_v4_0_set_powergating_state(void *handle, enum amd_powergating_sta
 	else
 		ret = vcn_v4_0_start(adev);
 
-	if(!ret)
+	if (!ret)
 		adev->vcn.cur_state = state;
 
 	return ret;
@@ -2100,8 +2100,7 @@ static const struct amd_ip_funcs vcn_v4_0_ip_funcs = {
 	.set_powergating_state = vcn_v4_0_set_powergating_state,
 };
 
-const struct amdgpu_ip_block_version vcn_v4_0_ip_block =
-{
+const struct amdgpu_ip_block_version vcn_v4_0_ip_block = {
 	.type = AMD_IP_BLOCK_TYPE_VCN,
 	.major = 4,
 	.minor = 0,
