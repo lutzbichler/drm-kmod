@@ -689,6 +689,7 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_dsc.c \
 	dcn35_hubbub.c \
 	dcn35_hubp.c \
+	dcn35_hwseq.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
