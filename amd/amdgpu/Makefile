@@ -28,6 +28,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn314 \
 	${SRCDIR}/display/dc/dml/dcn32 \
 	${SRCDIR}/display/dc/dml/dcn321 \
+	${SRCDIR}/display/dc/dml/dcn35 \
 	${SRCDIR}/display/dc/dml/dsc
 .endif
 
@@ -702,7 +703,8 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
-	dcn35_pg_cntl.c
+	dcn35_pg_cntl.c \
+	dcn35_resource.c
 
 # display/dc/clk_mgr/dcn31
 SRCS+=	dcn31_afmt.c \
@@ -763,8 +765,8 @@ SRCS+=	rc_calc.c \
 
 .endif
 
-# display/dc/dml
 .if !empty(KCONFIG:MDRM_AMD_DC_FP)
+# display/dc/dml
 SRCS+=	display_mode_lib.c \
 	display_mode_vba.c \
 	display_mode_vba_20.c \
@@ -773,7 +775,6 @@ SRCS+=	display_mode_lib.c \
 	display_rq_dlg_calc_20.c \
 	display_rq_dlg_calc_21.c \
 	dml1_display_rq_dlg_calc.c
-.endif
 
 # display/dc/dml/dcn10
 SRCS+=	dcn10_fpu.c
@@ -803,6 +804,11 @@ SRCS+=	dcn32_fpu.c \
 
 # display/dc/dml/dcn321
 SRCS+=	dcn321_fpu.c
+
+# display/dc/dml/dcn35
+SRCS+=	dcn35_fpu.c
+
+.endif # !empty(KCONFIG:MDRM_AMD_DC_FP)
 
 # display/dc/gpio/*
 SRCS+=	gpio_base.c \
@@ -1336,6 +1342,7 @@ CWARNFLAGS.dcn32_resource_helpers.c=	-Wno-missing-prototypes -Wno-unused-but-set
 CWARNFLAGS.dcn321_fpu.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn321_resource.c=		-Wno-initializer-overrides -Wno-unused-const-variable
 CWARNFLAGS.dcn35_clk_mgr.c=		-Wno-incompatible-pointer-types
+CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides 
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
 
 CWARNFLAGS.hw_ddc.c=			-Wno-unused-but-set-variable
