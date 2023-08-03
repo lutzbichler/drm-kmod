@@ -700,8 +700,7 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
-	dcn35_pg_cntl.c \
-	irq_service_dcn35.c
+	dcn35_pg_cntl.c
 
 # display/dc/clk_mgr/dcn31
 SRCS+=	dcn31_afmt.c \
@@ -743,7 +742,9 @@ SRCS+=	dcn32_clk_mgr.c \
 
 # display/dc/clk_mgr/dcn35
 SRCS+=	dcn35_clk_mgr.c \
-	dcn35_smu.c
+	dcn35_smu.c \
+	dmub_dcn35.c \
+	irq_service_dcn35.c
 
 # display/dc/core
 SRCS+=	dc_vm_helper.c
