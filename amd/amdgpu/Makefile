@@ -1197,7 +1197,7 @@ CWARNFLAGS.vcn_v3_0.c=				-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.vcn_v4_0.c=				-Wno-unused-but-set-variable
 
 # display/amdgpu_dm
-CWARNFLAGS.amdgpu_dm_helpers.c=		-Wno-int-in-bool-context
+CWARNFLAGS.amdgpu_dm_helpers.c=		-Wno-int-in-bool-context -Wno-uninitialized
 CWARNFLAGS.amdgpu_dm_mst_types.c=	-Wno-unused-but-set-variable -Wno-missing-prototypes
 CWARNFLAGS.amdgpu_dm_plane.c=		-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_dm_pp_smu.c=		-Wno-missing-prototypes -Wno-incompatible-function-pointer-types
