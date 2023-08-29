@@ -3,6 +3,7 @@
 #ifndef DRM_ACCEL_H_
 #define DRM_ACCEL_H_
 
+struct drm_device;
 struct drm_minor;
 
 static inline int
@@ -38,7 +39,13 @@ accel_minor_replace(struct drm_minor *minor __unused, int index __unused)
 }
 
 static inline void
-accel_debugfs_init(struct drm_minor *minor __unused, int index __unused)
+accel_debugfs_init(struct drm_device *dev)
+{
+
+}
+
+static inline void
+accel_debugfs_register(struct drm_device *dev)
 {
 
 }
