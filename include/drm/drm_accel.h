@@ -28,21 +28,19 @@
 #ifndef _DRM_ACCEL_H_
 #define _DRM_ACCEL_H_
 
-#include <drm/drm_file.h>
-
-static inline void
-accel_core_exit(void)
-{
-}
+struct device;
+struct drm_device;
+struct drm_minor;
 
 static inline int
 accel_core_init(void)
 {
-	return (0);
+
+    return (0);
 }
 
 static inline void
-accel_minor_remove(int index)
+accel_core_exit(void)
 {
 }
 
@@ -53,17 +51,28 @@ accel_minor_alloc(void)
 }
 
 static inline void
-accel_minor_replace(struct drm_minor *minor, int index)
+accel_minor_remove(int index __unused)
+{
+
+} 
+
+static inline void
+accel_minor_replace(struct drm_minor *minor __unused, int index __unused)
+{
+
+}
+
+static inline void
+accel_debugfs_init(struct drm_device *dev)
 {
 }
 
 static inline void
-accel_set_device_instance_params(struct device *kdev, int index)
+accel_debugfs_register(struct drm_device *dev)
 {
 }
-
 static inline void
-accel_debugfs_init(struct drm_minor *minor, int minor_id)
+accel_set_device_instance_params(struct device *dev __unused, int index __unused)
 {
 }
 
