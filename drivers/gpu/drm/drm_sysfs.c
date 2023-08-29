@@ -161,6 +161,17 @@ err:
 	return (rv);
 }
 
+int drm_sysfs_connector_add_late(struct drm_connector *connector)
+{
+
+	return (0);
+}
+
+void drm_sysfs_connector_remove_early(struct drm_connector *connector)
+{
+
+}
+
 void drm_sysfs_connector_remove(struct drm_connector *connector)
 {
 	if (connector->kdev == NULL)
