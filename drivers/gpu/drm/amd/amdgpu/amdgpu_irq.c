@@ -274,34 +274,37 @@ static void amdgpu_restore_msix(struct amdgpu_device *adev)
  */
 int amdgpu_irq_init(struct amdgpu_device *adev)
 {
-	int r = 0;
+#ifdef __linux__
+	unsigned int irq, flags;
+#elif defined(__FreeBSD__)
 	unsigned int irq;
+#endif
+	int r;
 
 	spin_lock_init(&adev->irq.lock);
 
 	/* Enable MSI if not disabled by module parameter */
 	adev->irq.msi_enabled = false;
 
-	if (amdgpu_msi_ok(adev)) {
 #ifdef __linux__
-		int nvec = pci_msix_vec_count(adev->pdev);
-		unsigned int flags;
+	if (!amdgpu_msi_ok(adev))
+		flags = PCI_IRQ_LEGACY;
+	else
+		flags = PCI_IRQ_ALL_TYPES;
 
-		if (nvec <= 0)
-			flags = PCI_IRQ_MSI;
-		else
-			flags = PCI_IRQ_MSI | PCI_IRQ_MSIX;
-
-		/* we only need one vector */
-		nvec = pci_alloc_irq_vectors(adev->pdev, 1, 1, flags);
-		if (nvec > 0) {
+	/* we only need one vector */
+	r = pci_alloc_irq_vectors(adev->pdev, 1, 1, flags);
 #elif defined(__FreeBSD__)
-		int ret = pci_enable_msi(adev->pdev);
-		if (!ret) {
+	r = pci_enable_msi(adev->pdev);
 #endif
-			adev->irq.msi_enabled = true;
-			dev_dbg(adev->dev, "using MSI/MSI-X.\n");
-		}
+	if (r < 0) {
+		dev_err(adev->dev, "Failed to alloc msi vectors\n");
+		return r;
+	}
+
+	if (amdgpu_msi_ok(adev)) {
+		adev->irq.msi_enabled = true;
+		dev_dbg(adev->dev, "using MSI/MSI-X.\n");
 	}
 
 	INIT_WORK(&adev->irq.ih1_work, amdgpu_irq_handle_ih1);
@@ -315,22 +318,29 @@ int amdgpu_irq_init(struct amdgpu_device *adev)
 	r = adev->pdev->irq;
 #endif
 	if (r < 0)
-		return r;
+		goto free_vectors;
 	irq = r;
 
 	/* PCI devices require shared interrupts. */
 	r = request_irq(irq, amdgpu_irq_handler, IRQF_SHARED, adev_to_drm(adev)->driver->name,
 			adev_to_drm(adev));
 	if (r)
-		return r;
+		goto free_vectors;
+
 	adev->irq.installed = true;
 	adev->irq.irq = irq;
 	adev_to_drm(adev)->max_vblank_count = 0x00ffffff;
 
 	DRM_DEBUG("amdgpu: irq initialized.\n");
 	return 0;
-}
 
+free_vectors:
+	if (adev->irq.msi_enabled)
+		pci_free_irq_vectors(adev->pdev);
+
+	adev->irq.msi_enabled = false;
+	return r;
+}
 
 void amdgpu_irq_fini_hw(struct amdgpu_device *adev)
 {
