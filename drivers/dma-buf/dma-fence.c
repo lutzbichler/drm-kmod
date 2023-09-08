@@ -166,6 +166,18 @@ dma_fence_signal(struct dma_fence *fence)
 	return (rv);
 }
 
+ktime_t
+dma_fence_timestamp(struct dma_fence *fence)
+{
+       if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+               return ktime_get();
+
+       while (!test_bit(DMA_FENCE_FLAG_TIMESTAMP_BIT, &fence->flags))
+               cpu_relax();
+
+       return (fence->timestamp);
+}
+
 /*
  * sleep until the fence gets signaled or until timeout elapses
  */
