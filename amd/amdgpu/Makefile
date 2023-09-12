@@ -861,16 +861,31 @@ SRCS+=	irq_service.c \
 	irq_service_dcn315.c \
 	irq_service_dcn32.c
 
-# display/dc/link/*
+# display/dc/link
+SRCS+=	link_detection.c \
+	link_dpms.c \
+	link_factory.c \
+	link_resource.c \
+	link_validation.c
+
+# display/dc/link/accessories/*
+SRCS+=	link_dp_cts.c \
+	link_dp_trace.c
+
+# display/dc/link/hwss/*
+SRCS+=	link_hwss_dio.c \
+	link_hwss_dio_fixed_vs_pe_retimer.c \
+	link_hwss_dpia.c \
+	link_hwss_hpo_dp.c \
+	link_hwss_hpo_fixed_vs_pe_retimer_dp.c
+
+# display/dc/link/protocols/*
 SRCS+=	link_ddc.c \
-	link_detection.c \
 	link_dp_capability.c \
-	link_dp_cts.c \
 	link_dp_dpia.c \
 	link_dp_dpia_bw.c \
 	link_dp_irq_handler.c \
 	link_dp_phy.c \
-	link_dp_trace.c \
 	link_dp_training.c \
 	link_dp_training_128b_132b.c \
 	link_dp_training_8b_10b.c \
@@ -878,18 +893,8 @@ SRCS+=	link_ddc.c \
 	link_dp_training_dpia.c \
 	link_dp_training_fixed_vs_pe_retimer.c \
 	link_dpcd.c \
-	link_dpms.c \
 	link_edp_panel_control.c \
-	link_factory.c \
-	link_fpga.c \
-	link_hpd.c \
-	link_hwss_dio.c \
-	link_hwss_dio_fixed_vs_pe_retimer.c \
-	link_hwss_dpia.c \
-	link_hwss_hpo_dp.c \
-	link_hwss_hpo_fixed_vs_pe_retimer_dp.c \
-	link_resource.c \
-	link_validation.c
+	link_hpd.c
 
 # display/dc/virtual
 SRCS+=	virtual_link_encoder.c \
