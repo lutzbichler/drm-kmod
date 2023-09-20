@@ -39,7 +39,7 @@ SRCS=	drm_atomic.c \
 	drm_gem.c \
 	drm_gem_atomic_helper.c \
 	drm_gem_framebuffer_helper.c \
-	drm_gpuva_mgr.c \
+	drm_gpuvm.c \
 	drm_hashtab.c \
 	drm_ioctl.c \
 	drm_lease.c \
