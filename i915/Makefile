@@ -79,6 +79,7 @@ SRCS=	\
 	intel_frontbuffer.c \
 	intel_hdcp.c \
 	intel_hotplug.c \
+	intel_link_bw.c \
 	intel_memory_region.c \
 	intel_opregion.c \
 	intel_overlay.c \
