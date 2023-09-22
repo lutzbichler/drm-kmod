@@ -94,6 +94,28 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/gpio/dcn315 \
 	${SRCDIR}/display/dc/gpio/dcn32 \
 	${SRCDIR}/display/dc/hdcp \
+	${SRCDIR}/display/dc/hwss/dce \
+	${SRCDIR}/display/dc/hwss/dce100 \
+	${SRCDIR}/display/dc/hwss/dce110 \
+	${SRCDIR}/display/dc/hwss/dce112 \
+	${SRCDIR}/display/dc/hwss/dce120 \
+	${SRCDIR}/display/dc/hwss/dce60 \
+	${SRCDIR}/display/dc/hwss/dce80 \
+	${SRCDIR}/display/dc/hwss/dcn10 \
+	${SRCDIR}/display/dc/hwss/dcn20 \
+	${SRCDIR}/display/dc/hwss/dcn201 \
+	${SRCDIR}/display/dc/hwss/dcn21 \
+	${SRCDIR}/display/dc/hwss/dcn30 \
+	${SRCDIR}/display/dc/hwss/dcn301 \
+	${SRCDIR}/display/dc/hwss/dcn302 \
+	${SRCDIR}/display/dc/hwss/dcn303 \
+	${SRCDIR}/display/dc/hwss/dcn31 \
+	${SRCDIR}/display/dc/hwss/dcn314 \
+	${SRCDIR}/display/dc/hwss/dcn315 \
+	${SRCDIR}/display/dc/hwss/dcn316 \
+	${SRCDIR}/display/dc/hwss/dcn32 \
+	${SRCDIR}/display/dc/hwss/dcn321 \
+	${SRCDIR}/display/dc/hwss/dcn35 \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
 	${SRCDIR}/display/dc/i2caux/dce110 \
@@ -459,7 +481,7 @@ SRCS+=	dc_debug.c \
 	dc.c \
 	dc_stat.c
 
-# display/dc/dce
+# display/dc/hwss/dce
 SRCS+=	dce_abm.c \
 	dce_audio.c \
 	dce_aux.c \
@@ -485,12 +507,12 @@ SRCS+=	dce_abm.c \
 	dmub_replay.c
 
 # display/dc/dce100
-SRCS+=	dce100_hw_sequencer.c \
+SRCS+=	dce100_hwseq.c \
 	dce100_resource.c
 
 # display/dc/dce110
 SRCS+=	dce110_compressor.c \
-	dce110_hw_sequencer.c \
+	dce110_hwseq.c \
 	dce110_mem_input_v.c \
 	dce110_opp_csc_v.c \
 	dce110_opp_regamma_v.c \
@@ -502,11 +524,11 @@ SRCS+=	dce110_compressor.c \
 
 # display/dc/dce112
 SRCS+=	dce112_compressor.c \
-	dce112_hw_sequencer.c \
+	dce112_hwseq.c \
 	dce112_resource.c
 
 # display/dc/dce120
-SRCS+=	dce120_hw_sequencer.c \
+SRCS+=	dce120_hwseq.c \
 	dce120_resource.c \
 	dce120_timing_generator.c
 
@@ -516,7 +538,7 @@ SRCS+=	dce60_hw_sequencer.c \
 	dce60_timing_generator.c
 
 # display/dc/dce80
-SRCS+=	dce80_hw_sequencer.c \
+SRCS+=	dce80_hwseq.c \
 	dce80_resource.c \
 	dce80_timing_generator.c
 
@@ -540,7 +562,7 @@ SRCS+=	dcn10_cm_common.c \
 	dcn10_dpp_dscl.c \
 	dcn10_hubbub.c \
 	dcn10_hubp.c \
-	dcn10_hw_sequencer.c \
+	dcn10_hwseq.c \
 	dcn10_hw_sequencer_debug.c \
 	dcn10_init.c \
 	dcn10_ipp.c \
@@ -1048,6 +1070,7 @@ CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/display/amdgpu_dm
 CFLAGS+= -I${SRCDIR}/display/dc
 CFLAGS+= -I${SRCDIR}/display/dc/clk_mgr/
+CFLAGS+= -I${SRCDIR}/display/dc/hwss
 CFLAGS+= -I${SRCDIR}/display/dc/inc
 CFLAGS+= -I${SRCDIR}/display/dc/inc/hw
 CFLAGS+= -I${SRCDIR}/display/dmub/inc
