@@ -389,12 +389,15 @@ struct amdgpu_ras {
 	/* ras infrastructure */
 	/* for ras itself. */
 	uint32_t features;
+	uint32_t schema;
 	struct list_head head;
 	/* sysfs */
 	struct device_attribute features_attr;
 #ifdef __linux__
 	struct bin_attribute badpages_attr;
 #endif
+	struct device_attribute version_attr;
+	struct device_attribute schema_attr;
 	struct dentry *de_ras_eeprom_table;
 	/* block array */
 	struct ras_manager *objs;
