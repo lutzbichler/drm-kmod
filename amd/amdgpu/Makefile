@@ -240,11 +240,12 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_ras.c \
 	amdgpu_ras_eeprom.c \
 	amdgpu_reset.c \
+	amdgpu_ring_mux.c \
 	amdgpu_rlc.c \
 	amdgpu_sa.c \
 	amdgpu_sched.c \
 	amdgpu_sdma.c \
-	amdgpu_ring_mux.c \
+	amdgpu_seq64.c \
 	amdgpu_sync.c \
 	amdgpu_trace_points.c \
 	amdgpu_ttm.c \
