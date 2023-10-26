@@ -3302,10 +3302,6 @@ static umode_t hwmon_attributes_visible(struct kobject *kobj,
 	uint32_t gc_ver = amdgpu_ip_version(adev, GC_HWIP, 0);
 	uint32_t tmp;
 
-	/* under multi-vf mode, the hwmon attributes are all not supported */
-	if (amdgpu_sriov_vf(adev) && !amdgpu_sriov_is_pp_one_vf(adev))
-		return 0;
-
 	/* under pp one vf mode manage of hwmon attributes is not supported */
 	if (amdgpu_sriov_is_pp_one_vf(adev))
 		effective_mode &= ~S_IWUSR;
@@ -4177,6 +4173,9 @@ err_out:
 
 int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
 {
+#ifdef __linux__
+	enum amdgpu_sriov_vf_mode mode;
+#endif
 	uint32_t mask = 0;
 	int ret;
 
@@ -4189,15 +4188,18 @@ int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
 		return 0;
 
 #ifdef __linux__
-	adev->pm.int_hwmon_dev = hwmon_device_register_with_groups(adev->dev,
-								   DRIVER_NAME, adev,
-								   hwmon_groups);
-	if (IS_ERR(adev->pm.int_hwmon_dev)) {
-		ret = PTR_ERR(adev->pm.int_hwmon_dev);
-		dev_err(adev->dev,
-			"Unable to register hwmon device: %d\n", ret);
-		return ret;
-	}
+	mode = amdgpu_virt_get_sriov_vf_mode(adev);
+
+	/* under multi-vf mode, the hwmon attributes are all not supported */
+	if (mode != SRIOV_VF_MODE_MULTI_VF) {
+		adev->pm.int_hwmon_dev = hwmon_device_register_with_groups(adev->dev,
+														DRIVER_NAME, adev,
+														hwmon_groups);
+		if (IS_ERR(adev->pm.int_hwmon_dev)) {
+			ret = PTR_ERR(adev->pm.int_hwmon_dev);
+			dev_err(adev->dev, "Unable to register hwmon device: %d\n", ret);
+			return ret;
+		}
 #endif
 
 	switch (amdgpu_virt_get_sriov_vf_mode(adev)) {
