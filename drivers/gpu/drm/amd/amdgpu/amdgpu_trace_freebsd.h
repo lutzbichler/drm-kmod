@@ -185,5 +185,12 @@ trace_amdgpu_vm_update_ptes(struct amdgpu_vm_update_params *p, uint64_t start,
 #define	trace_amdgpu_device_rreg(dev, reg, ret)
 #define	trace_amdgpu_device_wreg(dev, reg, value)
 
+static inline void
+trace_amdgpu_runpm_reference_dumps(uint32_t index, const char *func)
+{
+	CTR2(KTR_DRM, "amdgpu_runpm_reference_dumps: %x %x",
+		index, func);
+}
+
 #endif
 
