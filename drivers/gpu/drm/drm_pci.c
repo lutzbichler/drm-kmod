@@ -35,7 +35,6 @@
 #include <drm/drm_print.h>
 
 #include "drm_internal.h"
-#include "drm_legacy.h"
 
 #ifdef __FreeBSD__
 #include <vm/vm_phys.h>
