@@ -770,7 +770,7 @@ static int ttm_bo_mem_force_space(struct ttm_buffer_object *bo,
  * This function may sleep while waiting for space to become available.
  * Returns:
  * -EBUSY: No space available (only if no_wait == 1).
- * -ENOMEM: Could not allocate memory for the buffer object, either due to
+ * -ENOSPC: Could not allocate space for the buffer object, either due to
  * fragmentation or concurrent allocators.
  * -ERESTARTSYS: An interruptible sleep was interrupted by a signal.
  */
@@ -830,7 +830,7 @@ int ttm_bo_mem_space(struct ttm_buffer_object *bo,
 			goto error;
 	}
 
-	ret = -ENOMEM;
+	ret = -ENOSPC;
 	if (!type_found) {
 		pr_err(TTM_PFX "No compatible memory type found\n");
 		ret = -EINVAL;
@@ -907,18 +907,17 @@ int ttm_bo_validate(struct ttm_buffer_object *bo,
 	if (!placement->num_placement && !placement->num_busy_placement)
 		return ttm_bo_pipeline_gutting(bo);
 
-	/* Check whether we need to move buffer. */
-	if (bo->resource && ttm_resource_compat(bo->resource, placement))
-		return 0;
-
-	/* Moving of pinned BOs is forbidden */
-	if (bo->pin_count)
-		return -EINVAL;
-
-	ret = ttm_bo_move_buffer(bo, placement, ctx);
-	if (ret)
-		return ret;
-
+	/*
+	 * Check whether we need to move buffer.
+	 */
+	if (!bo->resource || !ttm_resource_compat(bo->resource, placement)) {
+		ret = ttm_bo_move_buffer(bo, placement, ctx);
+		/* For backward compatibility with userspace */
+		if (ret == -ENOSPC)
+			return -ENOMEM;
+		if (ret)
+			return ret;
+	}
 	/*
 	 * We might need to add a TTM.
 	 */
