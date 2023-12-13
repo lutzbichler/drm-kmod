@@ -118,6 +118,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hwss/dcn32 \
 	${SRCDIR}/display/dc/hwss/dcn321 \
 	${SRCDIR}/display/dc/hwss/dcn35 \
+	${SRCDIR}/display/dc/hwss/dcn351 \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
 	${SRCDIR}/display/dc/i2caux/dce110 \
@@ -151,13 +152,13 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/link/protocols \
 	${SRCDIR}/display/dc/optc/dcn10 \
 	${SRCDIR}/display/dc/optc/dcn20 \
-        ${SRCDIR}/display/dc/optc/dcn201 \
-        ${SRCDIR}/display/dc/optc/dcn30 \
-        ${SRCDIR}/display/dc/optc/dcn301 \
-        ${SRCDIR}/display/dc/optc/dcn31 \
-        ${SRCDIR}/display/dc/optc/dcn314 \
-        ${SRCDIR}/display/dc/optc/dcn32 \
-        ${SRCDIR}/display/dc/optc/dcn35 \
+    ${SRCDIR}/display/dc/optc/dcn201 \
+    ${SRCDIR}/display/dc/optc/dcn30 \
+    ${SRCDIR}/display/dc/optc/dcn301 \
+    ${SRCDIR}/display/dc/optc/dcn31 \
+    ${SRCDIR}/display/dc/optc/dcn314 \
+    ${SRCDIR}/display/dc/optc/dcn32 \
+    ${SRCDIR}/display/dc/optc/dcn35 \
 	${SRCDIR}/display/dc/resource/dce100 \
 	${SRCDIR}/display/dc/resource/dce110 \
 	${SRCDIR}/display/dc/resource/dce112 \
@@ -599,7 +600,6 @@ SRCS+=	dcn10_cm_common.c \
 	dcn10_hubp.c \
 	dcn10_hwseq.c \
 	dcn10_hw_sequencer_debug.c \
-	dcn10_init.c \
 	dcn10_ipp.c \
 	dcn10_link_encoder.c \
 	dcn10_mpc.c \
@@ -620,7 +620,6 @@ SRCS+=	dcn20_clk_mgr.c \
 	dcn20_hubbub.c \
 	dcn20_hubp.c \
 	dcn20_hwseq.c \
-	dcn20_init.c \
 	dcn20_link_encoder.c \
 	dcn20_mmhubbub.c \
 	dcn20_mpc.c \
@@ -639,7 +638,6 @@ SRCS+=	dcn201_clk_mgr.c \
 	dcn201_hubbub.c \
 	dcn201_hubp.c \
 	dcn201_hwseq.c \
-	dcn201_init.c \
 	dcn201_link_encoder.c \
 	dcn201_mpc.c \
 	dcn201_opp.c \
@@ -652,7 +650,6 @@ SRCS+=	dcn21_dccg.c \
 	dcn21_hubbub.c \
 	dcn21_hubp.c \
 	dcn21_hwseq.c \
-	dcn21_init.c \
 	dcn21_link_encoder.c \
 	dcn21_resource.c
 
@@ -676,7 +673,6 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	dcn30_resource.c \
 	dcn30_afmt.c \
 	dcn30_vpg.c \
-	dcn30_init.c \
 	irq_service_dcn30.c \
 	hw_factory_dcn30.c \
 	hw_translate_dcn30.c \
@@ -685,8 +681,7 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	display_rq_dlg_calc_30.c
 
 # display/dc/dcn301
-SRCS+=	dcn301_init.c \
-	dcn301_resource.c \
+SRCS+=	dcn301_resource.c \
 	dcn301_dccg.c \
 	dcn301_dio_link_encoder.c \
 	dcn301_fpu.c \
@@ -699,15 +694,13 @@ SRCS+=	dcn301_init.c \
 	dmub_dcn301.c
 
 # display/dc/dcn302
-SRCS+=	dcn302_init.c \
-	dcn302_hwseq.c \
+SRCS+=	dcn302_hwseq.c \
 	dcn302_resource.c \
 	irq_service_dcn302.c \
 	dmub_dcn302.c
 
 # display/dc/dcn303
 SRCS+=	dcn303_hwseq.c \
-	dcn303_init.c \
 	dcn303_resource.c \
 	irq_service_dcn303.c \
 	dmub_dcn303.c
@@ -716,7 +709,6 @@ SRCS+=	dcn303_hwseq.c \
 SRCS+=	dcn314_dccg.c \
 	dcn314_dio_stream_encoder.c \
 	dcn314_hwseq.c \
-	dcn314_init.c \
 	dcn314_optc.c \
 	dcn314_resource.c \
 	dmub_dcn314.c
@@ -736,7 +728,6 @@ SRCS+=	dcn32_dccg.c \
 	dcn32_hubbub.c \
 	dcn32_hubp.c \
 	dcn32_hwseq.c \
-	dcn32_init.c \
 	dcn32_mmhubbub.c \
 	dcn32_mpc.c \
 	dcn32_optc.c \
@@ -757,12 +748,50 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_hubbub.c \
 	dcn35_hubp.c \
 	dcn35_hwseq.c \
-	dcn35_init.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
 	dcn35_pg_cntl.c \
 	dcn35_resource.c
+
+# display/dc/hwss/dcn10
+SRCS+=	dcn10_init.c
+
+# display/dc/hwss/dcn20
+SRCS+=	dcn20_init.c
+
+# display/dc/hwss/dcn201
+SRCS+=	dcn201_init.c
+
+# display/dc/hwss/dcn21
+SRCS+=	dcn21_init.c
+
+# display/dc/hwss/dcn30
+SRCS+=	dcn30_init.c
+
+# display/dc/hwss/dcn301
+SRCS+=	dcn301_init.c
+
+# display/dc/hwss/dcn302
+SRCS+=	dcn302_init.c
+
+# display/dc/hwss/dcn303
+SRCS+=	dcn303_init.c
+
+# display/dc/hwss/dcn31
+SRCS+=	dcn31_init.c
+
+# display/dc/hwss/dcn314
+SRCS+=	dcn314_init.c
+
+# display/dc/hwss/dcn32
+SRCS+=	dcn32_init.c
+
+# display/dc/hwss/dcn35
+SRCS+=	dcn35_init.c
+
+# display/dc/hwss/dcn351
+SRCS+=	dcn351_init.c
 
 # display/dc/clk_mgr/dcn31
 SRCS+=	dcn31_afmt.c \
@@ -776,7 +805,6 @@ SRCS+=	dcn31_afmt.c \
 	dcn31_hubp.c \
 	dcn31_hubbub.c \
 	dcn31_hwseq.c \
-	dcn31_init.c \
 	dcn31_optc.c \
 	dcn31_panel_cntl.c \
 	dcn31_resource.c \
