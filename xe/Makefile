@@ -70,6 +70,7 @@ SRCS=	xe_bb.c \
 	xe_hw_fence.c \
 	xe_irq.c \
 	xe_lrc.c \
+	xe_memirq.c \
 	xe_migrate.c \
 	xe_mmio.c \
 	xe_mocs.c \
