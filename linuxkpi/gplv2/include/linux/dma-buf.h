@@ -164,6 +164,18 @@ get_dma_buf(struct dma_buf *dmabuf)
 #endif
 }
 
+/**
+ * dma_buf_is_dynamic - check if a DMA-buf uses dynamic mappings.
+ * @dmabuf: the DMA-buf to check
+ *
+ * Returns true if a DMA-buf exporter wants to be called with the dma_resv
+ * locked for the map/unmap callbacks, false if it doesn't wants to be called
+ * with the lock held.
+ */
+static inline bool dma_buf_is_dynamic(struct dma_buf *dmabuf)
+{
+	return !!dmabuf->ops->pin;
+}
 
 struct dma_buf_attachment *dma_buf_attach(struct dma_buf *, struct device *);
 struct dma_buf_attachment *dma_buf_dynamic_attach(struct dma_buf *,
