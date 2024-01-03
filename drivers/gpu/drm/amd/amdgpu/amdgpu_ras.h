@@ -478,6 +478,7 @@ struct ras_err_info {
 	struct amdgpu_smuio_mcm_config_info mcm_info;
 	u64 ce_count;
 	u64 ue_count;
+	u64 de_count;
 	struct ras_err_addr err_addr;
 };
 
@@ -489,6 +490,7 @@ struct ras_err_node {
 struct ras_err_data {
 	unsigned long ue_count;
 	unsigned long ce_count;
+	unsigned long de_count;
 	unsigned long err_addr_cnt;
 	struct eeprom_table_record *err_addr;
 	u32 err_list_count;
@@ -566,6 +568,7 @@ struct ras_query_if {
 	struct ras_common_if head;
 	unsigned long ue_count;
 	unsigned long ce_count;
+	unsigned long de_count;
 };
 
 struct ras_inject_if {
@@ -835,6 +838,9 @@ int amdgpu_ras_error_statistic_ce_count(struct ras_err_data *err_data,
 		struct amdgpu_smuio_mcm_config_info *mcm_info,
 		struct ras_err_addr *err_addr, u64 count);
 int amdgpu_ras_error_statistic_ue_count(struct ras_err_data *err_data,
+		struct amdgpu_smuio_mcm_config_info *mcm_info,
+		struct ras_err_addr *err_addr, u64 count);
+int amdgpu_ras_error_statistic_de_count(struct ras_err_data *err_data,
 		struct amdgpu_smuio_mcm_config_info *mcm_info,
 		struct ras_err_addr *err_addr, u64 count);
 void amdgpu_ras_query_boot_status(struct amdgpu_device *adev, u32 num_instances);
