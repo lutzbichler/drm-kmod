@@ -63,6 +63,7 @@ SRCS=	xe_bb.c \
 	xe_guc_hwconfig.c \
 	xe_guc_log.c \
 	xe_guc_pc.c \
+	xe_guc_relay.c \
 	xe_guc_submit.c \
 	xe_heci_gsc.c \
 	xe_huc.c \
