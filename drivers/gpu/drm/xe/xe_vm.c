@@ -37,6 +37,8 @@
 #include "generated/xe_wa_oob.h"
 #include "xe_wa.h"
 
+#define TEST_VM_ASYNC_OPS_ERROR
+
 static struct drm_gem_object *xe_vm_obj(struct xe_vm *vm)
 {
 	return vm->gpuvm.r_obj;
@@ -44,7 +46,7 @@ static struct drm_gem_object *xe_vm_obj(struct xe_vm *vm)
 
 /**
  * xe_vma_userptr_check_repin() - Advisory check for repin needed
- * @uvma: The userptr vma
+ * @vma: The userptr vma
  *
  * Check if the userptr vma has been invalidated since last successful
  * repin. The check is advisory only and can the function can be called
@@ -54,7 +56,7 @@ static struct drm_gem_object *xe_vm_obj(struct xe_vm *vm)
  *
  * Return: 0 if userptr vma is valid, -EAGAIN otherwise; repin recommended.
  */
-int xe_vma_userptr_check_repin(struct xe_userptr_vma *uvma)
+int xe_vma_userptr_check_repin(struct xe_vma *vma)
 {
 #ifdef __linux__
 	return mmu_interval_check_retry(&uvma->userptr.notifier,
@@ -65,10 +67,8 @@ int xe_vma_userptr_check_repin(struct xe_userptr_vma *uvma)
 #endif
 }
 
-int xe_vma_userptr_pin_pages(struct xe_userptr_vma *uvma)
+int xe_vma_userptr_pin_pages(struct xe_vma *vma)
 {
-	struct xe_userptr *userptr = &uvma->userptr;
-	struct xe_vma *vma = &uvma->vma;
 	struct xe_vm *vm = xe_vma_vm(vma);
 	struct xe_device *xe = vm->xe;
 	const unsigned long num_pages = xe_vma_size(vma) >> PAGE_SHIFT;
@@ -98,23 +98,23 @@ retry:
 	if (!pages)
 		return -ENOMEM;
 
-	if (userptr->sg) {
+	if (vma->userptr.sg) {
 		dma_unmap_sgtable(xe->drm.dev,
-				  userptr->sg,
+				  vma->userptr.sg,
 				  read_only ? DMA_TO_DEVICE :
 				  DMA_BIDIRECTIONAL, 0);
-		sg_free_table(userptr->sg);
-		userptr->sg = NULL;
+		sg_free_table(vma->userptr.sg);
+		vma->userptr.sg = NULL;
 	}
 
 	pinned = ret = 0;
 #ifdef __linux__
 	if (in_kthread) {
-		if (!mmget_not_zero(userptr->notifier.mm)) {
+		if (!mmget_not_zero(vma->userptr.notifier.mm)) {
 			ret = -EFAULT;
 			goto mm_closed;
 		}
-		kthread_use_mm(userptr->notifier.mm);
+		kthread_use_mm(vma->userptr.notifier.mm);
 	}
 #endif
 
@@ -124,8 +124,13 @@ retry:
 					  num_pages - pinned,
 					  read_only ? 0 : FOLL_WRITE,
 					  &pages[pinned]);
-		if (ret < 0)
+		if (ret < 0) {
+#ifdef __linux__
+			if (in_kthread)
+				ret = 0;
+#endif
 			break;
+		}
 
 		pinned += ret;
 		ret = 0;
@@ -133,33 +138,33 @@ retry:
 
 #ifdef __linux__
 	if (in_kthread) {
-		kthread_unuse_mm(userptr->notifier.mm);
-		mmput(userptr->notifier.mm);
+		kthread_unuse_mm(vma->userptr.notifier.mm);
+		mmput(vma->userptr.notifier.mm);
 	}
 mm_closed:
 #endif
 	if (ret)
 		goto out;
 
-	ret = sg_alloc_table_from_pages_segment(&userptr->sgt, pages,
+	ret = sg_alloc_table_from_pages_segment(&vma->userptr.sgt, pages,
 						pinned, 0,
 						(u64)pinned << PAGE_SHIFT,
 						xe_sg_segment_size(xe->drm.dev),
 						GFP_KERNEL);
 	if (ret) {
-		userptr->sg = NULL;
+		vma->userptr.sg = NULL;
 		goto out;
 	}
-	userptr->sg = &userptr->sgt;
+	vma->userptr.sg = &vma->userptr.sgt;
 
-	ret = dma_map_sgtable(xe->drm.dev, userptr->sg,
+	ret = dma_map_sgtable(xe->drm.dev, vma->userptr.sg,
 			      read_only ? DMA_TO_DEVICE :
 			      DMA_BIDIRECTIONAL,
 			      DMA_ATTR_SKIP_CPU_SYNC |
 			      DMA_ATTR_NO_KERNEL_MAPPING);
 	if (ret) {
-		sg_free_table(userptr->sg);
-		userptr->sg = NULL;
+		sg_free_table(vma->userptr.sg);
+		vma->userptr.sg = NULL;
 		goto out;
 	}
 
@@ -179,8 +184,8 @@ out:
 
 #ifdef __linux__
 	if (!(ret < 0)) {
-		userptr->notifier_seq = notifier_seq;
-		if (xe_vma_userptr_check_repin(uvma) == -EAGAIN)
+		vma->userptr.notifier_seq = notifier_seq;
+		if (xe_vma_userptr_check_repin(vma) == -EAGAIN)
 			goto retry;
 	}
 #endif
@@ -348,13 +353,13 @@ int xe_vm_add_compute_exec_queue(struct xe_vm *vm, struct xe_exec_queue *q)
 	down_write(&vm->lock);
 	err = drm_gpuvm_exec_lock(&vm_exec);
 	if (err)
-		goto out_up_write;
+		return err;
 
 	pfence = xe_preempt_fence_create(q, q->compute.context,
 					 ++q->compute.seqno);
 	if (!pfence) {
 		err = -ENOMEM;
-		goto out_fini;
+		goto out_unlock;
 	}
 
 	list_add(&q->compute.link, &vm->preempt.exec_queues);
@@ -377,9 +382,8 @@ int xe_vm_add_compute_exec_queue(struct xe_vm *vm, struct xe_exec_queue *q)
 
 	up_read(&vm->userptr.notifier_lock);
 
-out_fini:
+out_unlock:
 	drm_exec_fini(exec);
-out_up_write:
 	up_write(&vm->lock);
 
 	return err;
@@ -649,9 +653,7 @@ static bool vma_userptr_invalidate(struct mmu_interval_notifier *mni,
 				   const struct mmu_notifier_range *range,
 				   unsigned long cur_seq)
 {
-	struct xe_userptr *userptr = container_of(mni, typeof(*userptr), notifier);
-	struct xe_userptr_vma *uvma = container_of(userptr, typeof(*uvma), userptr);
-	struct xe_vma *vma = &uvma->vma;
+	struct xe_vma *vma = container_of(mni, struct xe_vma, userptr.notifier);
 	struct xe_vm *vm = xe_vma_vm(vma);
 	struct dma_resv_iter cursor;
 	struct dma_fence *fence;
@@ -667,7 +669,7 @@ static bool vma_userptr_invalidate(struct mmu_interval_notifier *mni,
 	mmu_interval_set_seq(mni, cur_seq);
 
 	/* No need to stop gpu access if the userptr is not yet bound. */
-	if (!userptr->initial_bind) {
+	if (!vma->userptr.initial_bind) {
 		up_write(&vm->userptr.notifier_lock);
 		return true;
 	}
@@ -679,7 +681,7 @@ static bool vma_userptr_invalidate(struct mmu_interval_notifier *mni,
 	if (!xe_vm_in_fault_mode(vm) &&
 	    !(vma->gpuva.flags & XE_VMA_DESTROYED) && vma->tile_present) {
 		spin_lock(&vm->userptr.invalidated_lock);
-		list_move_tail(&userptr->invalidate_link,
+		list_move_tail(&vma->userptr.invalidate_link,
 			       &vm->userptr.invalidated);
 		spin_unlock(&vm->userptr.invalidated_lock);
 	}
@@ -720,7 +722,7 @@ static const struct mmu_interval_notifier_ops vma_userptr_notifier_ops = {
 
 int xe_vm_userptr_pin(struct xe_vm *vm)
 {
-	struct xe_userptr_vma *uvma, *next;
+	struct xe_vma *vma, *next;
 	int err = 0;
 	LIST_HEAD(tmp_evict);
 
@@ -728,23 +730,22 @@ int xe_vm_userptr_pin(struct xe_vm *vm)
 
 	/* Collect invalidated userptrs */
 	spin_lock(&vm->userptr.invalidated_lock);
-	list_for_each_entry_safe(uvma, next, &vm->userptr.invalidated,
+	list_for_each_entry_safe(vma, next, &vm->userptr.invalidated,
 				 userptr.invalidate_link) {
-		list_del_init(&uvma->userptr.invalidate_link);
-		list_move_tail(&uvma->userptr.repin_link,
+		list_del_init(&vma->userptr.invalidate_link);
+		list_move_tail(&vma->combined_links.userptr,
 			       &vm->userptr.repin_list);
 	}
 	spin_unlock(&vm->userptr.invalidated_lock);
 
 	/* Pin and move to temporary list */
-	list_for_each_entry_safe(uvma, next, &vm->userptr.repin_list,
-				 userptr.repin_link) {
-		err = xe_vma_userptr_pin_pages(uvma);
+	list_for_each_entry_safe(vma, next, &vm->userptr.repin_list,
+				 combined_links.userptr) {
+		err = xe_vma_userptr_pin_pages(vma);
 		if (err < 0)
 			return err;
 
-		list_del_init(&uvma->userptr.repin_link);
-		list_move_tail(&uvma->vma.combined_links.rebind, &vm->rebind_list);
+		list_move_tail(&vma->combined_links.userptr, &vm->rebind_list);
 	}
 
 	return 0;
@@ -800,14 +801,6 @@ struct dma_fence *xe_vm_rebind(struct xe_vm *vm, bool rebind_worker)
 	return fence;
 }
 
-static void xe_vma_free(struct xe_vma *vma)
-{
-	if (xe_vma_is_userptr(vma))
-		kfree(to_userptr_vma(vma));
-	else
-		kfree(vma);
-}
-
 #define VMA_CREATE_FLAG_READ_ONLY	BIT(0)
 #define VMA_CREATE_FLAG_IS_NULL		BIT(1)
 
@@ -826,26 +819,14 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 	xe_assert(vm->xe, start < end);
 	xe_assert(vm->xe, end < vm->size);
 
-	/*
-	 * Allocate and ensure that the xe_vma_is_userptr() return
-	 * matches what was allocated.
-	 */
-	if (!bo && !is_null) {
-		struct xe_userptr_vma *uvma = kzalloc(sizeof(*uvma), GFP_KERNEL);
-
-		if (!uvma)
-			return ERR_PTR(-ENOMEM);
-
-		vma = &uvma->vma;
-	} else {
+	if (!bo && !is_null)	/* userptr */
 		vma = kzalloc(sizeof(*vma), GFP_KERNEL);
-		if (!vma)
-			return ERR_PTR(-ENOMEM);
-
-		if (is_null)
-			vma->gpuva.flags |= DRM_GPUVA_SPARSE;
-		if (bo)
-			vma->gpuva.gem.obj = &bo->ttm.base;
+	else
+		vma = kzalloc(sizeof(*vma) - sizeof(struct xe_userptr),
+			      GFP_KERNEL);
+	if (!vma) {
+		vma = ERR_PTR(-ENOMEM);
+		return vma;
 	}
 
 	INIT_LIST_HEAD(&vma->combined_links.rebind);
@@ -856,6 +837,8 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 	vma->gpuva.va.range = end - start + 1;
 	if (read_only)
 		vma->gpuva.flags |= XE_VMA_READ_ONLY;
+	if (is_null)
+		vma->gpuva.flags |= DRM_GPUVA_SPARSE;
 
 	for_each_tile(tile, vm->xe, id)
 		vma->tile_mask |= 0x1 << id;
@@ -872,29 +855,28 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 
 		vm_bo = drm_gpuvm_bo_obtain(vma->gpuva.vm, &bo->ttm.base);
 		if (IS_ERR(vm_bo)) {
-			xe_vma_free(vma);
+			kfree(vma);
 			return ERR_CAST(vm_bo);
 		}
 
 		drm_gpuvm_bo_extobj_add(vm_bo);
 		drm_gem_object_get(&bo->ttm.base);
+		vma->gpuva.gem.obj = &bo->ttm.base;
 		vma->gpuva.gem.offset = bo_offset_or_userptr;
 		drm_gpuva_link(&vma->gpuva, vm_bo);
 		drm_gpuvm_bo_put(vm_bo);
 	} else /* userptr or null */ {
 		if (!is_null) {
-			struct xe_userptr *userptr = &to_userptr_vma(vma)->userptr;
 #ifdef __linux__
 			u64 size = end - start + 1;
 #endif
 			int err;
 
-			INIT_LIST_HEAD(&userptr->invalidate_link);
-			INIT_LIST_HEAD(&userptr->repin_link);
+			INIT_LIST_HEAD(&vma->userptr.invalidate_link);
 			vma->gpuva.gem.offset = bo_offset_or_userptr;
 
 #ifdef __linux__
-			err = mmu_interval_notifier_insert(&userptr->notifier,
+			err = mmu_interval_notifier_insert(&vma->userptr.notifier,
 							   current->mm,
 							   xe_vma_userptr(vma), size,
 							   &vma_userptr_notifier_ops);
@@ -902,11 +884,12 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 			err = 0;
 #endif
 			if (err) {
-				xe_vma_free(vma);
-				return ERR_PTR(err);
+				kfree(vma);
+				vma = ERR_PTR(err);
+				return vma;
 			}
 
-			userptr->notifier_seq = LONG_MAX;
+			vma->userptr.notifier_seq = LONG_MAX;
 		}
 
 		xe_vm_get(vm);
@@ -921,21 +904,14 @@ static void xe_vma_destroy_late(struct xe_vma *vma)
 	struct xe_device *xe = vm->xe;
 	bool read_only = xe_vma_read_only(vma);
 
-	if (vma->ufence) {
-		xe_sync_ufence_put(vma->ufence);
-		vma->ufence = NULL;
-	}
-
 	if (xe_vma_is_userptr(vma)) {
-		struct xe_userptr *userptr = &to_userptr_vma(vma)->userptr;
-
-		if (userptr->sg) {
+		if (vma->userptr.sg) {
 			dma_unmap_sgtable(xe->drm.dev,
-					  userptr->sg,
+					  vma->userptr.sg,
 					  read_only ? DMA_TO_DEVICE :
 					  DMA_BIDIRECTIONAL, 0);
-			sg_free_table(userptr->sg);
-			userptr->sg = NULL;
+			sg_free_table(vma->userptr.sg);
+			vma->userptr.sg = NULL;
 		}
 
 		/*
@@ -944,7 +920,7 @@ static void xe_vma_destroy_late(struct xe_vma *vma)
 		 * them anymore
 		 */
 #ifdef __linux__
-		mmu_interval_notifier_remove(&userptr->notifier);
+		mmu_interval_notifier_remove(&vma->userptr.notifier);
 #endif
 		xe_vm_put(vm);
 	} else if (xe_vma_is_null(vma)) {
@@ -953,7 +929,7 @@ static void xe_vma_destroy_late(struct xe_vma *vma)
 		xe_bo_put(xe_vma_bo(vma));
 	}
 
-	xe_vma_free(vma);
+	kfree(vma);
 }
 
 static void vma_destroy_work_func(struct work_struct *w)
@@ -984,7 +960,7 @@ static void xe_vma_destroy(struct xe_vma *vma, struct dma_fence *fence)
 		xe_assert(vm->xe, vma->gpuva.flags & XE_VMA_DESTROYED);
 
 		spin_lock(&vm->userptr.invalidated_lock);
-		list_del(&to_userptr_vma(vma)->userptr.invalidate_link);
+		list_del(&vma->userptr.invalidate_link);
 		spin_unlock(&vm->userptr.invalidated_lock);
 	} else if (!xe_vma_is_null(vma)) {
 		xe_bo_assert_held(xe_vma_bo(vma));
@@ -1026,16 +1002,9 @@ int xe_vm_prepare_vma(struct drm_exec *exec, struct xe_vma *vma,
 	int err;
 
 	XE_WARN_ON(!vm);
-	if (num_shared)
-		err = drm_exec_prepare_obj(exec, xe_vm_obj(vm), num_shared);
-	else
-		err = drm_exec_lock_obj(exec, xe_vm_obj(vm));
-	if (!err && bo && !bo->vm) {
-		if (num_shared)
-			err = drm_exec_prepare_obj(exec, &bo->ttm.base, num_shared);
-		else
-			err = drm_exec_lock_obj(exec, &bo->ttm.base);
-	}
+	err = drm_exec_prepare_obj(exec, xe_vm_obj(vm), num_shared);
+	if (!err && bo && !bo->vm)
+		err = drm_exec_prepare_obj(exec, &bo->ttm.base, num_shared);
 
 	return err;
 }
@@ -1639,16 +1608,6 @@ xe_vm_unbind_vma(struct xe_vma *vma, struct xe_exec_queue *q,
 
 	trace_xe_vma_unbind(vma);
 
-	if (vma->ufence) {
-		struct xe_user_fence * const f = vma->ufence;
-
-		if (!xe_sync_ufence_get_status(f))
-			return ERR_PTR(-EBUSY);
-
-		vma->ufence = NULL;
-		xe_sync_ufence_put(f);
-	}
-
 	if (number_tiles > 1) {
 		fences = kmalloc_array(number_tiles, sizeof(*fences),
 				       GFP_KERNEL);
@@ -1782,21 +1741,6 @@ err_fences:
 	return ERR_PTR(err);
 }
 
-static struct xe_user_fence *
-find_ufence_get(struct xe_sync_entry *syncs, u32 num_syncs)
-{
-	unsigned int i;
-
-	for (i = 0; i < num_syncs; i++) {
-		struct xe_sync_entry *e = &syncs[i];
-
-		if (xe_sync_is_ufence(e))
-			return xe_sync_ufence_get(e);
-	}
-
-	return NULL;
-}
-
 static int __xe_vm_bind(struct xe_vm *vm, struct xe_vma *vma,
 			struct xe_exec_queue *q, struct xe_sync_entry *syncs,
 			u32 num_syncs, bool immediate, bool first_op,
@@ -1804,15 +1748,8 @@ static int __xe_vm_bind(struct xe_vm *vm, struct xe_vma *vma,
 {
 	struct dma_fence *fence;
 	struct xe_exec_queue *wait_exec_queue = to_wait_exec_queue(vm, q);
-	struct xe_user_fence *ufence;
 
 	xe_vm_assert_held(vm);
-
-	ufence = find_ufence_get(syncs, num_syncs);
-	if (vma->ufence && ufence)
-		xe_sync_ufence_put(vma->ufence);
-
-	vma->ufence = ufence ?: vma->ufence;
 
 	if (immediate) {
 		fence = xe_vm_bind_vma(vma, q, syncs, num_syncs, first_op,
@@ -1945,8 +1882,10 @@ int xe_vm_create_ioctl(struct drm_device *dev, void *data,
 	mutex_lock(&xef->vm.lock);
 	err = xa_alloc(&xef->vm.xa, &id, vm, xa_limit_32b, GFP_KERNEL);
 	mutex_unlock(&xef->vm.lock);
-	if (err)
-		goto err_close_and_put;
+	if (err) {
+		xe_vm_close_and_put(vm);
+		return err;
+	}
 
 	if (xe->info.has_asid) {
 		mutex_lock(&xe->usm.lock);
@@ -1954,9 +1893,11 @@ int xe_vm_create_ioctl(struct drm_device *dev, void *data,
 				      XA_LIMIT(1, XE_MAX_ASID - 1),
 				      &xe->usm.next_asid, GFP_KERNEL);
 		mutex_unlock(&xe->usm.lock);
-		if (err < 0)
-			goto err_free_id;
-
+		if (err < 0) {
+			xe_vm_close_and_put(vm);
+			return err;
+		}
+		err = 0;
 		vm->usm.asid = asid;
 	}
 
@@ -1974,15 +1915,6 @@ int xe_vm_create_ioctl(struct drm_device *dev, void *data,
 #endif
 
 	return 0;
-
-err_free_id:
-	mutex_lock(&xef->vm.lock);
-	xa_erase(&xef->vm.xa, id);
-	mutex_unlock(&xef->vm.lock);
-err_close_and_put:
-	xe_vm_close_and_put(vm);
-
-	return err;
 }
 
 int xe_vm_destroy_ioctl(struct drm_device *dev, void *data,
@@ -2049,7 +1981,6 @@ static int xe_vm_prefetch(struct xe_vm *vm, struct xe_vma *vma,
 					xe_exec_queue_last_fence_get(wait_exec_queue, vm);
 
 				xe_sync_entry_signal(&syncs[i], NULL, fence);
-				dma_fence_put(fence);
 			}
 		}
 
@@ -2130,6 +2061,7 @@ vm_bind_ioctl_ops_create(struct xe_vm *vm, struct xe_bo *bo,
 	struct drm_gem_object *obj = bo ? &bo->ttm.base : NULL;
 	struct drm_gpuva_ops *ops;
 	struct drm_gpuva_op *__op;
+	struct xe_vma_op *op;
 	struct drm_gpuvm_bo *vm_bo;
 	int err;
 
@@ -2176,10 +2108,23 @@ vm_bind_ioctl_ops_create(struct xe_vm *vm, struct xe_bo *bo,
 	if (IS_ERR(ops))
 		return ops;
 
+#ifdef TEST_VM_ASYNC_OPS_ERROR
+	if (operation & FORCE_ASYNC_OP_ERROR) {
+		op = list_first_entry_or_null(&ops->list, struct xe_vma_op,
+					      base.entry);
+		if (op)
+			op->inject_error = true;
+	}
+#endif
+
 	drm_gpuva_for_each_op(__op, ops) {
 		struct xe_vma_op *op = gpuva_op_to_vma_op(__op);
 
 		if (__op->op == DRM_GPUVA_OP_MAP) {
+			op->map.immediate =
+				flags & DRM_XE_VM_BIND_FLAG_IMMEDIATE;
+			op->map.read_only =
+				flags & DRM_XE_VM_BIND_FLAG_READONLY;
 			op->map.is_null = flags & DRM_XE_VM_BIND_FLAG_NULL;
 			op->map.pat_index = pat_index;
 		} else if (__op->op == DRM_GPUVA_OP_PREFETCH) {
@@ -2227,7 +2172,7 @@ static struct xe_vma *new_vma(struct xe_vm *vm, struct drm_gpuva_op_map *op,
 		drm_exec_fini(&exec);
 
 	if (xe_vma_is_userptr(vma)) {
-		err = xe_vma_userptr_pin_pages(to_userptr_vma(vma));
+		err = xe_vma_userptr_pin_pages(vma);
 		if (err) {
 			prep_vma_destroy(vm, vma, false);
 			xe_vma_destroy_unlocked(vma);
@@ -2249,17 +2194,13 @@ static u64 xe_vma_max_pte_size(struct xe_vma *vma)
 {
 	if (vma->gpuva.flags & XE_VMA_PTE_1G)
 		return SZ_1G;
-	else if (vma->gpuva.flags & (XE_VMA_PTE_2M | XE_VMA_PTE_COMPACT))
+	else if (vma->gpuva.flags & XE_VMA_PTE_2M)
 		return SZ_2M;
-	else if (vma->gpuva.flags & XE_VMA_PTE_64K)
-		return SZ_64K;
-	else if (vma->gpuva.flags & XE_VMA_PTE_4K)
-		return SZ_4K;
 
-	return SZ_1G;	/* Uninitialized, used max size */
+	return SZ_4K;
 }
 
-static void xe_vma_set_pte_size(struct xe_vma *vma, u64 size)
+static u64 xe_vma_set_pte_size(struct xe_vma *vma, u64 size)
 {
 	switch (size) {
 	case SZ_1G:
@@ -2268,13 +2209,9 @@ static void xe_vma_set_pte_size(struct xe_vma *vma, u64 size)
 	case SZ_2M:
 		vma->gpuva.flags |= XE_VMA_PTE_2M;
 		break;
-	case SZ_64K:
-		vma->gpuva.flags |= XE_VMA_PTE_64K;
-		break;
-	case SZ_4K:
-		vma->gpuva.flags |= XE_VMA_PTE_4K;
-		break;
 	}
+
+	return SZ_4K;
 }
 
 static int xe_vma_op_commit(struct xe_vm *vm, struct xe_vma_op *op)
@@ -2372,6 +2309,8 @@ static int vm_bind_ioctl_ops_parse(struct xe_vm *vm, struct xe_exec_queue *q,
 		switch (op->base.op) {
 		case DRM_GPUVA_OP_MAP:
 		{
+			flags |= op->map.read_only ?
+				VMA_CREATE_FLAG_READ_ONLY : 0;
 			flags |= op->map.is_null ?
 				VMA_CREATE_FLAG_IS_NULL : 0;
 
@@ -2502,7 +2441,7 @@ static int op_execute(struct drm_exec *exec, struct xe_vm *vm,
 	case DRM_GPUVA_OP_MAP:
 		err = xe_vm_bind(vm, vma, op->q, xe_vma_bo(vma),
 				 op->syncs, op->num_syncs,
-				 !xe_vm_in_fault_mode(vm),
+				 op->map.immediate || !xe_vm_in_fault_mode(vm),
 				 op->flags & XE_VMA_OP_FIRST,
 				 op->flags & XE_VMA_OP_LAST);
 		break;
@@ -2588,25 +2527,13 @@ retry_userptr:
 	}
 	drm_exec_fini(&exec);
 
-	if (err == -EAGAIN) {
+	if (err == -EAGAIN && xe_vma_is_userptr(vma)) {
 		lockdep_assert_held_write(&vm->lock);
+		err = xe_vma_userptr_pin_pages(vma);
+		if (!err)
+			goto retry_userptr;
 
-		if (op->base.op == DRM_GPUVA_OP_REMAP) {
-			if (!op->remap.unmap_done)
-				vma = gpuva_to_vma(op->base.remap.unmap->va);
-			else if (op->remap.prev)
-				vma = op->remap.prev;
-			else
-				vma = op->remap.next;
-		}
-
-		if (xe_vma_is_userptr(vma)) {
-			err = xe_vma_userptr_pin_pages(to_userptr_vma(vma));
-			if (!err)
-				goto retry_userptr;
-
-			trace_xe_vma_fail(vma);
-		}
+		trace_xe_vma_fail(vma);
 	}
 
 	return err;
@@ -2617,6 +2544,13 @@ static int xe_vma_op_execute(struct xe_vm *vm, struct xe_vma_op *op)
 	int ret = 0;
 
 	lockdep_assert_held_write(&vm->lock);
+
+#ifdef TEST_VM_ASYNC_OPS_ERROR
+	if (op->inject_error) {
+		op->inject_error = false;
+		return -ENOMEM;
+	}
+#endif
 
 	switch (op->base.op) {
 	case DRM_GPUVA_OP_MAP:
@@ -2732,7 +2666,7 @@ static void vm_bind_ioctl_ops_unwind(struct xe_vm *vm,
 {
 	int i;
 
-	for (i = num_ops_list - 1; i >= 0; --i) {
+	for (i = num_ops_list - 1; i; ++i) {
 		struct drm_gpuva_ops *__ops = ops[i];
 		struct drm_gpuva_op *__op;
 
@@ -2777,10 +2711,20 @@ static int vm_bind_ioctl_ops_execute(struct xe_vm *vm,
 	return 0;
 }
 
-#define SUPPORTED_FLAGS	(DRM_XE_VM_BIND_FLAG_NULL | \
-	 DRM_XE_VM_BIND_FLAG_DUMPABLE)
+#ifdef TEST_VM_ASYNC_OPS_ERROR
+#define SUPPORTED_FLAGS	\
+	(FORCE_ASYNC_OP_ERROR | DRM_XE_VM_BIND_FLAG_READONLY | \
+	 DRM_XE_VM_BIND_FLAG_IMMEDIATE | DRM_XE_VM_BIND_FLAG_NULL | 0xffff)
+#else
+#define SUPPORTED_FLAGS	\
+	(DRM_XE_VM_BIND_FLAG_READONLY | \
+	 DRM_XE_VM_BIND_FLAG_IMMEDIATE | DRM_XE_VM_BIND_FLAG_NULL | \
+	 0xffff)
+#endif
 #define XE_64K_PAGE_MASK 0xffffull
 #define ALL_DRM_XE_SYNCS_FLAGS (DRM_XE_SYNCS_FLAG_WAIT_FOR_OP)
+
+#define MAX_BINDS	512	/* FIXME: Picking random upper limit */
 
 static int vm_bind_ioctl_check_args(struct xe_device *xe,
 				    struct drm_xe_vm_bind *args,
@@ -2793,16 +2737,16 @@ static int vm_bind_ioctl_check_args(struct xe_device *xe,
 	    XE_IOCTL_DBG(xe, args->reserved[0] || args->reserved[1]))
 		return -EINVAL;
 
-	if (XE_IOCTL_DBG(xe, args->extensions))
+	if (XE_IOCTL_DBG(xe, args->extensions) ||
+	    XE_IOCTL_DBG(xe, args->num_binds > MAX_BINDS))
 		return -EINVAL;
 
 	if (args->num_binds > 1) {
 		u64 __user *bind_user =
 			u64_to_user_ptr(args->vector_of_binds);
 
-		*bind_ops = kvmalloc_array(args->num_binds,
-					   sizeof(struct drm_xe_vm_bind_op),
-					   GFP_KERNEL | __GFP_ACCOUNT);
+		*bind_ops = kmalloc(sizeof(struct drm_xe_vm_bind_op) *
+				    args->num_binds, GFP_KERNEL);
 		if (!*bind_ops)
 			return -ENOMEM;
 
@@ -2892,7 +2836,7 @@ static int vm_bind_ioctl_check_args(struct xe_device *xe,
 
 free_bind_ops:
 	if (args->num_binds > 1)
-		kvfree(*bind_ops);
+		kfree(*bind_ops);
 	return err;
 }
 
@@ -2929,7 +2873,7 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
 	struct drm_gpuva_ops **ops = NULL;
 	struct xe_vm *vm;
 	struct xe_exec_queue *q = NULL;
-	u32 num_syncs, num_ufence = 0;
+	u32 num_syncs;
 	struct xe_sync_entry *syncs = NULL;
 	struct drm_xe_vm_bind_op *bind_ops;
 	LIST_HEAD(ops_list);
@@ -2980,15 +2924,13 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
 	}
 
 	if (args->num_binds) {
-		bos = kvcalloc(args->num_binds, sizeof(*bos),
-			       GFP_KERNEL | __GFP_ACCOUNT);
+		bos = kcalloc(args->num_binds, sizeof(*bos), GFP_KERNEL);
 		if (!bos) {
 			err = -ENOMEM;
 			goto release_vm_lock;
 		}
 
-		ops = kvcalloc(args->num_binds, sizeof(*ops),
-			       GFP_KERNEL | __GFP_ACCOUNT);
+		ops = kcalloc(args->num_binds, sizeof(*ops), GFP_KERNEL);
 		if (!ops) {
 			err = -ENOMEM;
 			goto release_vm_lock;
@@ -3068,14 +3010,6 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
 					   SYNC_PARSE_FLAG_DISALLOW_USER_FENCE : 0));
 		if (err)
 			goto free_syncs;
-
-		if (xe_sync_is_ufence(&syncs[num_syncs]))
-			num_ufence++;
-	}
-
-	if (XE_IOCTL_DBG(xe, num_ufence > 1)) {
-		err = -EINVAL;
-		goto free_syncs;
 	}
 
 	if (!args->num_binds) {
@@ -3129,10 +3063,10 @@ int xe_vm_bind_ioctl(struct drm_device *dev, void *data, struct drm_file *file)
 	for (i = 0; bos && i < args->num_binds; ++i)
 		xe_bo_put(bos[i]);
 
-	kvfree(bos);
-	kvfree(ops);
+	kfree(bos);
+	kfree(ops);
 	if (args->num_binds > 1)
-		kvfree(bind_ops);
+		kfree(bind_ops);
 
 	return err;
 
@@ -3156,10 +3090,10 @@ put_exec_queue:
 	if (q)
 		xe_exec_queue_put(q);
 free_objs:
-	kvfree(bos);
-	kvfree(ops);
+	kfree(bos);
+	kfree(ops);
 	if (args->num_binds > 1)
-		kvfree(bind_ops);
+		kfree(bind_ops);
 	return err;
 }
 
@@ -3219,8 +3153,8 @@ int xe_vm_invalidate_vma(struct xe_vma *vma)
 		if (xe_vma_is_userptr(vma)) {
 #ifdef __linux__
 			WARN_ON_ONCE(!mmu_interval_check_retry
-				     (&to_userptr_vma(vma)->userptr.notifier,
-				      to_userptr_vma(vma)->userptr.notifier_seq));
+				     (&vma->userptr.notifier,
+				      vma->userptr.notifier_seq));
 #endif
 			WARN_ON_ONCE(!dma_resv_test_signaled(xe_vm_resv(xe_vma_vm(vma)),
 							     DMA_RESV_USAGE_BOOKKEEP));
@@ -3282,11 +3216,11 @@ int xe_analyze_vm(struct drm_printer *p, struct xe_vm *vm, int gt_id)
 		if (is_null) {
 			addr = 0;
 		} else if (is_userptr) {
-			struct sg_table *sg = to_userptr_vma(vma)->userptr.sg;
 			struct xe_res_cursor cur;
 
-			if (sg) {
-				xe_res_first_sg(sg, 0, XE_PAGE_SIZE, &cur);
+			if (vma->userptr.sg) {
+				xe_res_first_sg(vma->userptr.sg, 0, XE_PAGE_SIZE,
+						&cur);
 				addr = xe_res_dma(&cur);
 			} else {
 				addr = 0;
