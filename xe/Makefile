@@ -44,6 +44,7 @@ SRCS=	xe_bb.c \
 	xe_ggtt.c \
 	xe_gpu_scheduler.c \
 	xe_gsc.c \
+	xe_gsc_proxy.c \
 	xe_gsc_submit.c \
 	xe_gt.c \
 	xe_gt_ccs_mode.c \
