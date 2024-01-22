@@ -34,7 +34,6 @@ SRCS=	xe_bb.c \
 	xe_devcoredump.c \
 	xe_device.c \
 	xe_device_sysfs.c \
-	xe_display.c \
 	xe_dma_buf.c \
 	xe_drm_client.c \
 	xe_exec.c \
@@ -113,6 +112,7 @@ SRCS=	xe_bb.c \
 # xe/display
 SRCS+=	intel_fb_bo.c \
 	intel_fbdev_fb.c \
+	xe_display.c \
 	xe_display_misc.c \
 	xe_display_rps.c \
 	xe_dsb_buffer.c \
