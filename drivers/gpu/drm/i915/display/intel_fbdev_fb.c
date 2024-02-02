@@ -77,13 +77,13 @@ int intel_fbdev_fb_fill_info(struct drm_i915_private *i915, struct fb_info *info
 		struct intel_memory_region *mem = obj->mm.region;
 
 #ifdef __FreeBSD__
-		info->aperture_base = mem->io_start;
-		info->aperture_size = mem->io_size;
+		info->aperture_base = mem->io.start;
+		info->aperture_size = resource_size(&mem->io);
 #endif
 
 		/* Use fbdev's framebuffer from lmem for discrete */
 		info->fix.smem_start =
-			(unsigned long)(mem->io_start +
+			(unsigned long)(mem->io.start +
 					i915_gem_object_get_dma_address(obj, 0));
 		info->fix.smem_len = obj->base.size;
 	} else {
