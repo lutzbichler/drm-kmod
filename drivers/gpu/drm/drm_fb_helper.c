@@ -572,7 +572,7 @@ void drm_fb_helper_release_info(struct drm_fb_helper *fb_helper)
 #ifdef __linux__
 	if (info->cmap.len)
 		fb_dealloc_cmap(&info->cmap);
-#endif	
+#endif
 	framebuffer_release(info);
 }
 EXPORT_SYMBOL(drm_fb_helper_release_info);
@@ -702,8 +702,8 @@ void drm_fb_helper_damage_range(struct fb_info *info, off_t off, size_t len)
 
 	drm_fb_helper_memory_range_to_clip(info, off, len, &damage_area);
 	drm_fb_helper_damage(fb_helper, damage_area.x1, damage_area.y1,
-                            drm_rect_width(&damage_area),
-                            drm_rect_height(&damage_area));
+			     drm_rect_width(&damage_area),
+			     drm_rect_height(&damage_area));
 }
 EXPORT_SYMBOL(drm_fb_helper_damage_range);
 
@@ -716,9 +716,10 @@ void drm_fb_helper_damage_area(struct fb_info *info, u32 x, u32 y, u32 width, u3
 }
 EXPORT_SYMBOL(drm_fb_helper_damage_area);
 
+#ifdef __linux__
 // ifdef CONFIG_FB_DEFERRED_IO removed upstream
 // Does not compile, FreeBSD vm_page has no field lru
-#ifdef __linux__
+
 /**
  * drm_fb_helper_deferred_io() - fbdev deferred_io callback function
  * @info: fb_info struct pointer
