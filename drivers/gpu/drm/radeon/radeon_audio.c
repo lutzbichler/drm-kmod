@@ -831,16 +831,16 @@ void radeon_audio_component_init(struct radeon_device *rdev)
 
 #ifdef __linux__
 	if (!component_add(rdev->dev, &radeon_audio_component_bind_ops))
-#endif
 		rdev->audio.component_registered = true;
+#endif
 }
 
 void radeon_audio_component_fini(struct radeon_device *rdev)
 {
 	if (rdev->audio.component_registered) {
-#ifdef __linux__		
+#ifdef __linux__
 		component_del(rdev->dev, &radeon_audio_component_bind_ops);
-#endif		
+#endif
 		rdev->audio.component_registered = false;
 	}
 }
