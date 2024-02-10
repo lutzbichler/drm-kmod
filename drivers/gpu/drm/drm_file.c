@@ -160,7 +160,11 @@ struct drm_file *drm_file_alloc(struct drm_minor *minor)
 
 	/* Get a unique identifier for fdinfo: */
 	file->client_id = atomic64_inc_return(&ident);
+#ifdef __linux__
+	file->pid = get_pid(task_tgid(current));
+#elif defined(__FreeBSD__)
 	file->pid = get_pid(task_pid(current));
+#endif
 	file->minor = minor;
 
 	/* for compatibility root is always authenticated */
