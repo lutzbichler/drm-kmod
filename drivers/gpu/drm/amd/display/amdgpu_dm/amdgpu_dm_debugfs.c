@@ -585,7 +585,6 @@ static int dp_lttpr_status_show(struct seq_file *m, void *unused)
 	switch (caps.mode) {
 	case DP_PHY_REPEATER_MODE_TRANSPARENT:
 		seq_puts(m, "transparent");
-
 		break;
 	case DP_PHY_REPEATER_MODE_NON_TRANSPARENT:
 		seq_puts(m, "non-transparent");
