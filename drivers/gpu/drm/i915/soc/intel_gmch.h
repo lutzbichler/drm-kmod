@@ -20,5 +20,4 @@ void *bsd_intel_pci_bus_alloc_mem(device_t dev, int *rid, uintmax_t size,
     resource_size_t *start, resource_size_t *end);
 void bsd_intel_pci_bus_release_mem(device_t dev, int rid, void *res);
 #endif
-
 #endif /* __INTEL_GMCH_H__ */

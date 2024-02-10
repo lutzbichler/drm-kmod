@@ -305,6 +305,7 @@ void intel_gsc_proxy_irq_handler(struct intel_gsc_uc *gsc, u32 iir)
 	queue_work(gsc->wq, &gsc->work);
 }
 
+#ifdef __linux__
 static int i915_gsc_proxy_component_bind(struct device *i915_kdev,
 					 struct device *mei_kdev, void *data)
 {
@@ -344,7 +345,6 @@ static void i915_gsc_proxy_component_unbind(struct device *i915_kdev,
 				 HECI_H_CSR_IE | HECI_H_CSR_RST, 0);
 }
 
-#ifdef __linux__
 static const struct component_ops i915_gsc_proxy_component_ops = {
 	.bind   = i915_gsc_proxy_component_bind,
 	.unbind = i915_gsc_proxy_component_unbind,
@@ -415,20 +415,20 @@ int intel_gsc_proxy_init(struct intel_gsc_uc *gsc)
 #ifdef __linux__
 	err = component_add_typed(i915->drm.dev, &i915_gsc_proxy_component_ops,
 				  I915_COMPONENT_GSC_PROXY);
+#elif defined(__FreeBSD__)
+	err = -ENOTSUP;
+#endif
 	if (err < 0) {
 		gt_err(gt, "Failed to add GSC_PROXY component (%d)\n", err);
 		goto out_free;
 	}
-#endif
 
 	gsc->proxy.component_added = true;
 
 	return 0;
 
-#ifdef __linux__
 out_free:
 	proxy_channel_free(gsc);
 	return err;
-#endif
 }
 
