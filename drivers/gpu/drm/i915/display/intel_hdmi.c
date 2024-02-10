@@ -2580,7 +2580,7 @@ static void intel_hdmi_create_i2c_symlink(struct drm_connector *connector)
 	ret = sysfs_create_link(connector_kobj, i2c_kobj, i2c_kobj->name);
 	if (ret)
 		drm_err(&i915->drm, "Failed to create i2c symlink (%d)\n", ret);
-#endif
+#endif	
 }
 
 static void intel_hdmi_remove_i2c_symlink(struct drm_connector *connector)
@@ -2591,7 +2591,7 @@ static void intel_hdmi_remove_i2c_symlink(struct drm_connector *connector)
 	struct kobject *connector_kobj = &connector->kdev->kobj;
 
 	sysfs_remove_link(connector_kobj, i2c_kobj->name);
-#endif
+#endif	
 }
 
 static int
