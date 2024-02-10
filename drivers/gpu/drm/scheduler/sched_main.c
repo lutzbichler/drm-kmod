@@ -67,12 +67,7 @@
 #define to_drm_sched_job(sched_job)		\
 		container_of((sched_job), struct drm_sched_job, queue_node)
 
-#ifdef __linux__
 int drm_sched_policy = DRM_SCHED_POLICY_FIFO;
-#elif defined(__FreeBSD__)
-/* On FreeBSD, the FIFO scheduler deadlocks. Use RR for now. */
-int drm_sched_policy = DRM_SCHED_POLICY_RR;
-#endif
 
 /**
  * DOC: sched_policy (int)
