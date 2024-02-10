@@ -178,8 +178,8 @@ static void radeon_fbdev_fb_destroy(struct fb_info *info)
 	struct drm_gem_object *gobj = drm_gem_fb_get_obj(fb, 0);
 
 #ifdef __FreeBSD__
-	unregister_fictitious_range(
-	    info->fix.smem_start, info->fix.smem_len);
+	struct radeon_device *rdev = fb_helper->dev->dev_private;
+	unregister_fictitious_range(rdev->mc.aper_base, rdev->mc.aper_size);
 #endif
 
 	drm_fb_helper_fini(fb_helper);
@@ -241,7 +241,6 @@ static int radeon_fbdev_fb_helper_fb_probe(struct drm_fb_helper *fb_helper,
 		ret = -ENOMEM;
 		goto err_radeon_fbdev_destroy_pinned_object;
 	}
-
 	ret = radeon_framebuffer_init(rdev->ddev, fb, &mode_cmd, gobj);
 	if (ret) {
 		DRM_ERROR("failed to initialize framebuffer %d\n", ret);
@@ -261,7 +260,9 @@ static int radeon_fbdev_fb_helper_fb_probe(struct drm_fb_helper *fb_helper,
 	info->fbops = &radeon_fbdev_fb_ops;
 
 	/* radeon resume is fragile and needs a vt switch to help it along */
+#ifdef __linux__
 	info->skip_vt_switch = false;
+#endif
 
 	drm_fb_helper_fill_info(info, fb_helper, sizes);
 
@@ -272,10 +273,6 @@ static int radeon_fbdev_fb_helper_fb_probe(struct drm_fb_helper *fb_helper,
 	info->screen_size = radeon_bo_size(rbo);
 
 	memset_io(info->screen_base, 0, info->screen_size);
-
-	/* setup aperture base/size for vesafb takeover */
-	info->apertures->ranges[0].base = rdev->mc.aper_base;
-	info->apertures->ranges[0].size = rdev->mc.aper_size;
 
 #ifdef __FreeBSD__
 	/*
@@ -291,8 +288,7 @@ static int radeon_fbdev_fb_helper_fb_probe(struct drm_fb_helper *fb_helper,
 	 * values passed to register_fictitious_range() below are unavailable
 	 * from a generic structure set by both drivers.
 	 */
-	register_fictitious_range(
-	    info->fix.smem_start, info->fix.smem_len);
+	register_fictitious_range(rdev->mc.aper_base, rdev->mc.aper_size);
 #endif
 
 	/* Use default scratch pixmap (info->pixmap.flags = FB_PIXMAP_SYSTEM) */
