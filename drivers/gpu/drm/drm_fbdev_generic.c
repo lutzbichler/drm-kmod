@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: MIT
 
 #include <linux/moduleparam.h>
+#include <linux/vmalloc.h>
 
 #include <drm/drm_crtc_helper.h>
 #include <drm/drm_drv.h>
@@ -14,9 +15,9 @@
 /* @user: 1=userspace, 0=fbcon */
 static int drm_fbdev_generic_fb_open(struct fb_info *info, int user)
 {
+#ifdef __linux__
 	struct drm_fb_helper *fb_helper = info->par;
 
-#ifdef __linux__
 	/* No need to take a ref for fbcon because it unbinds on unregister */
 	if (user && !try_module_get(fb_helper->dev->driver->fops->owner))
 		return -ENODEV;
@@ -27,9 +28,9 @@ static int drm_fbdev_generic_fb_open(struct fb_info *info, int user)
 
 static int drm_fbdev_generic_fb_release(struct fb_info *info, int user)
 {
+#ifdef __linux__
 	struct drm_fb_helper *fb_helper = info->par;
 
-#ifdef __linux__
 	if (user)
 		module_put(fb_helper->dev->driver->fops->owner);
 #endif
@@ -53,7 +54,6 @@ static void drm_fbdev_generic_fb_destroy(struct fb_info *info)
 	fb_deferred_io_cleanup(info);
 #endif
 	drm_fb_helper_fini(fb_helper);
-
 	vfree(shadow);
 	drm_client_framebuffer_delete(fb_helper->buffer);
 
@@ -66,17 +66,10 @@ static const struct fb_ops drm_fbdev_generic_fb_ops = {
 	.owner		= THIS_MODULE,
 	.fb_open	= drm_fbdev_generic_fb_open,
 	.fb_release	= drm_fbdev_generic_fb_release,
-	DRM_FB_HELPER_DEFAULT_OPS,
 	FB_DEFAULT_DEFERRED_OPS(drm_fbdev_generic),
+	DRM_FB_HELPER_DEFAULT_OPS,
 	.fb_destroy	= drm_fbdev_generic_fb_destroy,
 };
-
-#ifdef __linux__
-static struct fb_deferred_io drm_fbdev_defio = {
-	.delay		= HZ / 20,
-	.deferred_io	= drm_fb_helper_deferred_io,
-};
-#endif
 
 /*
  * This function uses the client API to create a framebuffer backed by a dumb buffer.
@@ -214,22 +207,14 @@ static int drm_fbdev_generic_damage_blit(struct drm_fb_helper *fb_helper,
 	 */
 	mutex_lock(&fb_helper->lock);
 
-#ifdef __linux__
 	ret = drm_client_buffer_vmap(buffer, &map);
-#elif defined(__FreeBSD__)
-	ret = drm_client_buffer_vmap(buffer, &map, false);
-#endif
 	if (ret)
 		goto out;
 
 	dst = map;
 	drm_fbdev_generic_damage_blit_real(fb_helper, clip, &dst);
 
-#ifdef __linux__
 	drm_client_buffer_vunmap(buffer);
-#elif defined(__FreeBSD__)
-	drm_client_buffer_vunmap(buffer, false);
-#endif
 
 out:
 	mutex_unlock(&fb_helper->lock);

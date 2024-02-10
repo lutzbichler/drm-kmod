@@ -159,15 +159,9 @@ struct drm_client_buffer *
 drm_client_framebuffer_create(struct drm_client_dev *client, u32 width, u32 height, u32 format);
 void drm_client_framebuffer_delete(struct drm_client_buffer *buffer);
 int drm_client_framebuffer_flush(struct drm_client_buffer *buffer, struct drm_rect *rect);
-#ifdef __linux__
 int drm_client_buffer_vmap(struct drm_client_buffer *buffer,
 			   struct iosys_map *map);
 void drm_client_buffer_vunmap(struct drm_client_buffer *buffer);
-#elif defined(__FreeBSD__)
-int drm_client_buffer_vmap(struct drm_client_buffer *buffer,
-			   struct iosys_map *map, bool unlocked);
-void drm_client_buffer_vunmap(struct drm_client_buffer *buffer, bool unlocked);
-#endif
 
 int drm_client_modeset_create(struct drm_client_dev *client);
 void drm_client_modeset_free(struct drm_client_dev *client);

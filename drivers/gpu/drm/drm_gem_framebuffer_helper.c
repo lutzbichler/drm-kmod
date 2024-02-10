@@ -8,10 +8,10 @@
 struct drm_gem_object *
 drm_gem_fb_get_obj(struct drm_framebuffer *fb, unsigned int plane)
 {
-	if (plane < 4)
-		return (fb->obj[plane]);
+	if (plane >= DRM_FORMAT_MAX_PLANES)
+		return NULL;
 
-	return (NULL);
+	return fb->obj[plane];
 }
 
 void
