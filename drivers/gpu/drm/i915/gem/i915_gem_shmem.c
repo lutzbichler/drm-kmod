@@ -630,8 +630,11 @@ static int __create_shmem(struct drm_i915_private *i915,
 	 * i915_gem_object_size_2big() is called before init_object() callback
 	 * is called.
 	 */
+#ifdef __linux__
+	// BSD: There are no hardcoded size limit in swap_pager_alloc.
 	if (BITS_PER_LONG == 64 && size > MAX_LFS_FILESIZE)
 		return -E2BIG;
+#endif
 
 	if (i915->mm.gemfs)
 #ifdef __linux__

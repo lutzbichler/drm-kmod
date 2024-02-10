@@ -171,9 +171,9 @@ static void huc_delayed_load_start(struct intel_huc *huc)
 	hrtimer_start(&huc->delayed_load.timer, delay, HRTIMER_MODE_REL);
 }
 
+#ifdef __linux__
 static int gsc_notifier(struct notifier_block *nb, unsigned long action, void *data)
 {
-#ifdef __linux__
 	struct device *dev = data;
 	struct intel_huc *huc = container_of(nb, struct intel_huc, delayed_load.nb);
 	struct intel_gsc_intf *intf = &huc_to_gt(huc)->gsc.intf[0];
@@ -192,29 +192,30 @@ static int gsc_notifier(struct notifier_block *nb, unsigned long action, void *d
 		gsc_init_error(huc);
 		break;
 	}
-#endif
 
 	return 0;
 }
+#endif
 
 void intel_huc_register_gsc_notifier(struct intel_huc *huc, const struct bus_type *bus)
 {
-#ifdef __linux__
 	int ret;
-#endif
 
 	if (!intel_huc_is_loaded_by_gsc(huc))
 		return;
 
-	huc->delayed_load.nb.notifier_call = gsc_notifier;
 #ifdef __linux__
+	huc->delayed_load.nb.notifier_call = gsc_notifier;
 	ret = bus_register_notifier(bus, &huc->delayed_load.nb);
+#elif defined (__FreeBSD__)
+	// BSDFIXME: No mei driver exists
+	ret = -ENXIO;
+#endif
 	if (ret) {
 		huc_err(huc, "failed to register GSC notifier %pe\n", ERR_PTR(ret));
 		huc->delayed_load.nb.notifier_call = NULL;
 		gsc_init_error(huc);
 	}
-#endif
 }
 
 void intel_huc_unregister_gsc_notifier(struct intel_huc *huc, const struct bus_type *bus)

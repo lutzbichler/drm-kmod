@@ -227,10 +227,6 @@ struct drm_i915_private {
 		struct pci_dev *pdev;
 		struct resource mch_res;
 		bool mchbar_need_disable;
-#ifdef __FreeBSD__
-		int mch_res_rid;
-		void *mch_res_bsd_res;
-#endif
 	} gmch;
 
 	struct rb_root uabi_engines;
@@ -376,6 +372,11 @@ struct drm_i915_private {
 	 * NOTE: This is the dri1/ums dungeon, don't add stuff here. Your patch
 	 * will be rejected. Instead look for a better place.
 	 */
+
+#ifdef __FreeBSD__
+	int mch_res_rid;
+	void *mch_res_bsd_res;
+#endif
 };
 
 static inline struct drm_i915_private *to_i915(const struct drm_device *dev)
@@ -780,10 +781,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 	((sizes) & ~RUNTIME_INFO(i915)->page_sizes) == 0; \
 })
 
-#define HAS_OVERLAY(i915)		 (DISPLAY_INFO(i915)->has_overlay)
-#define OVERLAY_NEEDS_PHYSICAL(i915) \
-		(DISPLAY_INFO(i915)->overlay_needs_physical)
-
 /* Early gen2 have a totally busted CS tlb and require pinned batches. */
 #define HAS_BROKEN_CS_TLB(i915)	(IS_I830(i915) || IS_I845G(i915))
 
@@ -806,11 +803,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 
 #define HAS_RPS(i915)	(INTEL_INFO(i915)->has_rps)
 
-#define HAS_DMC(i915)	(DISPLAY_RUNTIME_INFO(i915)->has_dmc)
-#define HAS_DSB(i915)	(DISPLAY_INFO(i915)->has_dsb)
-#define HAS_DSC(__i915)		(DISPLAY_RUNTIME_INFO(__i915)->has_dsc)
-#define HAS_HW_SAGV_WM(i915) (DISPLAY_VER(i915) >= 13 && !IS_DGFX(i915))
-
 #define HAS_HECI_PXP(i915) \
 	(INTEL_INFO(i915)->has_heci_pxp)
 
@@ -818,8 +810,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 	(INTEL_INFO(i915)->has_heci_gscfi)
 
 #define HAS_HECI_GSC(i915) (HAS_HECI_PXP(i915) || HAS_HECI_GSCFI(i915))
-
-#define HAS_MSO(i915)		(DISPLAY_VER(i915) >= 12)
 
 #define HAS_RUNTIME_PM(i915) (INTEL_INFO(i915)->has_runtime_pm)
 #define HAS_64BIT_RELOC(i915) (INTEL_INFO(i915)->has_64bit_reloc)
@@ -836,9 +826,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
  * device local memory access.
  */
 #define HAS_64K_PAGES(i915) (INTEL_INFO(i915)->has_64k_pages)
-
-#define HAS_IPC(i915)		(DISPLAY_INFO(i915)->has_ipc)
-#define HAS_SAGV(i915)		(DISPLAY_VER(i915) >= 9 && !IS_LP(i915))
 
 #define HAS_REGION(i915, i) (INTEL_INFO(i915)->memory_regions & (i))
 #define HAS_LMEM(i915) HAS_REGION(i915, REGION_LMEM)
@@ -857,11 +844,7 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 
 #define HAS_GLOBAL_MOCS_REGISTERS(i915)	(INTEL_INFO(i915)->has_global_mocs)
 
-#define HAS_GMCH(i915) (DISPLAY_INFO(i915)->has_gmch)
-
 #define HAS_GMD_ID(i915)	(INTEL_INFO(i915)->has_gmd_id)
-
-#define HAS_LSPCON(i915) (IS_DISPLAY_VER(i915, 9, 10))
 
 #define HAS_L3_CCS_READ(i915) (INTEL_INFO(i915)->has_l3_ccs_read)
 
@@ -869,14 +852,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 #define HAS_L3_DPF(i915) (INTEL_INFO(i915)->has_l3_dpf)
 #define NUM_L3_SLICES(i915) (IS_HASWELL_GT3(i915) ? \
 				 2 : HAS_L3_DPF(i915))
-
-#define INTEL_NUM_PIPES(i915) (hweight8(DISPLAY_RUNTIME_INFO(i915)->pipe_mask))
-
-#define HAS_DISPLAY(i915) (DISPLAY_RUNTIME_INFO(i915)->pipe_mask != 0)
-
-#define HAS_VRR(i915)	(DISPLAY_VER(i915) >= 11)
-
-#define HAS_ASYNC_FLIPS(i915)		(DISPLAY_VER(i915) >= 5)
 
 /* Only valid when HAS_DISPLAY() is true */
 #define INTEL_DISPLAY_ENABLED(i915) \
@@ -886,11 +861,6 @@ IS_SUBPLATFORM(const struct drm_i915_private *i915,
 
 #define HAS_GUC_DEPRIVILEGE(i915) \
 	(INTEL_INFO(i915)->has_guc_deprivilege)
-
-#define HAS_D12_PLANE_MINIMIZATION(i915) (IS_ROCKETLAKE(i915) || \
-					      IS_ALDERLAKE_S(i915))
-
-#define HAS_MBUS_JOINING(i915) (IS_ALDERLAKE_P(i915) || DISPLAY_VER(i915) >= 14)
 
 #define HAS_3D_PIPELINE(i915)	(INTEL_INFO(i915)->has_3d_pipeline)
 
