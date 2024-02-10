@@ -2307,7 +2307,6 @@ static int intel_uncore_fw_domains_init(struct intel_uncore *uncore)
 	(ret ?: (ret = __fw_domain_init((uncore__), (id__), (set__), (ack__))))
 
 	if (GRAPHICS_VER(i915) >= 11) {
-		/* we'll prune the domains of missing engines later */
 		intel_engine_mask_t emask;
 		int i;
 

@@ -2134,7 +2134,7 @@ static void i915_hdcp_component_unbind(struct device *i915_kdev,
 }
 
 static const struct component_ops i915_hdcp_ops = {
- 	.bind   = i915_hdcp_component_bind,
+	.bind   = i915_hdcp_component_bind,
 	.unbind = i915_hdcp_component_unbind,
 };
 #endif
@@ -2233,8 +2233,9 @@ void intel_hdcp_component_init(struct drm_i915_private *i915)
 		ret = component_add_typed(i915->drm.dev, &i915_hdcp_ops,
 					  I915_COMPONENT_HDCP);
 #elif defined(__FreeBSD__)
-		ret = -ENOTSUPP;
+		ret = -ENOTSUP;
 #endif
+
 	if (ret < 0) {
 		drm_dbg_kms(&i915->drm, "Failed at fw component add(%d)\n",
 			    ret);

@@ -917,7 +917,7 @@ static void intel_acomp_get_config(struct intel_encoder *encoder,
 {
 	struct drm_i915_private *i915 = to_i915(encoder->base.dev);
 	enum transcoder cpu_transcoder = crtc_state->cpu_transcoder;
- 	struct intel_audio_state *audio_state;
+	struct intel_audio_state *audio_state;
 
 	mutex_lock(&i915->display.audio.mutex);
 
@@ -1428,14 +1428,14 @@ void intel_audio_init(struct drm_i915_private *i915)
 
 /**
  * intel_audio_deinit() - deinitialize the audio driver
- * @dev_priv: the i915 drm device private data
+ * @i915: the i915 drm device private data
  *
  */
 void intel_audio_deinit(struct drm_i915_private *i915)
 {
 #ifdef __linux__
 	// No lpe on BSD yet
-	if (dev_priv->display.audio.lpe.platdev != NULL)
+	if (i915->display.audio.lpe.platdev != NULL)
 		intel_lpe_audio_teardown(i915);
 	else
 #endif

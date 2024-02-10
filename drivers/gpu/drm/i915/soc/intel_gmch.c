@@ -37,20 +37,20 @@ static int
 intel_alloc_mchbar_resource(struct drm_i915_private *i915)
 {
 	int reg = GRAPHICS_VER(i915) >= 4 ? MCHBAR_I965 : MCHBAR_I915;
-	u32 temp_lo, temp_hi = 0;
 #ifdef __linux__
+	u32 temp_lo, temp_hi = 0;
 	u64 mchbar_addr;
 #endif
 	int ret;
 
+#ifdef __linux__
 	if (GRAPHICS_VER(i915) >= 4)
 		pci_read_config_dword(i915->gmch.pdev, reg + 4, &temp_hi);
 	pci_read_config_dword(i915->gmch.pdev, reg, &temp_lo);
-
-#ifdef __linux__
 	mchbar_addr = ((u64)temp_hi << 32) | temp_lo;
 
 	/* If ACPI doesn't have it, assume we need to allocate it ourselves */
+	/* CONFIG_PNP is disabled in kconfig.mk */
 	if (IS_ENABLED(CONFIG_PNP) && mchbar_addr &&
 	    pnp_range_reserved(mchbar_addr, mchbar_addr + MCHBAR_SIZE))
 		return 0;
@@ -59,11 +59,11 @@ intel_alloc_mchbar_resource(struct drm_i915_private *i915)
 	/* Get some space for it */
 #ifdef __FreeBSD__
 	ret = 0;
-	i915->gmch.mch_res_rid = 0x100;
-	i915->gmch.mch_res_bsd_res = bsd_intel_pci_bus_alloc_mem(
-	    i915->drm.dev->bsddev, &i915->gmch.mch_res_rid, MCHBAR_SIZE,
+	i915->mch_res_rid = 0x100;
+	i915->mch_res_bsd_res = bsd_intel_pci_bus_alloc_mem(
+	    i915->drm.dev->bsddev, &i915->mch_res_rid, MCHBAR_SIZE,
 	    &i915->gmch.mch_res.start, &i915->gmch.mch_res.end);
-	if (i915->gmch.mch_res_bsd_res == NULL)
+	if (i915->mch_res_bsd_res == NULL)
 		ret = -ENOMEM;
 #else
 	i915->gmch.mch_res.name = "i915 MCHBAR";
@@ -154,10 +154,10 @@ void intel_gmch_bar_teardown(struct drm_i915_private *i915)
 	}
 
 #ifdef __FreeBSD__
-	if (i915->gmch.mch_res_bsd_res != NULL) {
+	if (i915->mch_res_bsd_res != NULL) {
 		bsd_intel_pci_bus_release_mem(i915->drm.dev->bsddev,
-		    i915->gmch.mch_res_rid, i915->gmch.mch_res_bsd_res);
-		i915->gmch.mch_res_bsd_res = NULL;
+		    i915->mch_res_rid, i915->mch_res_bsd_res);
+		i915->mch_res_bsd_res = NULL;
 	}
 #else
 	if (i915->gmch.mch_res.start)

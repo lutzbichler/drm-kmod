@@ -501,8 +501,7 @@ static void lpt_enable_backlight(const struct intel_crtc_state *crtc_state,
 
 	intel_de_write(i915, BLC_PWM_PCH_CTL1, pch_ctl1);
 	intel_de_posting_read(i915, BLC_PWM_PCH_CTL1);
-	intel_de_write(i915, BLC_PWM_PCH_CTL1,
-		       pch_ctl1 | BLM_PCH_PWM_ENABLE);
+	intel_de_write(i915, BLC_PWM_PCH_CTL1, pch_ctl1 | BLM_PCH_PWM_ENABLE);
 
 	/* This won't stick until the above enable. */
 	intel_backlight_set_pwm_level(conn_state, level);

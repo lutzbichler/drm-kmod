@@ -194,9 +194,7 @@ int i915_getparam_ioctl(struct drm_device *dev, void *data,
 		value = i915_perf_ioctl_version(i915);
 		break;
 	case I915_PARAM_OA_TIMESTAMP_FREQUENCY:
-#ifdef __linux__
 		value = i915_perf_oa_timestamp_frequency(i915);
-#endif
 		break;
 	default:
 		drm_dbg(&i915->drm, "Unknown parameter %d\n", param->param);

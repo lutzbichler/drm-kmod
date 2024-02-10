@@ -10,10 +10,6 @@
 #include <linux/iosys-map.h>
 #include <linux/xarray.h>
 
-#ifdef __FreeBSD__
-#include <drm/drm_util.h>
-#endif
-
 #include "intel_guc_ct.h"
 #include "intel_guc_fw.h"
 #include "intel_guc_fwif.h"
@@ -24,6 +20,10 @@
 #include "intel_uncore.h"
 #include "i915_utils.h"
 #include "i915_vma.h"
+
+#ifdef __FreeBSD__
+#include <drm/drm_util.h>
+#endif
 
 struct __guc_ads_blob;
 struct intel_guc_state_capture;
