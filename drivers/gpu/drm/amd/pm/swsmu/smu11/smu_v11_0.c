@@ -1399,9 +1399,7 @@ static int smu_v11_0_irq_process(struct amdgpu_device *adev,
 				 struct amdgpu_irq_src *source,
 				 struct amdgpu_iv_entry *entry)
 {
-#ifdef __linux__
 	struct smu_context *smu = adev->powerplay.pp_handle;
-#endif
 	uint32_t client_id = entry->client_id;
 	uint32_t src_id = entry->src_id;
 	/*
@@ -1414,10 +1412,8 @@ static int smu_v11_0_irq_process(struct amdgpu_device *adev,
 	if (client_id == SOC15_IH_CLIENTID_THM) {
 		switch (src_id) {
 		case THM_11_0__SRCID__THM_DIG_THERM_L2H:
-#ifdef __linux__		
 			schedule_delayed_work(&smu->swctf_delayed_work,
 					      msecs_to_jiffies(AMDGPU_SWCTF_EXTRA_DELAY));
-#endif						  
 		break;
 		case THM_11_0__SRCID__THM_DIG_THERM_H2L:
 			dev_emerg(adev->dev, "ERROR: GPU under temperature range detected\n");

@@ -226,8 +226,8 @@ static void amdgpu_gem_object_close(struct drm_gem_object *obj,
 
 	r = amdgpu_vm_clear_freed(adev, vm, &fence);
 	if (unlikely(r < 0))
-		dev_err(adev->dev, "failed to clear page tables on GEM object close (%ld)\n",
-			r);
+		dev_err(adev->dev, "failed to clear page "
+			"tables on GEM object close (%ld)\n", r);
 	if (r || !fence)
 		goto out_unlock;
 
@@ -236,8 +236,7 @@ static void amdgpu_gem_object_close(struct drm_gem_object *obj,
 
 out_unlock:
 	if (r)
-		dev_err(adev->dev, "leaking bo va because we fail to reserve bo (%ld)\n",
-			r);
+		dev_err(adev->dev, "leaking bo va (%ld)\n", r);
 	drm_exec_fini(&exec);
 }
 
@@ -974,7 +973,11 @@ static int amdgpu_debugfs_gem_info_show(struct seq_file *m, void *unused)
 		 * Therefore, we need to protect this ->comm access using RCU.
 		 */
 		rcu_read_lock();
+#ifdef __linux__
+		task = pid_task(file->pid, PIDTYPE_TGID);
+#elif defined(__FreeBSD__)
 		task = pid_task(file->pid, PIDTYPE_PID);
+#endif
 		seq_printf(m, "pid %8d command %s:\n", pid_nr(file->pid),
 			   task ? task->comm : "<unknown>");
 		rcu_read_unlock();

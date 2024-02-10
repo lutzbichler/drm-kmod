@@ -95,7 +95,7 @@ void amdgpu_xcp_drv_release(void)
 	for (--pdev_num; pdev_num >= 0; --pdev_num) {
 #ifdef __linux__
 		devres_release_group(&xcp_dev[pdev_num]->pdev->dev, NULL);
-#endif		
+#endif
 		platform_device_unregister(xcp_dev[pdev_num]->pdev);
 		xcp_dev[pdev_num]->pdev = NULL;
 		xcp_dev[pdev_num] = NULL;

@@ -499,9 +499,7 @@ static void amdgpu_discovery_sysfs_fini(struct amdgpu_device *adev);
 
 void amdgpu_discovery_fini(struct amdgpu_device *adev)
 {
-#ifdef __linux__
 	amdgpu_discovery_sysfs_fini(adev);
-#endif
 	kfree(adev->mman.discovery_bin);
 	adev->mman.discovery_bin = NULL;
 }
@@ -646,7 +644,6 @@ static void amdgpu_discovery_read_from_harvest_table(struct amdgpu_device *adev,
 				~umc_harvest_config;
 }
 
-#ifdef __linux__
 /* ================================================== */
 
 struct ip_hw_instance {
@@ -1184,7 +1181,6 @@ static void amdgpu_discovery_sysfs_fini(struct amdgpu_device *adev)
 }
 
 /* ================================================== */
-#endif
 
 static int amdgpu_discovery_reg_base_init(struct amdgpu_device *adev)
 {
@@ -2314,9 +2310,7 @@ int amdgpu_discovery_set_ip_blocks(struct amdgpu_device *adev)
 	}
 
 	amdgpu_discovery_init_soc_config(adev);
-#ifdef __linux__
 	amdgpu_discovery_sysfs_init(adev);
-#endif
 
 	switch (adev->ip_versions[GC_HWIP][0]) {
 	case IP_VERSION(9, 0, 1):
