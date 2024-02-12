@@ -324,7 +324,9 @@ int xe_gt_tlb_invalidation_vma(struct xe_gt *gt,
  */
 int xe_gt_tlb_invalidation_wait(struct xe_gt *gt, int seqno)
 {
+	struct xe_device *xe = gt_to_xe(gt);
 	struct xe_guc *guc = &gt->uc.guc;
+	struct drm_printer p = drm_err_printer(&xe->drm, __func__);
 	int ret;
 
 	/* Execlists not supported */
@@ -339,8 +341,6 @@ int xe_gt_tlb_invalidation_wait(struct xe_gt *gt, int seqno)
 				 tlb_invalidation_seqno_past(gt, seqno),
 				 TLB_TIMEOUT);
 	if (!ret) {
-		struct drm_printer p = xe_gt_err_printer(gt);
-
 		xe_gt_err(gt, "TLB invalidation time'd out, seqno=%d, recv=%d\n",
 			  seqno, gt->tlb_invalidation.seqno_recv);
 		xe_guc_ct_print(&guc->ct, &p, true);
