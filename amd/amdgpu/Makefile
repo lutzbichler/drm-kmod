@@ -87,6 +87,29 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dcn32 \
 	${SRCDIR}/display/dc/dcn321 \
 	${SRCDIR}/display/dc/dcn35 \
+	${SRCDIR}/display/dc/dml/calcs \
+	${SRCDIR}/display/dc/dsc \
+	${SRCDIR}/display/dc/dsc/dcn20 \
+	${SRCDIR}/display/dc/dsc/dcn35 \
+	${_dml} \
+	${SRCDIR}/display/dc/dpp/dcn10 \
+	${SRCDIR}/display/dc/dpp/dcn20 \
+	${SRCDIR}/display/dc/dpp/dcn201 \
+	${SRCDIR}/display/dc/dpp/dcn30 \
+	${SRCDIR}/display/dc/dpp/dcn32 \
+	${SRCDIR}/display/dc/dpp/dcn35 \
+	${SRCDIR}/display/dc/gpio \
+	${SRCDIR}/display/dc/gpio/dce110 \
+	${SRCDIR}/display/dc/gpio/dce120 \
+	${SRCDIR}/display/dc/gpio/dce60 \
+	${SRCDIR}/display/dc/gpio/dce80 \
+	${SRCDIR}/display/dc/gpio/dcn10 \
+	${SRCDIR}/display/dc/gpio/dcn20 \
+	${SRCDIR}/display/dc/gpio/dcn21 \
+	${SRCDIR}/display/dc/gpio/dcn30 \
+	${SRCDIR}/display/dc/gpio/dcn315 \
+	${SRCDIR}/display/dc/gpio/dcn32 \
+	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/hwss/dce \
 	${SRCDIR}/display/dc/hwss/dce100 \
 	${SRCDIR}/display/dc/hwss/dce110 \
@@ -1129,6 +1152,7 @@ CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/display/amdgpu_dm
 CFLAGS+= -I${SRCDIR}/display/dc
 CFLAGS+= -I${SRCDIR}/display/dc/clk_mgr/
+CFLAGS+= -I${SRCDIR}/display/dc/dpp/
 CFLAGS+= -I${SRCDIR}/display/dc/dsc
 CFLAGS+= -I${SRCDIR}/display/dc/hwss
 CFLAGS+= -I${SRCDIR}/display/dc/inc
