@@ -86,6 +86,23 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dcn32 \
 	${SRCDIR}/display/dc/dcn321 \
 	${SRCDIR}/display/dc/dcn35 \
+	${SRCDIR}/display/dc/dml/calcs \
+	${SRCDIR}/display/dc/dsc \
+	${SRCDIR}/display/dc/dsc/dcn20 \
+	${SRCDIR}/display/dc/dsc/dcn35 \
+	${_dml} \
+	${SRCDIR}/display/dc/gpio \
+	${SRCDIR}/display/dc/gpio/dce110 \
+	${SRCDIR}/display/dc/gpio/dce120 \
+	${SRCDIR}/display/dc/gpio/dce60 \
+	${SRCDIR}/display/dc/gpio/dce80 \
+	${SRCDIR}/display/dc/gpio/dcn10 \
+	${SRCDIR}/display/dc/gpio/dcn20 \
+	${SRCDIR}/display/dc/gpio/dcn21 \
+	${SRCDIR}/display/dc/gpio/dcn30 \
+	${SRCDIR}/display/dc/gpio/dcn315 \
+	${SRCDIR}/display/dc/gpio/dcn32 \
+	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/hwss/dce \
 	${SRCDIR}/display/dc/hwss/dce100 \
 	${SRCDIR}/display/dc/hwss/dce110 \
@@ -109,23 +126,6 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hwss/dcn321 \
 	${SRCDIR}/display/dc/hwss/dcn35 \
 	${SRCDIR}/display/dc/hwss/dcn351 \
-	${SRCDIR}/display/dc/dml/calcs \
-	${SRCDIR}/display/dc/dsc \
-	${SRCDIR}/display/dc/dsc/dcn20 \
-	${SRCDIR}/display/dc/dsc/dcn35 \
-	${_dml} \
-	${SRCDIR}/display/dc/gpio \
-	${SRCDIR}/display/dc/gpio/dce110 \
-	${SRCDIR}/display/dc/gpio/dce120 \
-	${SRCDIR}/display/dc/gpio/dce60 \
-	${SRCDIR}/display/dc/gpio/dce80 \
-	${SRCDIR}/display/dc/gpio/dcn10 \
-	${SRCDIR}/display/dc/gpio/dcn20 \
-	${SRCDIR}/display/dc/gpio/dcn21 \
-	${SRCDIR}/display/dc/gpio/dcn30 \
-	${SRCDIR}/display/dc/gpio/dcn315 \
-	${SRCDIR}/display/dc/gpio/dcn32 \
-	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
 	${SRCDIR}/display/dc/i2caux/dce110 \
@@ -286,8 +286,6 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_sa.c \
 	amdgpu_sched.c \
 	amdgpu_sdma.c \
-	amdgpu_umsch_mm.c \
-	amdgpu_vpe.c \
 	sienna_cichlid.c \
 	amdgpu_seq64.c \
 	amdgpu_sync.c \
@@ -295,16 +293,18 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_ttm.c \
 	amdgpu_ucode.c \
 	amdgpu_umc.c \
+	amdgpu_umsch_mm.c \
 	amdgpu_uvd.c \
 	amdgpu_vce.c \
 	amdgpu_vcn.c \
 	amdgpu_vf_error.c \
 	amdgpu_virt.c \
-	amdgpu_vm.c \
 	amdgpu_vkms.c \
+	amdgpu_vm.c \
 	amdgpu_vm_cpu.c \
 	amdgpu_vm_pt.c \
 	amdgpu_vm_sdma.c \
+	amdgpu_vpe.c \
 	amdgpu_vram_mgr.c \
 	amdgpu_xcp.c \
 	amdgpu_xgmi.c \
@@ -495,11 +495,8 @@ SRCS+=	amdgpu_dm_color.c \
 	dc_fpu.c
 
 # display/dc/basics
-SRCS+=	bw_fixed.c \
-	conversion.c \
-	custom_float.c \
+SRCS+=	conversion.c \
 	dc_common.c \
-	dce_calcs.c \
 	fixpt31_32.c \
 	vector.c
 
@@ -519,20 +516,25 @@ SRCS+=	bios_parser_common.c \
 	command_table_helper_dce60.c \
 	command_table_helper_dce80.c
 
+# display/dc/calcs
+SRCS+=	bw_fixed.c \
+	custom_float.c \
+	dce_calcs.c
+
 # display/dc/core
 SRCS+=	dc_debug.c \
 	dc_hw_sequencer.c \
+	dc_link_enc_cfg.c \
 	dc_link_exports.c \
 	dc_resource.c \
 	dc_sink.c \
+	dc_stat.c \
 	dc_state.c \
 	dc_stream.c \
-	dc_link_enc_cfg.c \
 	dc_surface.c \
-	dc.c \
-	dc_stat.c
+	dc.c
 
-# display/dc/dce
+# display/dc/hwss/dce
 SRCS+=	dce_abm.c \
 	dce_audio.c \
 	dce_aux.c \
@@ -614,7 +616,6 @@ SRCS+=	dcn10_cm_common.c \
 	dcn10_hubp.c \
 	dcn10_hwseq.c \
 	dcn10_hw_sequencer_debug.c \
-	dcn10_init.c \
 	dcn10_ipp.c \
 	dcn10_link_encoder.c \
 	dcn10_mpc.c \
@@ -635,7 +636,6 @@ SRCS+=	dcn20_clk_mgr.c \
 	dcn20_hubbub.c \
 	dcn20_hubp.c \
 	dcn20_hwseq.c \
-	dcn20_init.c \
 	dcn20_link_encoder.c \
 	dcn20_mmhubbub.c \
 	dcn20_mpc.c \
@@ -654,7 +654,6 @@ SRCS+=	dcn201_clk_mgr.c \
 	dcn201_hubbub.c \
 	dcn201_hubp.c \
 	dcn201_hwseq.c \
-	dcn201_init.c \
 	dcn201_link_encoder.c \
 	dcn201_mpc.c \
 	dcn201_opp.c \
@@ -667,7 +666,6 @@ SRCS+=	dcn21_dccg.c \
 	dcn21_hubbub.c \
 	dcn21_hubp.c \
 	dcn21_hwseq.c \
-	dcn21_init.c \
 	dcn21_link_encoder.c \
 	dcn21_resource.c
 
@@ -692,7 +690,6 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	dcn30_resource.c \
 	dcn30_afmt.c \
 	dcn30_vpg.c \
-	dcn30_init.c \
 	irq_service_dcn30.c \
 	hw_factory_dcn30.c \
 	hw_translate_dcn30.c \
@@ -702,8 +699,7 @@ SRCS+=	dcn30_dio_link_encoder.c \
 .endif
 
 # display/dc/dcn301
-SRCS+=	dcn301_init.c \
-	dcn301_resource.c \
+SRCS+=	dcn301_resource.c \
 	dcn301_dccg.c \
 	dcn301_dio_link_encoder.c \
 	dcn301_fpu.c \
@@ -716,15 +712,13 @@ SRCS+=	dcn301_init.c \
 	dmub_dcn301.c
 
 # display/dc/dcn302
-SRCS+=	dcn302_init.c \
-	dcn302_hwseq.c \
+SRCS+=	dcn302_hwseq.c \
 	dcn302_resource.c \
 	irq_service_dcn302.c \
 	dmub_dcn302.c
 
 # display/dc/dcn303
 SRCS+=	dcn303_hwseq.c \
-	dcn303_init.c \
 	dcn303_resource.c \
 	irq_service_dcn303.c \
 	dmub_dcn303.c
@@ -733,7 +727,6 @@ SRCS+=	dcn303_hwseq.c \
 SRCS+=	dcn314_dccg.c \
 	dcn314_dio_stream_encoder.c \
 	dcn314_hwseq.c \
-	dcn314_init.c \
 	dcn314_optc.c \
 	dcn314_resource.c
 
@@ -752,7 +745,6 @@ SRCS+=	dcn32_dccg.c \
 	dcn32_hubbub.c \
 	dcn32_hubp.c \
 	dcn32_hwseq.c \
-	dcn32_init.c \
 	dcn32_mmhubbub.c \
 	dcn32_mpc.c \
 	dcn32_optc.c \
@@ -763,27 +755,60 @@ SRCS+=	dcn32_dccg.c \
 SRCS+=	dcn321_dio_link_encoder.c \
 	dcn321_resource.c
 
-# display/dc/dcn35
-SRCS+=	dcn35_clk_mgr.c \
-	dcn35_dccg.c \
+# display/dc/dc35
+SRCS+=	dcn35_dccg.c \
 	dcn35_dio_link_encoder.c \
 	dcn35_dio_stream_encoder.c \
 	dcn35_dpp.c \
-	dcn35_dsc.c \
 	dcn35_dwb.c \
-	dcn35_fpu.c \
+	dcn35_dsc.c \
 	dcn35_hubbub.c \
 	dcn35_hubp.c \
 	dcn35_hwseq.c \
-	dcn35_init.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
 	dcn35_pg_cntl.c \
-	dcn35_resource.c \
-	dcn35_smu.c \
-	dmub_dcn35.c \
-	irq_service_dcn35.c
+	dcn35_resource.c
+
+# display/dc/hwss/dcn10
+SRCS+=	dcn10_init.c
+
+# display/dc/hwss/dcn20
+SRCS+=	dcn20_init.c
+
+# display/dc/hwss/dcn201
+SRCS+=	dcn201_init.c
+
+# display/dc/hwss/dcn21
+SRCS+=	dcn21_init.c
+
+# display/dc/hwss/dcn30
+SRCS+=	dcn30_init.c
+
+# display/dc/hwss/dcn301
+SRCS+=	dcn301_init.c
+
+# display/dc/hwss/dcn302
+SRCS+=	dcn302_init.c
+
+# display/dc/hwss/dcn303
+SRCS+=	dcn303_init.c
+
+# display/dc/hwss/dcn31
+SRCS+=	dcn31_init.c
+
+# display/dc/hwss/dcn314
+SRCS+=	dcn314_init.c
+
+# display/dc/hwss/dcn32
+SRCS+=	dcn32_init.c
+
+# display/dc/hwss/dcn35
+SRCS+=	dcn35_init.c
+
+# display/dc/hwss/dcn351
+SRCS+=	dcn351_init.c
 
 # display/dc/clk_mgr/dcn31
 SRCS+=	dcn31_afmt.c \
@@ -797,7 +822,6 @@ SRCS+=	dcn31_afmt.c \
 	dcn31_hubp.c \
 	dcn31_hubbub.c \
 	dcn31_hwseq.c \
-	dcn31_init.c \
 	dcn31_optc.c \
 	dcn31_panel_cntl.c \
 	dcn31_resource.c \
@@ -823,6 +847,13 @@ SRCS+=	dcn316_clk_mgr.c \
 SRCS+=	dcn32_clk_mgr.c \
 	dcn32_clk_mgr_smu_msg.c
 
+# display/dc/clk_mgr/dcn35
+SRCS+=	dcn35_clk_mgr.c \
+	dcn35_smu.c \
+	dmub_dcn35.c \
+	dmub_dcn351.c \
+	irq_service_dcn35.c
+
 # display/dc/core
 SRCS+=	dc_vm_helper.c
 
@@ -838,8 +869,8 @@ SRCS+=	rc_calc.c \
 
 .endif
 
-# display/dc/dml
 .if !empty(KCONFIG:MDRM_AMD_DC_FP)
+# display/dc/dml
 SRCS+=	display_mode_lib.c \
 	display_mode_vba.c \
 	display_mode_vba_20.c \
@@ -848,7 +879,17 @@ SRCS+=	display_mode_lib.c \
 	display_rq_dlg_calc_20.c \
 	display_rq_dlg_calc_21.c \
 	dml1_display_rq_dlg_calc.c
-.endif
+
+# display/dc/dml2
+SRCS+=	display_mode_core.c \
+	display_mode_util.c \
+	dml2_dc_resource_mgmt.c \
+	dml2_mall_phantom.c \
+	dml2_policy.c \
+	dml2_translation_helper.c \
+	dml2_utils.c \
+	dml2_wrapper.c \
+	dml_display_rq_dlg_calc.c
 
 # display/dc/dml/dcn10
 SRCS+=	dcn10_fpu.c
@@ -879,16 +920,10 @@ SRCS+=	dcn32_fpu.c \
 # display/dc/dml/dcn321
 SRCS+=	dcn321_fpu.c
 
-# display/dc/dml2
-SRCS+=	display_mode_core.c \
-	display_mode_util.c \
-	dml_display_rq_dlg_calc.c \
-	dml2_dc_resource_mgmt.c \
-	dml2_mall_phantom.c \
-	dml2_policy.c \
-	dml2_translation_helper.c \
-	dml2_utils.c \
-	dml2_wrapper.c
+# display/dc/dml/dcn35
+SRCS+=	dcn35_fpu.c
+
+.endif # !empty(KCONFIG:MDRM_AMD_DC_FP)
 
 # display/dc/gpio/*
 SRCS+=	gpio_base.c \
@@ -934,16 +969,31 @@ SRCS+=	irq_service.c \
 	irq_service_dcn315.c \
 	irq_service_dcn32.c
 
-# display/dc/link/*
+# display/dc/link
+SRCS+=	link_detection.c \
+	link_dpms.c \
+	link_factory.c \
+	link_resource.c \
+	link_validation.c
+
+# display/dc/link/accessories/*
+SRCS+=	link_dp_cts.c \
+	link_dp_trace.c
+
+# display/dc/link/hwss/*
+SRCS+=	link_hwss_dio.c \
+	link_hwss_dio_fixed_vs_pe_retimer.c \
+	link_hwss_dpia.c \
+	link_hwss_hpo_dp.c \
+	link_hwss_hpo_fixed_vs_pe_retimer_dp.c
+
+# display/dc/link/protocols/*
 SRCS+=	link_ddc.c \
-	link_detection.c \
 	link_dp_capability.c \
-	link_dp_cts.c \
 	link_dp_dpia.c \
 	link_dp_dpia_bw.c \
 	link_dp_irq_handler.c \
 	link_dp_phy.c \
-	link_dp_trace.c \
 	link_dp_training.c \
 	link_dp_training_128b_132b.c \
 	link_dp_training_8b_10b.c \
@@ -951,17 +1001,8 @@ SRCS+=	link_ddc.c \
 	link_dp_training_dpia.c \
 	link_dp_training_fixed_vs_pe_retimer.c \
 	link_dpcd.c \
-	link_dpms.c \
 	link_edp_panel_control.c \
-	link_factory.c \
-	link_hpd.c \
-	link_hwss_dio.c \
-	link_hwss_dio_fixed_vs_pe_retimer.c \
-	link_hwss_dpia.c \
-	link_hwss_hpo_dp.c \
-	link_hwss_hpo_fixed_vs_pe_retimer_dp.c \
-	link_resource.c \
-	link_validation.c
+	link_hpd.c
 
 # display/dc/virtual
 SRCS+=	virtual_link_encoder.c \
@@ -1191,6 +1232,7 @@ CFLAGS.dml2_utils.c  = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml2_wrapper.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 
 CFLAGS.display_mode_lib.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.display_mode_util.c=	${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_20.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_21.c= ${FPUFLAGS} -mstack-alignment=4
@@ -1200,12 +1242,14 @@ CFLAGS.display_mode_vba_314.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_util_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_pipe_clocks.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_helpers.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_20.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_21.c= ${FPUFLAGS} -mstack-alignment=4 -Wno-missing-prototypes
 CFLAGS.display_rq_dlg_calc_314.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_32.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.soc_bounding_box.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_rq_dlg_calc_20v2.c= ${FPUFLAGS} -mstack-alignment=4
@@ -1231,8 +1275,8 @@ CWARNFLAGS.amdgpu_csa.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.amdgpu_device.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.amdgpu_discovery.c=			-Wno-unused-function
 CWARNFLAGS.amdgpu_dm_debugfs.c=			-Wno-pointer-bool-conversion -Wno-unused-but-set-variable
-CWARNFLAGS.amdgpu_fence.c=			-Wno-unused-variable
 CWARNFLAGS.amdgpu_fdinfo.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.amdgpu_fence.c=			-Wno-unused-variable
 CWARNFLAGS.amdgpu_gfx.c=			-Wno-unused-but-set-variable -Wno-tautological-overlap-compare
 CWARNFLAGS.amdgpu_ioc32.c=			-Wno-missing-prototypes
 CWARNFLAGS.amdgpu_pm.c=				-Wno-unused-const-variable
