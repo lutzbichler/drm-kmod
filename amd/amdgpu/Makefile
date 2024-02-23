@@ -29,6 +29,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn32 \
 	${SRCDIR}/display/dc/dml/dcn321 \
 	${SRCDIR}/display/dc/dml/dcn35 \
+	${SRCDIR}/display/dc/dml/dcn351 \
 	${SRCDIR}/display/dc/dml/dsc \
 	${SRCDIR}/display/dc/dml2
 .endif
@@ -188,6 +189,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn32 \
 	${SRCDIR}/display/dc/resource/dcn321 \
 	${SRCDIR}/display/dc/resource/dcn35 \
+	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
@@ -659,8 +661,7 @@ SRCS+=	dcn201_clk_mgr.c \
 	dcn201_mpc.c \
 	dcn201_opp.c \
 	dcn201_optc.c \
-	dcn201_resource.c \
-	irq_service_dcn201.c
+	dcn201_resource.c
 
 # display/dc/dcn21
 SRCS+=	dcn21_dccg.c \
@@ -691,10 +692,8 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	dcn30_resource.c \
 	dcn30_afmt.c \
 	dcn30_vpg.c \
-	irq_service_dcn30.c \
 	hw_factory_dcn30.c \
 	hw_translate_dcn30.c \
-	dmub_dcn30.c \
 	display_mode_vba_30.c \
 	display_rq_dlg_calc_30.c
 .endif
@@ -703,26 +702,20 @@ SRCS+=	dcn30_dio_link_encoder.c \
 SRCS+=	dcn301_resource.c \
 	dcn301_dccg.c \
 	dcn301_dio_link_encoder.c \
-	dcn301_fpu.c \
+	dcn301_hubbub.c \
 	dcn301_hwseq.c \
 	dcn301_optc.c \
 	dcn301_panel_cntl.c \
-	dcn301_hubbub.c \
 	vg_clk_mgr.c \
-	dcn301_smu.c \
-	dmub_dcn301.c
+	dcn301_smu.c
 
 # display/dc/dcn302
 SRCS+=	dcn302_hwseq.c \
-	dcn302_resource.c \
-	irq_service_dcn302.c \
-	dmub_dcn302.c
+	dcn302_resource.c
 
 # display/dc/dcn303
 SRCS+=	dcn303_hwseq.c \
-	dcn303_resource.c \
-	irq_service_dcn303.c \
-	dmub_dcn303.c
+	dcn303_resource.c
 
 # display/dc/dcn314
 SRCS+=	dcn314_dccg.c \
@@ -773,7 +766,7 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_resource.c
 
 # display/dc/dc351
-SRCS+=	irq_service_dcn351.c
+SRCS+=	dcn351_resource.c
 
 # display/dc/hwss/dcn10
 SRCS+=	dcn10_init.c
@@ -831,9 +824,7 @@ SRCS+=	dcn31_afmt.c \
 	dcn31_resource.c \
 	dcn31_vpg.c \
 	display_mode_vba_31.c \
-	display_rq_dlg_calc_31.c \
-	dmub_dcn31.c \
-	irq_service_dcn31.c
+	display_rq_dlg_calc_31.c
 
 # display/dc/clk_mgr/dcn314
 SRCS+=	dcn314_clk_mgr.c \
@@ -853,11 +844,7 @@ SRCS+=	dcn32_clk_mgr.c \
 
 # display/dc/clk_mgr/dcn35
 SRCS+=	dcn35_clk_mgr.c \
-	dcn35_smu.c \
-	dmub_dcn35.c \
-	irq_service_dcn35.c
-
-SRCS+=	dmub_dcn351.c
+	dcn35_smu.c
 
 # display/dc/core
 SRCS+=	dc_vm_helper.c
@@ -902,6 +889,9 @@ SRCS+=	dcn10_fpu.c
 # display/dc/dml/dcn30
 SRCS+=	dcn30_fpu.c
 
+# display/dc/dml/dcn301
+SRCS+=	dcn301_fpu.c
+
 # display/dc/dml/dcn302
 SRCS+=	dcn302_fpu.c
 
@@ -927,6 +917,9 @@ SRCS+=	dcn321_fpu.c
 
 # display/dc/dml/dcn35
 SRCS+=	dcn35_fpu.c
+
+# display/dc/dml/dcn351
+SRCS+=	dcn351_fpu.c
 
 .endif # !empty(KCONFIG:MDRM_AMD_DC_FP)
 
@@ -969,10 +962,17 @@ SRCS+=	irq_service.c \
 	irq_service_dce80.c \
 	irq_service_dcn10.c \
 	irq_service_dcn20.c \
+	irq_service_dcn201.c \
 	irq_service_dcn21.c \
+	irq_service_dcn30.c \
+	irq_service_dcn302.c \
+	irq_service_dcn303.c \
+	irq_service_dcn31.c \
 	irq_service_dcn314.c \
 	irq_service_dcn315.c \
-	irq_service_dcn32.c
+	irq_service_dcn32.c \
+	irq_service_dcn35.c \
+	irq_service_dcn351.c
 
 # display/dc/link
 SRCS+=	link_detection.c \
@@ -1037,10 +1037,17 @@ SRCS+=	dc_helper.c \
 # display/dmub/src
 SRCS+=	dmub_dcn20.c \
 	dmub_dcn21.c \
+	dmub_dcn30.c \
+	dmub_dcn301.c \
+	dmub_dcn302.c \
+	dmub_dcn303.c \
+	dmub_dcn31.c \
 	dmub_dcn314.c \
 	dmub_dcn315.c \
 	dmub_dcn316.c \
 	dmub_dcn32.c \
+	dmub_dcn35.c \
+	dmub_dcn351.c \
 	dmub_reg.c \
 	dmub_srv.c \
 	dmub_srv_stat.c
@@ -1225,6 +1232,8 @@ CFLAGS.dcn32_resource.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn32_resource_helpers.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn321_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn35_fpu.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dcn351_fpu.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dcn351_resource.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_mode_core.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.display_mode_util.c  = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
@@ -1491,7 +1500,8 @@ CWARNFLAGS.dcn32_resource_helpers.c=	-Wno-missing-prototypes -Wno-unused-but-set
 CWARNFLAGS.dcn321_fpu.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn321_resource.c=		-Wno-initializer-overrides -Wno-unused-const-variable
 CWARNFLAGS.dcn35_clk_mgr.c=		-Wno-incompatible-pointer-types
-CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides 
+CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
 
 CWARNFLAGS.hw_ddc.c=			-Wno-unused-but-set-variable
