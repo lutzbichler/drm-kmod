@@ -332,6 +332,10 @@ SRCS+=	i915_gpu_error.c
 SRCS+=	i915_hwmon.c
 .endif
 
+.if !empty(KCONFIG:MDRM_DISPLAY_DP_TUNNEL)
+SRCS+=	intel_dp_tunnel.c
+.endif
+
 # i915_perf.c         # This one opens a can of worms. Hold off for now.
 # intel_lpe_audio.c   # Need platform and irq_chip support
 
