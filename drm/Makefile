@@ -118,6 +118,10 @@ SRCS+=	drm_scdc_helper.c \
 SRCS+=	drm_dp_aux_dev.c
 .endif
 
+.if !empty(KCONFIG:MDRM_DISPLAY_DP_TUNNEL)
+SRCS+=	drm_dp_tunnel.c
+.endif
+
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
 CFLAGS+= -I${.CURDIR:H}/linuxkpi/gplv2/include
@@ -155,5 +159,6 @@ CWARNFLAGS+=-Wno-cast-qual
 CWARNFLAGS+= -Wno-pointer-sign -Wno-format
 
 CWARNFLAGS.drm_ioc32.c+=	-Wno-address-of-packed-member
+CWARNFLAGS.drm_dp_tunnel.c+=	-Wno-incompatible-pointer-types	
 
 .include <bsd.kmod.mk>
