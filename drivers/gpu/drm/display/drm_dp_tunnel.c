@@ -441,8 +441,8 @@ EXPORT_SYMBOL(drm_dp_tunnel_get);
 
 /**
  * drm_dp_tunnel_put - Put a reference for a DP tunnel
- * @tunnel - Tunnel object
- * @tracker - Debug tracker for the reference
+ * @tunnel: Tunnel object
+ * @tracker: Debug tracker for the reference
  *
  * Put a reference for @tunnel along with its debug *@tracker, which
  * was obtained with drm_dp_tunnel_get().
@@ -1200,7 +1200,7 @@ int drm_dp_tunnel_alloc_bw(struct drm_dp_tunnel *tunnel, int bw)
 EXPORT_SYMBOL(drm_dp_tunnel_alloc_bw);
 
 /**
- * drm_dp_tunnel_atomic_get_allocated_bw - Get the BW allocated for a DP tunnel
+ * drm_dp_tunnel_get_allocated_bw - Get the BW allocated for a DP tunnel
  * @tunnel: Tunnel object
  *
  * Get the current BW allocated for @tunnel. After the tunnel is created /
@@ -1922,6 +1922,7 @@ static void destroy_mgr(struct drm_dp_tunnel_mgr *mgr)
 /**
  * drm_dp_tunnel_mgr_create - Create a DP tunnel manager
  * @dev: DRM device object
+ * @max_group_count: Maximum number of tunnel groups
  *
  * Creates a DP tunnel manager for @dev.
  *
