@@ -5700,15 +5700,15 @@ intel_dp_detect(struct drm_connector *connector,
 		goto out;
 	}
 
-	if (!intel_dp_is_edp(intel_dp))
-		intel_psr_init_dpcd(intel_dp);
-
 	ret = intel_dp_tunnel_detect(intel_dp, ctx);
 	if (ret == -EDEADLK)
 		return ret;
 
 	if (ret == 1)
 		intel_connector->base.epoch_counter++;
+
+	if (!intel_dp_is_edp(intel_dp))
+		intel_psr_init_dpcd(intel_dp);
 
 	intel_dp_detect_dsc_caps(intel_dp, intel_connector);
 
