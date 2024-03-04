@@ -4207,7 +4207,6 @@ static void release_minimal_transition_state(struct dc *dc,
 {
 	restore_minimal_pipe_split_policy(dc, base_context, policy);
 	dc_state_release(minimal_transition_context);
-	/* restore previous pipe split and odm policy */
 }
 
 static void force_vsync_flip_in_minimal_transition_context(struct dc_state *context)
@@ -4262,7 +4261,7 @@ static bool is_pipe_topology_transition_seamless_with_intermediate_step(
 					intermediate_state, final_state);
 }
 
-static void swap_and_free_current_context(struct dc *dc,
+static void swap_and_release_current_context(struct dc *dc,
 		struct dc_state *new_context, struct dc_stream_state *stream)
 {
 
@@ -4324,7 +4323,7 @@ static bool commit_minimal_transition_based_on_new_context(struct dc *dc,
 			commit_planes_for_stream(dc, srf_updates,
 					surface_count, stream, NULL,
 					UPDATE_TYPE_FULL, intermediate_context);
-			swap_and_free_current_context(
+			swap_and_release_current_context(
 					dc, intermediate_context, stream);
 			dc_state_retain(dc->current_state);
 			success = true;
@@ -4341,6 +4340,7 @@ static bool commit_minimal_transition_based_on_current_context(struct dc *dc,
 	bool success = false;
 	struct pipe_split_policy_backup policy;
 	struct dc_state *intermediate_context;
+	struct dc_state *old_current_state = dc->current_state;
 	struct dc_surface_update srf_updates[MAX_SURFACE_NUM] = {0};
 	int surface_count;
 
@@ -4356,8 +4356,10 @@ static bool commit_minimal_transition_based_on_current_context(struct dc *dc,
 	 * with the current state.
 	 */
 	restore_planes_and_stream_state(&dc->scratch.current_state, stream);
+	dc_state_retain(old_current_state);
 	intermediate_context = create_minimal_transition_state(dc,
-			dc->current_state, &policy);
+			old_current_state, &policy);
+
 	if (intermediate_context) {
 		if (is_pipe_topology_transition_seamless_with_intermediate_step(
 				dc,
@@ -4370,14 +4372,15 @@ static bool commit_minimal_transition_based_on_current_context(struct dc *dc,
 			commit_planes_for_stream(dc, srf_updates,
 					surface_count, stream, NULL,
 					UPDATE_TYPE_FULL, intermediate_context);
-			swap_and_free_current_context(
+			swap_and_release_current_context(
 					dc, intermediate_context, stream);
 			dc_state_retain(dc->current_state);
 			success = true;
 		}
 		release_minimal_transition_state(dc, intermediate_context,
-				dc->current_state, &policy);
+				old_current_state, &policy);
 	}
+	dc_state_release(old_current_state);
 	/*
 	 * Restore stream and plane states back to the values associated with
 	 * new context.
@@ -4501,12 +4504,14 @@ static bool commit_minimal_transition_state(struct dc *dc,
 			dc->debug.pipe_split_policy != MPC_SPLIT_AVOID ? "MPC in Use" :
 			"Unknown");
 
+	dc_state_retain(transition_base_context);
 	transition_context = create_minimal_transition_state(dc,
 			transition_base_context, &policy);
 	if (transition_context) {
 		ret = dc_commit_state_no_check(dc, transition_context);
 		release_minimal_transition_state(dc, transition_context, transition_base_context, &policy);
 	}
+	dc_state_release(transition_base_context);
 
 	if (ret != DC_OK) {
 		/* this should never happen */
@@ -4844,7 +4849,7 @@ static bool update_planes_and_stream_v2(struct dc *dc,
 				context);
 	}
 	if (dc->current_state != context)
-		swap_and_free_current_context(dc, context, stream);
+		swap_and_release_current_context(dc, context, stream);
 	return true;
 }
 
@@ -4946,7 +4951,7 @@ static bool update_planes_and_stream_v3(struct dc *dc,
 		commit_planes_and_stream_update_with_new_context(dc,
 				srf_updates, surface_count, stream,
 				stream_update, update_type, new_context);
-		swap_and_free_current_context(dc, new_context, stream);
+		swap_and_release_current_context(dc, new_context, stream);
 	}
 
 	return true;
