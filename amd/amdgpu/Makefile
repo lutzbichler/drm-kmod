@@ -1501,7 +1501,8 @@ CWARNFLAGS.dcn32_resource_helpers.c=	-Wno-missing-prototypes -Wno-unused-but-set
 CWARNFLAGS.dcn321_fpu.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn321_resource.c=		-Wno-initializer-overrides -Wno-unused-const-variable
 CWARNFLAGS.dcn35_clk_mgr.c=		-Wno-incompatible-pointer-types
-CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides 
+CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn351_fpu.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
 
