@@ -18,6 +18,17 @@ enum hdcp_ddi {
 	HDCP_DDI_RANGE_END = HDCP_DDI_A,
 };
 
+/**
+ * enum hdcp_transcoder - ME/GSC Firmware defined index for transcoders
+ * @HDCP_INVALID_TRANSCODER: Index for Invalid transcoder
+ * @HDCP_TRANSCODER_EDP: Index for EDP Transcoder
+ * @HDCP_TRANSCODER_DSI0: Index for DSI0 Transcoder
+ * @HDCP_TRANSCODER_DSI1: Index for DSI1 Transcoder
+ * @HDCP_TRANSCODER_A: Index for Transcoder A
+ * @HDCP_TRANSCODER_B: Index for Transcoder B
+ * @HDCP_TRANSCODER_C: Index for Transcoder C
+ * @HDCP_TRANSCODER_D: Index for Transcoder D
+ */
 enum hdcp_transcoder {
 	HDCP_INVALID_TRANSCODER = 0x00,
 	HDCP_TRANSCODER_EDP,
@@ -52,6 +63,26 @@ struct hdcp_port_data {
 	uint16_t k;
 };
 
+/**
+ * struct i915_hdcp_ops- ops for HDCP2.2 services.
+ * @owner: Module providing the ops
+ * @initiate_hdcp2_session: Initiate a Wired HDCP2.2 Tx Session.
+ *			    And Prepare AKE_Init.
+ * @verify_receiver_cert_prepare_km: Verify the Receiver Certificate
+ *				     AKE_Send_Cert and prepare
+ *				     AKE_Stored_Km/AKE_No_Stored_Km
+ * @verify_hprime: Verify AKE_Send_H_prime
+ * @store_pairing_info: Store pairing info received
+ * @initiate_locality_check: Prepare LC_Init
+ * @verify_lprime: Verify lprime
+ * @get_session_key: Prepare SKE_Send_Eks
+ * @repeater_check_flow_prepare_ack: Validate the Downstream topology
+ *				     and prepare rep_ack
+ * @verify_mprime: Verify mprime
+ * @enable_hdcp_authentication:  Mark a port as authenticated.
+ * @close_hdcp_session: Close the Wired HDCP Tx session per port.
+ *			This also disables the authenticated state of the port.
+ */
 struct i915_hdcp_ops {
 	int (*initiate_hdcp2_session)(struct device *, struct hdcp_port_data *,
 	    struct hdcp2_ake_init *);
@@ -78,9 +109,26 @@ struct i915_hdcp_ops {
 	int (*close_hdcp_session)(struct device *, struct hdcp_port_data *);
 };
 
+/**
+ * struct i915_hdcp_arbiter - Used for communication between i915
+ * and hdcp drivers for the HDCP2.2 services
+ */
 struct i915_hdcp_arbiter {
+	/**
+	 * @hdcp_dev: device that provides the HDCP2.2 service from MEI Bus.
+	 */
 	struct device *hdcp_dev;
+
+	/**
+	 * @ops: Ops implemented by hdcp driver or intel_hdcp_gsc, used by i915
+	 * driver.
+	 */
 	const struct i915_hdcp_ops *ops;
+
+	/**
+	 * @mutex: To protect the above members.
+	 */
+	struct mutex mutex;
 };
 
 enum fw_hdcp_status {
