@@ -315,7 +315,7 @@ trace_xe_vma_fail(struct xe_vma *vma)
 }
 
 static inline void
-trace_xe_vma_usm_invalidate(struct xe_vma *vma)
+trace_xe_vma_invalidate(struct xe_vma *vma)
 {
 }
 
