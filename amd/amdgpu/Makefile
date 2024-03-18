@@ -312,7 +312,6 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_sched.c \
 	amdgpu_sdma.c \
 	amdgpu_umsch_mm.c \
-	amdgpu_vpe.c \
 	sienna_cichlid.c \
 	amdgpu_seq64.c \
 	amdgpu_sync.c \
@@ -330,6 +329,8 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_vm_cpu.c \
 	amdgpu_vm_pt.c \
 	amdgpu_vm_sdma.c \
+	amdgpu_vm_tlb_fence.c \
+	amdgpu_vpe.c \
 	amdgpu_vram_mgr.c \
 	amdgpu_xcp.c \
 	amdgpu_xgmi.c \
