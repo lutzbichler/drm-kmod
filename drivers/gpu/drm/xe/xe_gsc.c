@@ -281,7 +281,7 @@ static void gsc_work(struct work_struct *work)
 	int ret;
 
 	xe_pm_runtime_get(xe);
-	xe_force_wake_get(gt_to_fw(gt), XE_FW_GSC);
+	xe_gt_WARN_ON(gt, xe_force_wake_get(gt_to_fw(gt), XE_FW_GSC));
 
 	ret = gsc_upload_and_init(gsc);
 	if (ret && ret != -EEXIST)
