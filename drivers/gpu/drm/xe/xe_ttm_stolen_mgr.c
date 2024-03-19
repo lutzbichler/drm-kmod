@@ -217,6 +217,11 @@ void xe_ttm_stolen_mgr_init(struct xe_device *xe)
 	u64 stolen_size, io_size, pgsize;
 	int err;
 
+	if (!mgr) {
+		drm_dbg_kms(&xe->drm, "Stolen mgr init failed\n");
+		return;
+	}
+
 #ifdef __FreeBSD__
 #if defined(__amd64__)
 	intel_graphics_stolen_res = (struct resource)
