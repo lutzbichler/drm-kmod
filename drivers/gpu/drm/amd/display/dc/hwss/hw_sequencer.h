@@ -535,6 +535,12 @@ void get_fams2_visual_confirm_color(
 	struct pipe_ctx *pipe_ctx,
 	struct tg_color *color);
 
+void get_fams2_visual_confirm_color(
+	struct dc *dc,
+	struct dc_state *context,
+	struct pipe_ctx *pipe_ctx,
+	struct tg_color *color);
+
 void get_mclk_switch_visual_confirm_color(
 		struct pipe_ctx *pipe_ctx,
 		struct tg_color *color);
