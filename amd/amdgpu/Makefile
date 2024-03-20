@@ -1420,7 +1420,6 @@ CFLAGS.display_rq_dlg_calc_21.c= ${FPUFLAGS} -mstack-alignment=4 -Wno-missing-pr
 CFLAGS.display_rq_dlg_calc_314.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml_top_mcache.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4_calcs.c= ${FPUFLAGS} -mstack-alignment=4
