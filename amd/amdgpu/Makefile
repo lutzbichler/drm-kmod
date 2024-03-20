@@ -261,6 +261,7 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_ctx.c \
 	amdgpu_debugfs.c \
 	amdgpu_device.c \
+	amdgpu_dev_coredump.c \
 	amdgpu_discovery.c \
 	amdgpu_display.c \
 	amdgpu_doorbell_mgr.c \
