@@ -1755,7 +1755,7 @@ next:
 		xe_exec_queue_last_fence_get(wait_exec_queue, vm) : fence;
 	if (last_op) {
 		for (i = 0; i < num_syncs; i++)
-			xe_sync_entry_signal(&syncs[i], NULL, fence);
+			xe_sync_entry_signal(&syncs[i], fence);
 	}
 
 	return fence;
@@ -1829,7 +1829,7 @@ next:
 
 	if (last_op) {
 		for (i = 0; i < num_syncs; i++)
-			xe_sync_entry_signal(&syncs[i], NULL,
+			xe_sync_entry_signal(&syncs[i],
 					     cf ? &cf->base : fence);
 	}
 
@@ -1890,7 +1890,7 @@ static int __xe_vm_bind(struct xe_vm *vm, struct xe_vma *vma,
 		fence = xe_exec_queue_last_fence_get(wait_exec_queue, vm);
 		if (last_op) {
 			for (i = 0; i < num_syncs; i++)
-				xe_sync_entry_signal(&syncs[i], NULL, fence);
+				xe_sync_entry_signal(&syncs[i], fence);
 		}
 	}
 
@@ -2111,7 +2111,7 @@ static int xe_vm_prefetch(struct xe_vm *vm, struct xe_vma *vma,
 				struct dma_fence *fence =
 					xe_exec_queue_last_fence_get(wait_exec_queue, vm);
 
-				xe_sync_entry_signal(&syncs[i], NULL, fence);
+				xe_sync_entry_signal(&syncs[i], fence);
 				dma_fence_put(fence);
 			}
 		}
@@ -2989,7 +2989,7 @@ static int vm_bind_ioctl_signal_fences(struct xe_vm *vm,
 		return PTR_ERR(fence);
 
 	for (i = 0; i < num_syncs; i++)
-		xe_sync_entry_signal(&syncs[i], NULL, fence);
+		xe_sync_entry_signal(&syncs[i], fence);
 
 	xe_exec_queue_last_fence_set(to_wait_exec_queue(vm, q), vm,
 				     fence);
