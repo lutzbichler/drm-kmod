@@ -288,7 +288,7 @@ int amdgpu_irq_init(struct amdgpu_device *adev)
 
 #ifdef __linux__
 	if (!amdgpu_msi_ok(adev))
-		flags = PCI_IRQ_LEGACY;
+		flags = PCI_IRQ_INTX;
 	else
 		flags = PCI_IRQ_ALL_TYPES;
 
