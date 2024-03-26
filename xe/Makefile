@@ -130,7 +130,8 @@ SRCS+=  xe_hwmon.c
 .endif
 
 .if !empty(KCONFIG:MPCI_IOV)
-SRCS+=	xe_lmtt.c \
+SRCS+=	xe_gt_sriov_pf_control.c \
+	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c
 .endif
