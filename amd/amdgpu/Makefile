@@ -815,7 +815,8 @@ SRCS+=	dcn32_init.c
 SRCS+=	dcn35_init.c
 
 # display/dc/hwss/dcn351
-SRCS+=	dcn351_init.c
+SRCS+=	dcn351_init.c \
+	dcn351_hwseq.c
 
 # display/dc/clk_mgr/dcn31
 SRCS+=	dcn31_afmt.c \
