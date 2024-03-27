@@ -157,3 +157,11 @@ drmm_add_final_kfree(struct drm_device *dev, void *p)
 {
 	dev->managed.final_kfree = p;
 }
+
+void
+drmm_mutex_release(struct drm_device *dev, void *r)
+{
+
+	mutex_destroy((struct mutex *)r);	
+}
+
