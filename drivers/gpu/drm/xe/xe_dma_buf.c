@@ -5,7 +5,9 @@
 
 #include "xe_dma_buf.h"
 
+#ifdef __linux__
 #include <kunit/test.h>
+#endif
 #include <linux/dma-buf.h>
 #include <linux/pci-p2pdma.h>
 
@@ -26,9 +28,11 @@ static int xe_dma_buf_attach(struct dma_buf *dmabuf,
 {
 	struct drm_gem_object *obj = attach->dmabuf->priv;
 
+#ifdef __linux__
 	if (attach->peer2peer &&
 	    pci_p2pdma_distance(to_pci_dev(obj->dev->dev), attach->dev, false) < 0)
 		attach->peer2peer = false;
+#endif
 
 	if (!attach->peer2peer && !xe_bo_can_migrate(gem_to_xe_bo(obj), XE_PL_TT))
 		return -EOPNOTSUPP;
