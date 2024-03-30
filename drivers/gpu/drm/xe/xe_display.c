@@ -6,6 +6,10 @@
 #include "xe_display.h"
 #include "regs/xe_regs.h"
 
+#ifdef __FreeBSD__
+#include <linux/acpi.h>
+#endif
+
 #include <linux/fb.h>
 
 #include <drm/drm_drv.h>
