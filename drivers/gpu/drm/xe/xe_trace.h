@@ -21,5 +21,10 @@ trace_xe_bo_cpu_fault(struct xe_bo *bo)
 {
 }
 
+static inline void
+trace_xe_exec_queue_close(struct xe_exec_queue *q)
+{
+}
+
 #endif /* _XE_TRACE_FREEBSD_H_ */
 
