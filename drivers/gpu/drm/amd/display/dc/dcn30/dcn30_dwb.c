@@ -228,9 +228,7 @@ static const struct dwbc_funcs dcn30_dwbc_funcs = {
 	.is_enabled		= dwb3_is_enabled,
 	.set_stereo		= dwb3_set_stereo,
 	.set_new_content	= dwb3_set_new_content,
-	.dwb_program_output_csc	= NULL,
 	.dwb_ogam_set_input_transfer_func	= dwb3_ogam_set_input_transfer_func, //TODO: rename
-	.dwb_set_scaler		= NULL,
 };
 
 void dcn30_dwbc_construct(struct dcn30_dwbc *dwbc30,
