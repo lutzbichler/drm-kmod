@@ -241,7 +241,9 @@ void xe_display_register(struct xe_device *xe)
 		return;
 
 	intel_display_driver_register(xe);
+#ifdef __linux__
 	intel_register_dsm_handler();
+#endif
 	intel_power_domains_enable(xe);
 }
 
@@ -250,7 +252,9 @@ void xe_display_unregister(struct xe_device *xe)
 	if (!xe->info.enable_display)
 		return;
 
+#ifdef __linux__
 	intel_unregister_dsm_handler();
+#endif
 	intel_power_domains_disable(xe);
 	intel_display_driver_unregister(xe);
 }

@@ -1,24 +1,34 @@
 # $FreeBSD$
 
 SRCDIR=	${.CURDIR:H}/drivers/gpu/drm/xe
+I915_SRCDIR= ${.CURDIR:H}/drivers/gpu/drm/i915
 
 .PATH:	${SRCDIR} \
 	${SRCDIR}/display \
-	${SRCDIR}/gem \
-	${SRCDIR}/gt \
-	${SRCDIR}/gt/uc \
-	${SRCDIR}/oa \
-	${SRCDIR}/pxp \
-	${SRCDIR}/soc
+	${SRCDIR}/display/ext \
+	${SRCDIR}/generated \
+	${I915_SRCDIR} \
+	${I915_SRCDIR}/display \
+	${I915_SRCDIR}/soc
 
 .include "../kconfig.mk"
 .include "../linuxkpi_version.mk"
 
 KMOD=	xe
+
+xe.ko:	xe_wa_oob.c
+
+xe_gen_wa_oob:	${SRCDIR}/xe_gen_wa_oob.c
+	cc -o xe_gen_wa_oob ${SRCDIR}/xe_gen_wa_oob.c
+
+xe_wa_oob.c:	xe_wa_oob.rules	xe_gen_wa_oob
+	mkdir -p ${SRCDIR}/generated
+	./xe_gen_wa_oob ${SRCDIR}/xe_wa_oob.rules ${SRCDIR}/generated/xe_wa_oob.c ${SRCDIR}/generated/xe_wa_oob.h
+
+# xe
 SRCS=	xe_bb.c \
 	xe_bo.c \
 	xe_bo_evict.c \
-	xe_debugfs.c \
 	xe_devcoredump.c \
 	xe_device.c \
 	xe_device_sysfs.c \
@@ -29,7 +39,6 @@ SRCS=	xe_bb.c \
 	xe_exec_queue.c \
 	xe_execlist.c \
 	xe_force_wake.c \
-	xe_gen_wa_oob.c \
 	xe_ggtt.c \
 	xe_gpu_scheduler.c \
 	xe_gsc.c \
@@ -37,7 +46,6 @@ SRCS=	xe_bb.c \
 	xe_gt.c \
 	xe_gt_ccs_mode.c \
 	xe_gt_clock.c \
-	xe_gt_debugfs.c \
 	xe_gt_freq.c \
 	xe_gt_idle.c \
 	xe_gt_mcr.c \
@@ -49,22 +57,16 @@ SRCS=	xe_bb.c \
 	xe_guc.c \
 	xe_guc_ads.c \
 	xe_guc_ct.c \
-	xe_guc_debugfs.c \
 	xe_guc_hwconfig.c \
 	xe_guc_log.c \
 	xe_guc_pc.c \
 	xe_guc_submit.c \
 	xe_heci_gsc.c \
 	xe_huc.c \
-	xe_huc_debugfs.c \
 	xe_hw_engine.c \
 	xe_hw_engine_class_sysfs.c \
 	xe_hw_fence.c \
-	xe_hwmon.c \
 	xe_irq.c \
-	xe_lmtt.c \
-	xe_lmtt_2l.c \
-	xe_lmtt_ml.c \
 	xe_lrc.c \
 	xe_migrate.c \
 	xe_mmio.c \
@@ -95,12 +97,134 @@ SRCS=	xe_bb.c \
 	xe_ttm_vram_mgr.c \
 	xe_tuning.c \
 	xe_uc.c \
-	xe_uc_debugfs.c \
 	xe_uc_fw.c \
 	xe_vm.c \
 	xe_wa.c \
 	xe_wait_user_fence.c \
 	xe_wopcm.c
+
+# xe/display
+SRCS+=	intel_fb_bo.c \
+	intel_fbdev_fb.c \
+	xe_display_misc.c \
+	xe_display_rps.c \
+	xe_dsb_buffer.c \
+	xe_fb_pin.c \
+	xe_hdcp_gsc.c \
+	xe_plane_initial.c
+
+# xe/display/ext
+SRCS+=	i915_irq.c \
+	i915_utils.c
+
+.if !empty(KCONFIG:MHWMON)
+SRCS+=  xe_hwmon.c
+.endif
+
+.if !empty(KCONFIG:MPCI_IOV)
+SRCS+=	xe_lmtt.c \
+	xe_lmtt_2l.c \
+	xe_lmtt_ml.c
+.endif
+
+.if !empty(KCONFIG:MDEBUG_FS)
+SRCS+=	xe_debugfs.c \
+	xe_gt_debugfs.c \
+	xe_guc_debugfs.c \
+	xe_huc_debugfs.c \
+	xe_uc_debugfs.c
+.endif
+
+# i915
+SRCS+=	intel_freebsd.c
+
+# i915/display
+SRCS+=	icl_dsi.c \
+    intel_acpi.c \
+    intel_atomic.c \
+    intel_atomic_plane.c \
+    intel_audio.c \
+    intel_backlight.c \
+    intel_bios.c \
+    intel_bw.c \
+    intel_cdclk.c \
+    intel_color.c \
+    intel_combo_phy.c \
+    intel_connector.c \
+    intel_crtc.c \
+    intel_crtc_state_dump.c \
+    intel_cursor.c \
+    intel_cx0_phy.c \
+    intel_ddi.c \
+    intel_ddi_buf_trans.c \
+    intel_display.c \
+    intel_display_debugfs.c \
+    intel_display_debugfs_params.c \
+    intel_display_device.c \
+    intel_display_driver.c \
+    intel_display_irq.c \
+    intel_display_params.c \
+    intel_display_power.c \
+    intel_display_power_map.c \
+    intel_display_power_well.c \
+    intel_display_trace.c \
+    intel_display_wa.c \
+    intel_dkl_phy.c \
+    intel_dmc.c \
+    intel_dp.c \
+    intel_dp_aux.c \
+    intel_dp_aux_backlight.c \
+    intel_dp_hdcp.c \
+    intel_dp_link_training.c \
+    intel_dp_mst.c \
+    intel_dpll.c \
+    intel_dpll_mgr.c \
+    intel_dpt_common.c \
+    intel_drrs.c \
+    intel_dsb.c \
+    intel_dsi.c \
+    intel_dsi_dcs_backlight.c \
+    intel_dsi_vbt.c \
+    intel_fb.c \
+    intel_fbc.c \
+    intel_fbdev.c \
+    intel_fdi.c \
+    intel_fifo_underrun.c \
+    intel_frontbuffer.c \
+    intel_global_state.c \
+    intel_gmbus.c \
+    intel_hdcp.c \
+    intel_hdmi.c \
+    intel_hotplug.c \
+    intel_hotplug_irq.c \
+    intel_hti.c \
+    intel_link_bw.c \
+    intel_lspcon.c \
+    intel_modeset_lock.c \
+    intel_modeset_setup.c \
+    intel_modeset_verify.c \
+    intel_opregion.c \
+    intel_panel.c \
+    intel_pipe_crc.c \
+    intel_pmdemand.c \
+    intel_pps.c \
+    intel_psr.c \
+    intel_qp_tables.c \
+    intel_quirks.c \
+    intel_snps_phy.c \
+    intel_tc.c \
+    intel_vblank.c \
+    intel_vdsc.c \
+    intel_vga.c \
+    intel_vrr.c \
+    intel_wm.c \
+    skl_scaler.c \
+    skl_universal_plane.c \
+    skl_watermark.c
+
+# i915/soc
+SRCS+=	intel_dram.c \
+    intel_pch.c
 
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
@@ -113,11 +237,13 @@ CFLAGS+= -I${SYSDIR}/compat/linuxkpi/dummy/include
 CFLAGS+= -I${.CURDIR:H}/include
 CFLAGS+= -I${.CURDIR:H}/include/drm
 CFLAGS+= -I${.CURDIR:H}/include/uapi
-CFLAGS+= -I${SRCDIR:H:H} -I${SRCDIR} -I${SRCDIR}/display
+CFLAGS+= -I${SRCDIR:H:H}
+CFLAGS+= -I${SRCDIR}
+CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/display/ext
 CFLAGS+= -I${SRCDIR}/compat-i915-headers
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
-CFLAGS+= -Ddrm_i915_gem_object=xe_bo -Ddrm_i915_private=xe_device 
+CFLAGS+= -Ddrm_i915_gem_object=xe_bo -Ddrm_i915_private=xe_device
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
 CFLAGS+= '-DLINUXKPI_PARAM_PREFIX=xe_' -DDRM_SYSCTL_PARAM_PREFIX=_${KMOD}
@@ -143,3 +269,14 @@ SRCS	+=			\
 # error: cast from 'const unsigned long *' to 'volatile unsigned long *'
 CWARNFLAGS += -Wno-pointer-arith -Wno-format -Wno-cast-qual
 
+CWARNFLAGS.xe_dsb_buffer.c=		-Wno-uninitialized
+CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
+CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
+CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
+CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
+CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
+CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
+
+CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides
+CWARNFLAGS.intel_dpll_mgr.c=		-Wno-compare-distinct-pointer-types
+CWARNFLAGS.intel_fbdev.c=		-Wno-initializer-overrides

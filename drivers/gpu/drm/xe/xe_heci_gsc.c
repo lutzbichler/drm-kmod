@@ -19,6 +19,7 @@
 #define PVC_GSC_HECI2_BASE			0x285000
 #define DG2_GSC_HECI2_BASE			0x374000
 
+#ifdef __FreeBSD_not_yet
 static void heci_gsc_irq_mask(struct irq_data *d)
 {
 	/* generic irq handling */
@@ -87,9 +88,11 @@ static void heci_gsc_release_dev(struct device *dev)
 
 	kfree(adev);
 }
+#endif
 
 void xe_heci_gsc_fini(struct xe_device *xe)
 {
+#ifdef __FreeBSD_not_yet
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
 
 	if (!HAS_HECI_GSCFI(xe))
@@ -106,8 +109,10 @@ void xe_heci_gsc_fini(struct xe_device *xe)
 	if (heci_gsc->irq >= 0)
 		irq_free_desc(heci_gsc->irq);
 	heci_gsc->irq = -1;
+#endif
 }
 
+#ifdef __FreeBSD_not_yet
 static int heci_gsc_irq_setup(struct xe_device *xe)
 {
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
@@ -170,9 +175,11 @@ static int heci_gsc_add_device(struct xe_device *xe, const struct heci_gsc_def *
 	}
 	return ret;
 }
+#endif
 
 void xe_heci_gsc_init(struct xe_device *xe)
 {
+#ifdef __FreeBSD_not_yet
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
 	const struct heci_gsc_def *def;
 	int ret;
@@ -211,10 +218,12 @@ void xe_heci_gsc_init(struct xe_device *xe)
 	return;
 fail:
 	xe_heci_gsc_fini(xe);
+#endif
 }
 
 void xe_heci_gsc_irq_handler(struct xe_device *xe, u32 iir)
 {
+#ifdef __FreeBSD_not_yet
 	int ret;
 
 	if ((iir & GSC_IRQ_INTF(1)) == 0)
@@ -231,4 +240,5 @@ void xe_heci_gsc_irq_handler(struct xe_device *xe, u32 iir)
 	ret = generic_handle_irq(xe->heci_gsc.irq);
 	if (ret)
 		drm_err_ratelimited(&xe->drm, "error handling GSC irq: %d\n", ret);
+#endif
 }

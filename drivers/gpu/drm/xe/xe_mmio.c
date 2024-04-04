@@ -27,6 +27,7 @@
 
 #define BAR_SIZE_SHIFT 20
 
+#ifdef __linux__
 static void
 _resize_bar(struct xe_device *xe, int resno, resource_size_t size)
 {
@@ -46,6 +47,7 @@ _resize_bar(struct xe_device *xe, int resno, resource_size_t size)
 
 	drm_info(&xe->drm, "BAR%d resized to %dM\n", resno, 1 << bar_size);
 }
+#endif
 
 /*
  * if force_vram_bar_size is set, attempt to set to the requested size
@@ -53,6 +55,7 @@ _resize_bar(struct xe_device *xe, int resno, resource_size_t size)
  */
 static void xe_resize_vram_bar(struct xe_device *xe)
 {
+#ifdef __linux__
 	u64 force_vram_bar_size = xe_modparam.force_vram_bar_size;
 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 	struct pci_bus *root = pdev->bus;
@@ -121,15 +124,18 @@ static void xe_resize_vram_bar(struct xe_device *xe)
 
 	pci_assign_unassigned_bus_resources(pdev->bus);
 	pci_write_config_dword(pdev, PCI_COMMAND, pci_cmd);
+#endif
 }
 
 static bool xe_pci_resource_valid(struct pci_dev *pdev, int bar)
 {
+#ifdef __linux__
 	if (!pci_resource_flags(pdev, bar))
 		return false;
 
 	if (pci_resource_flags(pdev, bar) & IORESOURCE_UNSET)
 		return false;
+#endif
 
 	if (!pci_resource_len(pdev, bar))
 		return false;
