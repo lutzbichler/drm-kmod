@@ -16,7 +16,9 @@
 struct xe_modparam xe_modparam = {
 	.enable_display = true,
 	.guc_log_level = 5,
+#ifdef __linux__
 	.force_probe = CONFIG_DRM_XE_FORCE_PROBE,
+#endif
 	/* the rest are 0 by default */
 };
 
@@ -92,10 +94,26 @@ static void __exit xe_exit(void)
 		init_funcs[i].exit();
 }
 
+#ifdef __linux__
 module_init(xe_init);
 module_exit(xe_exit);
+#endif
 
 MODULE_AUTHOR("Intel Corporation");
 
 MODULE_DESCRIPTION(DRIVER_DESC);
 MODULE_LICENSE("GPL and additional rights");
+
+/* BSD stuff */
+#ifdef __FreeBSD__
+LKPI_DRIVER_MODULE(xe, xe_init, xe_exit);
+MODULE_DEPEND(xe, drmn, 2, 2, 2);
+MODULE_DEPEND(xe, ttm, 1, 1, 1);
+MODULE_DEPEND(xe, linuxkpi, 1, 1, 1);
+MODULE_DEPEND(xe, linuxkpi_video, 1, 1, 1);
+MODULE_DEPEND(xe, dmabuf, 1, 1, 1);
+MODULE_DEPEND(xe, firmware, 1, 1, 1);
+#ifdef CONFIG_DEBUG_FS
+MODULE_DEPEND(xe, lindebugfs, 1, 1, 1);
+#endif
+#endif

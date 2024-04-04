@@ -56,9 +56,13 @@ static struct drm_gem_object *xe_vm_obj(struct xe_vm *vm)
  */
 int xe_vma_userptr_check_repin(struct xe_userptr_vma *uvma)
 {
+#ifdef __linux__
 	return mmu_interval_check_retry(&uvma->userptr.notifier,
 					uvma->userptr.notifier_seq) ?
 		-EAGAIN : 0;
+#elif defined(__FreeBSD__)
+	return (0);
+#endif
 }
 
 int xe_vma_userptr_pin_pages(struct xe_userptr_vma *uvma)
@@ -69,20 +73,26 @@ int xe_vma_userptr_pin_pages(struct xe_userptr_vma *uvma)
 	struct xe_device *xe = vm->xe;
 	const unsigned long num_pages = xe_vma_size(vma) >> PAGE_SHIFT;
 	struct page **pages;
+#ifdef __linux__
 	bool in_kthread = !current->mm;
 	unsigned long notifier_seq;
+#endif
 	int pinned, ret, i;
 	bool read_only = xe_vma_read_only(vma);
 
 	lockdep_assert_held(&vm->lock);
 	xe_assert(xe, xe_vma_is_userptr(vma));
+#ifdef __linux__
 retry:
+#endif
 	if (vma->gpuva.flags & XE_VMA_DESTROYED)
 		return 0;
 
+#ifdef __linux__
 	notifier_seq = mmu_interval_read_begin(&userptr->notifier);
 	if (notifier_seq == userptr->notifier_seq)
 		return 0;
+#endif
 
 	pages = kvmalloc_array(num_pages, sizeof(*pages), GFP_KERNEL);
 	if (!pages)
@@ -98,6 +108,7 @@ retry:
 	}
 
 	pinned = ret = 0;
+#ifdef __linux__
 	if (in_kthread) {
 		if (!mmget_not_zero(userptr->notifier.mm)) {
 			ret = -EFAULT;
@@ -105,6 +116,7 @@ retry:
 		}
 		kthread_use_mm(userptr->notifier.mm);
 	}
+#endif
 
 	while (pinned < num_pages) {
 		ret = get_user_pages_fast(xe_vma_userptr(vma) +
@@ -119,11 +131,13 @@ retry:
 		ret = 0;
 	}
 
+#ifdef __linux__
 	if (in_kthread) {
 		kthread_unuse_mm(userptr->notifier.mm);
 		mmput(userptr->notifier.mm);
 	}
 mm_closed:
+#endif
 	if (ret)
 		goto out;
 
@@ -163,11 +177,13 @@ out:
 	release_pages(pages, pinned);
 	kvfree(pages);
 
+#ifdef __linux__
 	if (!(ret < 0)) {
 		userptr->notifier_seq = notifier_seq;
 		if (xe_vma_userptr_check_repin(uvma) == -EAGAIN)
 			goto retry;
 	}
+#endif
 
 	return ret < 0 ? ret : 0;
 }
@@ -628,6 +644,7 @@ out_unlock_outer:
 	trace_xe_vm_rebind_worker_exit(vm);
 }
 
+#ifdef __linux__
 static bool vma_userptr_invalidate(struct mmu_interval_notifier *mni,
 				   const struct mmu_notifier_range *range,
 				   unsigned long cur_seq)
@@ -699,6 +716,7 @@ static bool vma_userptr_invalidate(struct mmu_interval_notifier *mni,
 static const struct mmu_interval_notifier_ops vma_userptr_notifier_ops = {
 	.invalidate = vma_userptr_invalidate,
 };
+#endif
 
 int xe_vm_userptr_pin(struct xe_vm *vm)
 {
@@ -866,17 +884,23 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 	} else /* userptr or null */ {
 		if (!is_null) {
 			struct xe_userptr *userptr = &to_userptr_vma(vma)->userptr;
+#ifdef __linux__
 			u64 size = end - start + 1;
+#endif
 			int err;
 
 			INIT_LIST_HEAD(&userptr->invalidate_link);
 			INIT_LIST_HEAD(&userptr->repin_link);
 			vma->gpuva.gem.offset = bo_offset_or_userptr;
 
+#ifdef __linux__
 			err = mmu_interval_notifier_insert(&userptr->notifier,
 							   current->mm,
 							   xe_vma_userptr(vma), size,
 							   &vma_userptr_notifier_ops);
+#elif defined(__FreeBSD__)
+			err = 0;
+#endif
 			if (err) {
 				xe_vma_free(vma);
 				return ERR_PTR(err);
@@ -919,7 +943,9 @@ static void xe_vma_destroy_late(struct xe_vma *vma)
 		 * the notifer until we're sure the GPU is not accessing
 		 * them anymore
 		 */
+#ifdef __linux__
 		mmu_interval_notifier_remove(&userptr->notifier);
+#endif
 		xe_vm_put(vm);
 	} else if (xe_vma_is_null(vma)) {
 		xe_vm_put(vm);
@@ -3191,9 +3217,11 @@ int xe_vm_invalidate_vma(struct xe_vma *vma)
 	/* Check that we don't race with page-table updates */
 	if (IS_ENABLED(CONFIG_PROVE_LOCKING)) {
 		if (xe_vma_is_userptr(vma)) {
+#ifdef __linux__
 			WARN_ON_ONCE(!mmu_interval_check_retry
 				     (&to_userptr_vma(vma)->userptr.notifier,
 				      to_userptr_vma(vma)->userptr.notifier_seq));
+#endif
 			WARN_ON_ONCE(!dma_resv_test_signaled(xe_vm_resv(xe_vma_vm(vma)),
 							     DMA_RESV_USAGE_BOOKKEEP));
 

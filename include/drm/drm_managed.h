@@ -10,6 +10,7 @@ struct drm_device;
 
 typedef void (*drmm_func_t)(struct drm_device *, void *);
 
+void *drmm_kmalloc(struct drm_device *, size_t, int);
 void *drmm_kzalloc(struct drm_device *, size_t, int);
 void *drmm_kcalloc(struct drm_device *, size_t, size_t, int);
 char *drmm_kstrdup(struct drm_device *, const char *, int);

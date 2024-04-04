@@ -335,6 +335,7 @@ int xe_pm_runtime_get_if_active(struct xe_device *xe)
 
 void xe_pm_assert_unbounded_bridge(struct xe_device *xe)
 {
+#ifdef __linux__
 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 	struct pci_dev *bridge = pci_upstream_bridge(pdev);
 
@@ -345,6 +346,7 @@ void xe_pm_assert_unbounded_bridge(struct xe_device *xe)
 		drm_warn(&xe->drm, "unbounded parent pci bridge, device won't support any PM support.\n");
 		device_set_pm_not_required(&pdev->dev);
 	}
+#endif
 }
 
 int xe_pm_set_vram_threshold(struct xe_device *xe, u32 threshold)
