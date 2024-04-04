@@ -23,6 +23,17 @@
 #include "xe_ttm_vram_mgr.h"
 #include "xe_wa.h"
 
+#ifdef __FreeBSD__
+#include <linux/ioport.h>
+
+/*
+ * intel_graphics_stolen_* are defined in sys/dev/pci/pcivar.h
+ * and set at early boot from machdep.c. Copy over the values
+ * here to a Linux resource struct.
+ */
+struct resource intel_graphics_stolen_res;
+#endif
+
 struct xe_ttm_stolen_mgr {
 	struct xe_ttm_vram_mgr base;
 
@@ -204,6 +215,17 @@ void xe_ttm_stolen_mgr_init(struct xe_device *xe)
 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 	u64 stolen_size, io_size, pgsize;
 	int err;
+
+#ifdef __FreeBSD__
+#if defined(__amd64__)
+	intel_graphics_stolen_res = (struct resource)
+		DEFINE_RES_MEM(intel_graphics_stolen_base,
+		    intel_graphics_stolen_size);
+	DRM_INFO("Got Intel graphics stolen memory base 0x%x, size 0x%x\n",
+	    intel_graphics_stolen_res.start,
+	    resource_size(&intel_graphics_stolen_res));
+#endif
+#endif
 
 	if (IS_DGFX(xe))
 		stolen_size = detect_bar2_dgfx(xe, mgr);

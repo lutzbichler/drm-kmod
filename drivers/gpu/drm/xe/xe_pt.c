@@ -1017,7 +1017,9 @@ static int xe_pt_userptr_pre_commit(struct xe_migrate_pt_update *pt_update)
 	struct xe_pt_migrate_pt_update *userptr_update =
 		container_of(pt_update, typeof(*userptr_update), base);
 	struct xe_userptr_vma *uvma = to_userptr_vma(pt_update->vma);
+#ifdef __linux__
 	unsigned long notifier_seq = uvma->userptr.notifier_seq;
+#endif
 	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
 	int err = xe_pt_vm_dependencies(pt_update->job,
 					&vm->rftree[pt_update->tile_id],
@@ -1029,6 +1031,7 @@ static int xe_pt_userptr_pre_commit(struct xe_migrate_pt_update *pt_update)
 
 	userptr_update->locked = false;
 
+#ifdef __linux__
 	/*
 	 * Wait until nobody is running the invalidation notifier, and
 	 * since we're exiting the loop holding the notifier lock,
@@ -1050,6 +1053,7 @@ static int xe_pt_userptr_pre_commit(struct xe_migrate_pt_update *pt_update)
 
 		notifier_seq = mmu_interval_read_begin(&uvma->userptr.notifier);
 	} while (true);
+#endif
 
 	/* Inject errors to test_whether they are handled correctly */
 	if (userptr_update->bind && xe_pt_userptr_inject_eagain(uvma)) {

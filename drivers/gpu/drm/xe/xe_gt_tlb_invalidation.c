@@ -11,6 +11,9 @@
 #include "xe_guc.h"
 #include "xe_guc_ct.h"
 #include "xe_trace.h"
+#ifdef __FreeBSD__
+#include "xe_vm.h"
+#endif
 
 #define TLB_TIMEOUT	(HZ / 4)
 
