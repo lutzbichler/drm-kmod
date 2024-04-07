@@ -12,6 +12,10 @@ struct mipi_dsi_device;
 struct mipi_dsi_msg;
 struct drm_dsc_picture_parameter_set;
 
+enum mipi_dsi_compression_algo {
+	MIPI_DSI_COMPRESSION_DSC
+};
+
 struct mipi_dsi_host_ops {
 	int (*attach)(struct mipi_dsi_host *, struct mipi_dsi_device *);
 	int (*detach)(struct mipi_dsi_host *, struct mipi_dsi_device *);
