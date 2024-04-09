@@ -2,10 +2,55 @@
 #ifndef __DRM_PANIC_H__
 #define __DRM_PANIC_H__
 
+#include <linux/module.h>
+#include <linux/types.h>
+#include <linux/iosys-map.h>
+
 #include <drm/drm_device.h>
+#include <drm/drm_fourcc.h>
 /*
  * Copyright (c) 2024 Intel
  */
+
+/**
+ * struct drm_scanout_buffer - DRM scanout buffer
+ *
+ * This structure holds the information necessary for drm_panic to draw the
+ * panic screen, and display it.
+ */
+struct drm_scanout_buffer {
+	/**
+	 * @format:
+	 *
+	 * drm format of the scanout buffer.
+	 */
+	const struct drm_format_info *format;
+
+	/**
+	 * @map:
+	 *
+	 * Virtual address of the scanout buffer, either in memory or iomem.
+	 * The scanout buffer should be in linear format, and can be directly
+	 * sent to the display hardware. Tearing is not an issue for the panic
+	 * screen.
+	 */
+	struct iosys_map map[DRM_FORMAT_MAX_PLANES];
+
+	/**
+	 * @width: Width of the scanout buffer, in pixels.
+	 */
+	unsigned int width;
+
+	/**
+	 * @height: Height of the scanout buffer, in pixels.
+	 */
+	unsigned int height;
+
+	/**
+	 * @pitch: Length in bytes between the start of two consecutive lines.
+	 */
+	unsigned int pitch[DRM_FORMAT_MAX_PLANES];
+};
 
 /**
  * drm_panic_trylock - try to enter the panic printing critical section
@@ -55,8 +100,13 @@
  * Return:
  * %0 when failing to acquire the raw spinlock, nonzero on success.
  */
+#ifdef __linux__
 #define drm_panic_trylock(dev, flags) \
 	raw_spin_trylock_irqsave(&(dev)->mode_config.panic_lock, flags)
+#elif defined(__FreeBSD__)
+#define drm_panic_trylock(dev, flags) \
+	spin_trylock_irqsave(&(dev)->mode_config.panic_lock, flags)
+#endif
 
 /**
  * drm_panic_lock - protect panic printing relevant state
@@ -100,6 +150,18 @@
 #elif defined(__FreeBSD__)
 #define drm_panic_unlock(dev, flags) \
 	spin_unlock_irqrestore(&(dev)->mode_config.panic_lock, flags)
+#endif
+
+#ifdef CONFIG_DRM_PANIC
+
+void drm_panic_register(struct drm_device *dev);
+void drm_panic_unregister(struct drm_device *dev);
+
+#else
+
+static inline void drm_panic_register(struct drm_device *dev) {}
+static inline void drm_panic_unregister(struct drm_device *dev) {}
+
 #endif
 
 #endif /* __DRM_PANIC_H__ */
