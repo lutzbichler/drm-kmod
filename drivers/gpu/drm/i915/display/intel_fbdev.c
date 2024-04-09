@@ -484,99 +484,6 @@ static void intel_fbdev_suspend_worker(struct work_struct *work)
 				true);
 }
 
-/*
- * Fbdev client and struct drm_client_funcs
- */
-
-static void intel_fbdev_client_unregister(struct drm_client_dev *client)
-{ }
-
-static int intel_fbdev_client_restore(struct drm_client_dev *client)
-{
-	return 0;
-}
-
-static int intel_fbdev_client_hotplug(struct drm_client_dev *client)
-{
-	return 0;
-}
-
-static const struct drm_client_funcs intel_fbdev_client_funcs = {
-	.owner		= THIS_MODULE,
-	.unregister	= intel_fbdev_client_unregister,
-	.restore	= intel_fbdev_client_restore,
-	.hotplug	= intel_fbdev_client_hotplug,
-};
-
-int intel_fbdev_init(struct drm_device *dev)
-{
-	struct drm_i915_private *dev_priv = to_i915(dev);
-	struct intel_fbdev *ifbdev;
-	int ret;
-
-	if (drm_WARN_ON(dev, !HAS_DISPLAY(dev_priv)))
-		return -ENODEV;
-
-	ifbdev = kzalloc(sizeof(struct intel_fbdev), GFP_KERNEL);
-	if (ifbdev == NULL)
-		return -ENOMEM;
-
-	mutex_init(&ifbdev->hpd_lock);
-	drm_fb_helper_prepare(dev, &ifbdev->helper, 32, &intel_fb_helper_funcs);
-
-	if (intel_fbdev_init_bios(dev, ifbdev))
-		ifbdev->helper.preferred_bpp = ifbdev->preferred_bpp;
-	else
-		ifbdev->preferred_bpp = ifbdev->helper.preferred_bpp;
-
-	ret = drm_client_init(dev, &ifbdev->helper.client, "intel-fbdev",
-			      &intel_fbdev_client_funcs);
-	if (ret)
-		goto err_drm_fb_helper_unprepare;
-
-	ret = drm_fb_helper_init(dev, &ifbdev->helper);
-	if (ret)
-		goto err_drm_client_release;
-
-	dev_priv->display.fbdev.fbdev = ifbdev;
-	INIT_WORK(&dev_priv->display.fbdev.suspend_work, intel_fbdev_suspend_worker);
-
-	return 0;
-
-err_drm_client_release:
-	drm_client_release(&ifbdev->helper.client);
-err_drm_fb_helper_unprepare:
-	drm_fb_helper_unprepare(&ifbdev->helper);
-	kfree(ifbdev);
-	return ret;
-}
-
-#ifdef __linux__
-static void intel_fbdev_initial_config(void *data, async_cookie_t cookie)
-{
-	struct intel_fbdev *ifbdev = data;
-
-	/* Due to peculiar init order wrt to hpd handling this is separate. */
-	if (drm_fb_helper_initial_config(&ifbdev->helper))
-		intel_fbdev_unregister(to_i915(ifbdev->helper.dev));
-}
-#endif
-
-void intel_fbdev_initial_config_async(struct drm_i915_private *dev_priv)
-{
-	struct intel_fbdev *ifbdev = dev_priv->display.fbdev.fbdev;
-
-	if (!ifbdev)
-		return;
-
-#ifdef __linux__
-	ifbdev->cookie = async_schedule(intel_fbdev_initial_config, ifbdev);
-#elif defined(__FreeBSD__)
-	if (drm_fb_helper_initial_config(&ifbdev->helper))
-		intel_fbdev_unregister(to_i915(ifbdev->helper.dev));
-#endif
-}
-
 static void intel_fbdev_sync(struct intel_fbdev *ifbdev)
 {
 #ifdef __linux__
@@ -587,33 +494,6 @@ static void intel_fbdev_sync(struct intel_fbdev *ifbdev)
 	async_synchronize_cookie(ifbdev->cookie + 1);
 	ifbdev->cookie = 0;
 #endif
-}
-
-void intel_fbdev_unregister(struct drm_i915_private *dev_priv)
-{
-	struct intel_fbdev *ifbdev = dev_priv->display.fbdev.fbdev;
-
-	if (!ifbdev)
-		return;
-
-	intel_fbdev_set_suspend(&dev_priv->drm, FBINFO_STATE_SUSPENDED, true);
-
-#ifdef __linux__
-	if (!current_is_async())
-		intel_fbdev_sync(ifbdev);
-#endif
-
-	drm_fb_helper_unregister_info(&ifbdev->helper);
-}
-
-void intel_fbdev_fini(struct drm_i915_private *dev_priv)
-{
-	struct intel_fbdev *ifbdev = fetch_and_zero(&dev_priv->display.fbdev.fbdev);
-
-	if (!ifbdev)
-		return;
-
-	intel_fbdev_destroy(ifbdev);
 }
 
 /* Suspends/resumes fbdev processing of incoming HPD events. When resuming HPD
@@ -698,13 +578,13 @@ set_suspend:
 	intel_fbdev_hpd_set_suspend(dev_priv, state);
 }
 
-void intel_fbdev_output_poll_changed(struct drm_device *dev)
+static int intel_fbdev_output_poll_changed(struct drm_device *dev)
 {
 	struct intel_fbdev *ifbdev = to_i915(dev)->display.fbdev.fbdev;
 	bool send_hpd;
 
 	if (!ifbdev)
-		return;
+		return -EINVAL;
 
 	intel_fbdev_sync(ifbdev);
 
@@ -715,21 +595,158 @@ void intel_fbdev_output_poll_changed(struct drm_device *dev)
 
 	if (send_hpd && (ifbdev->vma || ifbdev->helper.deferred_setup))
 		drm_fb_helper_hotplug_event(&ifbdev->helper);
+
+	return 0;
 }
 
-void intel_fbdev_restore_mode(struct drm_i915_private *dev_priv)
+static int intel_fbdev_restore_mode(struct drm_i915_private *dev_priv)
+{
+	struct intel_fbdev *ifbdev = dev_priv->display.fbdev.fbdev;
+	int ret;
+
+	if (!ifbdev)
+		return -EINVAL;
+
+	intel_fbdev_sync(ifbdev);
+	if (!ifbdev->vma)
+		return -ENOMEM;
+
+	ret = drm_fb_helper_restore_fbdev_mode_unlocked(&ifbdev->helper);
+	if (ret)
+		return ret;
+
+	intel_fbdev_invalidate(ifbdev);
+
+	return 0;
+}
+
+/*
+ * Fbdev client and struct drm_client_funcs
+ */
+
+static void intel_fbdev_client_unregister(struct drm_client_dev *client)
+{ }
+
+static int intel_fbdev_client_restore(struct drm_client_dev *client)
+{
+	struct drm_i915_private *dev_priv = to_i915(client->dev);
+	int ret;
+
+	ret = intel_fbdev_restore_mode(dev_priv);
+	if (ret)
+		return ret;
+
+	vga_switcheroo_process_delayed_switch();
+
+	return 0;
+}
+
+static int intel_fbdev_client_hotplug(struct drm_client_dev *client)
+{
+	return intel_fbdev_output_poll_changed(client->dev);
+}
+
+static const struct drm_client_funcs intel_fbdev_client_funcs = {
+	.owner		= THIS_MODULE,
+	.unregister	= intel_fbdev_client_unregister,
+	.restore	= intel_fbdev_client_restore,
+	.hotplug	= intel_fbdev_client_hotplug,
+};
+
+int intel_fbdev_init(struct drm_device *dev)
+{
+	struct drm_i915_private *dev_priv = to_i915(dev);
+	struct intel_fbdev *ifbdev;
+	int ret;
+
+	if (drm_WARN_ON(dev, !HAS_DISPLAY(dev_priv)))
+		return -ENODEV;
+
+	ifbdev = kzalloc(sizeof(*ifbdev), GFP_KERNEL);
+	if (!ifbdev)
+		return -ENOMEM;
+
+	mutex_init(&ifbdev->hpd_lock);
+	drm_fb_helper_prepare(dev, &ifbdev->helper, 32, &intel_fb_helper_funcs);
+
+	if (intel_fbdev_init_bios(dev, ifbdev))
+		ifbdev->helper.preferred_bpp = ifbdev->preferred_bpp;
+	else
+		ifbdev->preferred_bpp = ifbdev->helper.preferred_bpp;
+
+	ret = drm_client_init(dev, &ifbdev->helper.client, "intel-fbdev",
+			      &intel_fbdev_client_funcs);
+	if (ret)
+		goto err_drm_fb_helper_unprepare;
+
+	ret = drm_fb_helper_init(dev, &ifbdev->helper);
+	if (ret)
+		goto err_drm_client_release;
+
+	dev_priv->display.fbdev.fbdev = ifbdev;
+	INIT_WORK(&dev_priv->display.fbdev.suspend_work, intel_fbdev_suspend_worker);
+
+	return 0;
+
+err_drm_client_release:
+	drm_client_release(&ifbdev->helper.client);
+err_drm_fb_helper_unprepare:
+	drm_fb_helper_unprepare(&ifbdev->helper);
+	kfree(ifbdev);
+	return ret;
+}
+
+#ifdef __linux__
+static void intel_fbdev_initial_config(void *data, async_cookie_t cookie)
+{
+	struct intel_fbdev *ifbdev = data;
+
+	/* Due to peculiar init order wrt to hpd handling this is separate. */
+	if (drm_fb_helper_initial_config(&ifbdev->helper))
+		intel_fbdev_unregister(to_i915(ifbdev->helper.dev));
+}
+#endif
+
+void intel_fbdev_initial_config_async(struct drm_i915_private *dev_priv)
 {
 	struct intel_fbdev *ifbdev = dev_priv->display.fbdev.fbdev;
 
 	if (!ifbdev)
 		return;
 
-	intel_fbdev_sync(ifbdev);
-	if (!ifbdev->vma)
+#ifdef __linux__
+	ifbdev->cookie = async_schedule(intel_fbdev_initial_config, ifbdev);
+#elif defined(__FreeBSD__)
+	if (drm_fb_helper_initial_config(&ifbdev->helper))
+		intel_fbdev_unregister(to_i915(ifbdev->helper.dev));
+#endif
+}
+
+void intel_fbdev_unregister(struct drm_i915_private *dev_priv)
+{
+	struct intel_fbdev *ifbdev = dev_priv->display.fbdev.fbdev;
+
+	if (!ifbdev)
 		return;
 
-	if (drm_fb_helper_restore_fbdev_mode_unlocked(&ifbdev->helper) == 0)
-		intel_fbdev_invalidate(ifbdev);
+	intel_fbdev_set_suspend(&dev_priv->drm, FBINFO_STATE_SUSPENDED, true);
+
+#ifdef __linux__
+	if (!current_is_async())
+		intel_fbdev_sync(ifbdev);
+#endif
+
+	drm_fb_helper_unregister_info(&ifbdev->helper);
+}
+
+void intel_fbdev_fini(struct drm_i915_private *dev_priv)
+{
+	struct intel_fbdev *ifbdev = fetch_and_zero(&dev_priv->display.fbdev.fbdev);
+
+	if (!ifbdev)
+		return;
+
+	intel_fbdev_destroy(ifbdev);
 }
 
 struct intel_framebuffer *intel_fbdev_framebuffer(struct intel_fbdev *fbdev)
