@@ -99,6 +99,10 @@ SRCS+=	drm_privacy_screen.c \
 	drm_privacy_screen_x86.c
 .endif
 
+.if !empty(KCONFIG:MDRM_PANIC)
+SRCS+=	drm_panic.c
+.endif
+
 # drm scheduler (moved from amdgpu)
 SRCS+=	sched_main.c \
 	sched_fence.c \
