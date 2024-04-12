@@ -186,6 +186,7 @@ SRCS+=	icl_dsi.c \
     intel_display_wa.c \
     intel_dkl_phy.c \
     intel_dmc.c \
+    intel_dmc_wl.c \
     intel_dp.c \
     intel_dp_aux.c \
     intel_dp_aux_backlight.c \
