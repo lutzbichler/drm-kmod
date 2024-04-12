@@ -27,6 +27,8 @@ xe_wa_oob.h:	xe_wa_oob.rules	xe_gen_wa_oob
 	mkdir -p ${SRCDIR}/generated
 	./xe_gen_wa_oob ${SRCDIR}/xe_wa_oob.rules ${SRCDIR}/generated/xe_wa_oob.c ${SRCDIR}/generated/xe_wa_oob.h
 
+#	xe_hmm.c	// disabled
+
 # xe
 SRCS=	xe_bb.c \
 	xe_bo.c \
