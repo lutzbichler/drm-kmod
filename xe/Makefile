@@ -54,7 +54,6 @@ SRCS=	xe_bb.c \
 	xe_gt_idle.c \
 	xe_gt_mcr.c \
 	xe_gt_pagefault.c \
-	xe_gt_sriov_pf_policy.c \
 	xe_gt_sysfs.c \
 	xe_gt_throttle_sysfs.c \
 	xe_gt_tlb_invalidation.c \
@@ -135,7 +134,9 @@ SRCS+=  xe_hwmon.c
 
 .if !empty(KCONFIG:MPCI_IOV)
 SRCS+=	xe_gt_sriov_pf.c \
+	xe_gt_sriov_pf_config.c \
 	xe_gt_sriov_pf_control.c \
+	xe_gt_sriov_pf_policy.c \
 	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
