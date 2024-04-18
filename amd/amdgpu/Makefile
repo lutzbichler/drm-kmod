@@ -124,6 +124,15 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/gpio/dcn32 \
 	${SRCDIR}/display/dc/gpio/dcn401 \
 	${SRCDIR}/display/dc/hdcp \
+	${SRCDIR}/display/dc/hubbub/dcn10 \
+	${SRCDIR}/display/dc/hubbub/dcn20 \
+	${SRCDIR}/display/dc/hubbub/dcn201 \
+	${SRCDIR}/display/dc/hubbub/dcn21 \
+	${SRCDIR}/display/dc/hubbub/dcn30 \
+	${SRCDIR}/display/dc/hubbub/dcn301 \
+	${SRCDIR}/display/dc/hubbub/dcn31 \
+	${SRCDIR}/display/dc/hubbub/dcn32 \
+	${SRCDIR}/display/dc/hubbub/dcn35 \
 	${SRCDIR}/display/dc/hwss/dce \
 	${SRCDIR}/display/dc/hwss/dce100 \
 	${SRCDIR}/display/dc/hwss/dce110 \
@@ -648,6 +657,7 @@ SRCS+=	dcn10_cm_common.c \
 	dcn10_hubp.c \
 	dcn10_hwseq.c \
 	dcn10_hw_sequencer_debug.c \
+	dcn10_init.c \
 	dcn10_ipp.c \
 	dcn10_link_encoder.c \
 	dcn10_mpc.c \
@@ -668,6 +678,7 @@ SRCS+=	dcn20_clk_mgr.c \
 	dcn20_hubbub.c \
 	dcn20_hubp.c \
 	dcn20_hwseq.c \
+	dcn20_init.c \
 	dcn20_link_encoder.c \
 	dcn20_mmhubbub.c \
 	dcn20_mpc.c \
@@ -686,6 +697,7 @@ SRCS+=	dcn201_clk_mgr.c \
 	dcn201_hubbub.c \
 	dcn201_hubp.c \
 	dcn201_hwseq.c \
+	dcn201_init.c \
 	dcn201_link_encoder.c \
 	dcn201_mpc.c \
 	dcn201_opp.c \
@@ -697,35 +709,35 @@ SRCS+=	dcn21_dccg.c \
 	dcn21_hubbub.c \
 	dcn21_hubp.c \
 	dcn21_hwseq.c \
+	dcn21_init.c \
 	dcn21_link_encoder.c \
 	dcn21_resource.c
 
 # display/dc/dcn30
-.if !empty(KCONFIG:MDRM_AMD_DC_FP)
-SRCS+=	dcn30_dio_link_encoder.c \
+SRCS+=	dcn30_afmt.c \
 	dcn30_clk_mgr.c \
 	dcn30_clk_mgr_smu_msg.c \
-	dcn30_dccg.c \
-	dcn30_optc.c \
-	dcn30_mpc.c \
 	dcn30_cm_common.c \
+	dcn30_dccg.c \
+	dcn30_dio_link_encoder.c \
+	dcn30_dio_stream_encoder.c \
 	dcn30_dpp.c \
 	dcn30_dpp_cm.c \
-	dcn30_hubbub.c \
-	dcn30_hubp.c \
-	dcn30_mmhubbub.c \
 	dcn30_dwb.c \
 	dcn30_dwb_cm.c \
-	dcn30_dio_stream_encoder.c \
+	dcn30_hubbub.c \
+	dcn30_hubp.c \
 	dcn30_hwseq.c \
+	dcn30_init.c \
+	dcn30_mmhubbub.c \
+	dcn30_mpc.c \
+	dcn30_optc.c \
 	dcn30_resource.c \
-	dcn30_afmt.c \
 	dcn30_vpg.c \
-	hw_factory_dcn30.c \
-	hw_translate_dcn30.c \
 	display_mode_vba_30.c \
-	display_rq_dlg_calc_30.c
-.endif
+	display_rq_dlg_calc_30.c \
+	hw_factory_dcn30.c \
+	hw_translate_dcn30.c
 
 # display/dc/dcn301
 SRCS+=	dcn301_resource.c \
@@ -733,6 +745,7 @@ SRCS+=	dcn301_resource.c \
 	dcn301_dio_link_encoder.c \
 	dcn301_hubbub.c \
 	dcn301_hwseq.c \
+	dcn301_init.c \
 	dcn301_optc.c \
 	dcn301_panel_cntl.c \
 	vg_clk_mgr.c \
@@ -740,27 +753,57 @@ SRCS+=	dcn301_resource.c \
 
 # display/dc/dcn302
 SRCS+=	dcn302_hwseq.c \
+	dcn302_init.c \
 	dcn302_resource.c
 
 # display/dc/dcn303
 SRCS+=	dcn303_hwseq.c \
+	dcn303_init.c \
 	dcn303_resource.c
 
+# display/dc/dcn31
+SRCS+=	dcn31_afmt.c \
+	dcn31_apg.c \
+	dcn31_smu.c \
+	dcn31_clk_mgr.c \
+	dcn31_dccg.c \
+	dcn31_dio_link_encoder.c \
+	dcn31_hpo_dp_link_encoder.c \
+	dcn31_hpo_dp_stream_encoder.c \
+	dcn31_hubp.c \
+	dcn31_hubbub.c \
+	dcn31_hwseq.c \
+	dcn31_init.c \
+	dcn31_optc.c \
+	dcn31_panel_cntl.c \
+	dcn31_resource.c \
+	dcn31_vpg.c \
+	display_mode_vba_31.c \
+	display_rq_dlg_calc_31.c
+
 # display/dc/dcn314
-SRCS+=	dcn314_dccg.c \
+SRCS+=	dcn314_clk_mgr.c \
+	dcn314_dccg.c \
 	dcn314_dio_stream_encoder.c \
 	dcn314_hwseq.c \
+	dcn314_init.c \
 	dcn314_optc.c \
-	dcn314_resource.c
-
+	dcn314_resource.c \
+	dcn314_smu.c
 # display/dc/dcn315
-SRCS+=	dcn315_resource.c
+SRCS+=	dcn315_clk_mgr.c \
+	dcn315_resource.c \
+	dcn315_smu.c
 
 # display/dc/dcn316
-SRCS+=	dcn316_resource.c
+SRCS+=	dcn316_clk_mgr.c \
+	dcn316_resource.c \
+	dcn316_smu.c
 
 # display/dc/dcn32
-SRCS+=	dcn32_dccg.c \
+SRCS+=	dcn32_clk_mgr.c \
+	dcn32_clk_mgr_smu_msg.c \
+	dcn32_dccg.c \
 	dcn32_dio_link_encoder.c \
 	dcn32_dio_stream_encoder.c \
 	dcn32_dpp.c \
@@ -768,6 +811,7 @@ SRCS+=	dcn32_dccg.c \
 	dcn32_hubbub.c \
 	dcn32_hubp.c \
 	dcn32_hwseq.c \
+	dcn32_init.c \
 	dcn32_mmhubbub.c \
 	dcn32_mpc.c \
 	dcn32_optc.c \
@@ -779,7 +823,8 @@ SRCS+=	dcn321_dio_link_encoder.c \
 	dcn321_resource.c
 
 # display/dc/dc35
-SRCS+=	dcn35_dccg.c \
+SRCS+=	dcn35_clk_mgr.c \
+	dcn35_dccg.c \
 	dcn35_dio_link_encoder.c \
 	dcn35_dio_stream_encoder.c \
 	dcn35_dpp.c \
@@ -788,17 +833,23 @@ SRCS+=	dcn35_dccg.c \
 	dcn35_hubbub.c \
 	dcn35_hubp.c \
 	dcn35_hwseq.c \
+	dcn35_init.c \
 	dcn35_mmhubbub.c \
 	dcn35_opp.c \
 	dcn35_optc.c \
 	dcn35_pg_cntl.c \
-	dcn35_resource.c
+	dcn35_resource.c \
+	dcn35_smu.c
 
 # display/dc/dc351
-SRCS+=	dcn351_resource.c
+SRCS+=	dcn351_init.c \
+	dcn351_hwseq.c \
+	dcn351_resource.c
 
 # display/dc/dc401
-SRCS+=	dcn401_dccg.c \
+SRCS+=	dcn401_clk_mgr.c \
+	dcn401_clk_mgr_smu_msg.c \
+	dcn401_dccg.c \
 	dcn401_dio_link_encoder.c \
 	dcn401_dio_stream_encoder.c \
 	dcn401_dpp.c \
@@ -813,89 +864,6 @@ SRCS+=	dcn401_dccg.c \
 	dcn401_optc.c \
 	dcn401_resource.c
 
-# display/dc/hwss/dcn10
-SRCS+=	dcn10_init.c
-
-# display/dc/hwss/dcn20
-SRCS+=	dcn20_init.c
-
-# display/dc/hwss/dcn201
-SRCS+=	dcn201_init.c
-
-# display/dc/hwss/dcn21
-SRCS+=	dcn21_init.c
-
-# display/dc/hwss/dcn30
-SRCS+=	dcn30_init.c
-
-# display/dc/hwss/dcn301
-SRCS+=	dcn301_init.c
-
-# display/dc/hwss/dcn302
-SRCS+=	dcn302_init.c
-
-# display/dc/hwss/dcn303
-SRCS+=	dcn303_init.c
-
-# display/dc/hwss/dcn31
-SRCS+=	dcn31_init.c
-
-# display/dc/hwss/dcn314
-SRCS+=	dcn314_init.c
-
-# display/dc/hwss/dcn32
-SRCS+=	dcn32_init.c
-
-# display/dc/hwss/dcn35
-SRCS+=	dcn35_init.c
-
-# display/dc/hwss/dcn351
-SRCS+=	dcn351_init.c \
-	dcn351_hwseq.c
-
-# display/dc/clk_mgr/dcn31
-SRCS+=	dcn31_afmt.c \
-	dcn31_apg.c \
-	dcn31_smu.c \
-	dcn31_clk_mgr.c \
-	dcn31_dccg.c \
-	dcn31_dio_link_encoder.c \
-	dcn31_hpo_dp_link_encoder.c \
-	dcn31_hpo_dp_stream_encoder.c \
-	dcn31_hubp.c \
-	dcn31_hubbub.c \
-	dcn31_hwseq.c \
-	dcn31_optc.c \
-	dcn31_panel_cntl.c \
-	dcn31_resource.c \
-	dcn31_vpg.c \
-	display_mode_vba_31.c \
-	display_rq_dlg_calc_31.c
-
-# display/dc/clk_mgr/dcn314
-SRCS+=	dcn314_clk_mgr.c \
-	dcn314_smu.c
-
-# display/dc/clk_mgr/dcn316
-SRCS+=	dcn315_clk_mgr.c \
-	dcn315_smu.c
-
-# display/dc/clk_mgr/dcn316
-SRCS+=	dcn316_clk_mgr.c \
-	dcn316_smu.c
-
-# display/dc/clk_mgr/dcn32
-SRCS+=	dcn32_clk_mgr.c \
-	dcn32_clk_mgr_smu_msg.c
-
-# display/dc/clk_mgr/dcn35
-SRCS+=	dcn35_clk_mgr.c \
-	dcn35_smu.c
-
-# display/dc/clk_mgr/dcn401
-SRCS+=	dcn401_clk_mgr.c \
-	dcn401_clk_mgr_smu_msg.c
-
 # display/dc/core
 SRCS+=	dc_vm_helper.c
 
@@ -909,9 +877,6 @@ SRCS+=	rc_calc.c \
 	rc_calc_fpu.c \
 	dc_dsc.c
 
-.endif
-
-.if !empty(KCONFIG:MDRM_AMD_DC_FP)
 # display/dc/dml
 SRCS+=	display_mode_lib.c \
 	display_mode_vba.c \
@@ -1282,6 +1247,7 @@ CFLAGS+= -I${SRCDIR}/display/dc
 CFLAGS+= -I${SRCDIR}/display/dc/clk_mgr/
 CFLAGS+= -I${SRCDIR}/display/dc/dpp/
 CFLAGS+= -I${SRCDIR}/display/dc/dsc
+CFLAGS+= -I${SRCDIR}/display/dc/hubbub
 CFLAGS+= -I${SRCDIR}/display/dc/hwss
 CFLAGS+= -I${SRCDIR}/display/dc/inc
 CFLAGS+= -I${SRCDIR}/display/dc/inc/hw
