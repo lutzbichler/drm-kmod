@@ -30,6 +30,7 @@ SRCS=	drm_atomic.c \
 	drm_edid.c \
 	drm_displayid.c \
 	drm_encoder.c \
+	drm_fbdev_ttm.c \
 	drm_file.c \
 	drm_flip_work.c \
 	drm_fourcc.c \
@@ -70,8 +71,7 @@ SRCS=	drm_atomic.c \
 	vt_drmfb.c
 
 .if !empty(KCONFIG:MDRM_FBDEV_EMULATION)
-SRCS+=	drm_fb_helper.c \
-	drm_fbdev_generic.c
+SRCS+=	drm_fb_helper.c
 .endif
 
 .if !empty(KCONFIG:MCOMPAT)
