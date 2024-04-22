@@ -21,6 +21,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
 #include <linux/time.h>
 
 #include "hsw_ips.h"
