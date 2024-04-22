@@ -7,6 +7,9 @@
 #define INTEL_GT_DEBUGFS_H
 
 #include <linux/file.h>
+#ifdef __FreeBSD__
+#include <linux/seq_file.h>
+#endif
 
 struct intel_gt;
 

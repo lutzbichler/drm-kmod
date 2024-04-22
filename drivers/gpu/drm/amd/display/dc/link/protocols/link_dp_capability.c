@@ -34,6 +34,10 @@
  * structure used to represent link capability instead of function interfaces.
  */
 
+#ifdef __FreeBSD__
+#include <linux/string_helpers.h>
+#endif
+
 #include "link_dp_capability.h"
 #include "link_ddc.h"
 #include "link_dpcd.h"
