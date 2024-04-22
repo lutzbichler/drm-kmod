@@ -3,6 +3,9 @@
  * Copyright © 2019 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/seq_file.h>
+#endif
 #include <linux/string_helpers.h>
 
 #include "i915_drv.h"
