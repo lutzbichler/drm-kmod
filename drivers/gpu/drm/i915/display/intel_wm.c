@@ -3,6 +3,10 @@
  * Copyright © 2023 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
+
 #include "i915_drv.h"
 #include "i9xx_wm.h"
 #include "intel_display_types.h"
