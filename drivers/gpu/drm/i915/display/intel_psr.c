@@ -21,6 +21,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
+
 #include <drm/drm_atomic_helper.h>
 #include <drm/drm_damage_helper.h>
 #include <drm/drm_debugfs.h>

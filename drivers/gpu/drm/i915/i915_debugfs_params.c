@@ -3,6 +3,9 @@
  * Copyright © 2019 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
 #include <linux/kernel.h>
 
 #include "i915_debugfs_params.h"
