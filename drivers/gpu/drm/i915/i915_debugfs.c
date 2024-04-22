@@ -26,6 +26,9 @@
  *
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
 #include <linux/sched/mm.h>
 #include <linux/sort.h>
 #include <linux/string_helpers.h>
