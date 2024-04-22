@@ -3,6 +3,10 @@
  * Copyright © 2020 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
+
 #include "g4x_dp.h"
 #include "i915_drv.h"
 #include "i915_reg.h"
