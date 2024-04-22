@@ -3,6 +3,10 @@
  * Copyright © 2022 Intel Corporation
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
+
 #include "hsw_ips.h"
 #include "i915_drv.h"
 #include "i915_reg.h"
