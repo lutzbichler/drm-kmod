@@ -37,6 +37,9 @@
 #include <linux/module.h>
 #include <linux/pci.h>
 #include <linux/seq_buf.h>
+#ifdef __FreeBSD__
+#include <linux/seq_file.h>
+#endif
 #include <linux/slab.h>
 #include <linux/vga_switcheroo.h>
 
