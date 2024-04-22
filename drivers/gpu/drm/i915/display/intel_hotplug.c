@@ -21,6 +21,9 @@
  * IN THE SOFTWARE.
  */
 
+#ifdef __FreeBSD__
+#include <linux/debugfs.h>
+#endif
 #include <linux/kernel.h>
 
 #include "i915_drv.h"
