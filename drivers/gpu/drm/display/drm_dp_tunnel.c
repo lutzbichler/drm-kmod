@@ -4,6 +4,9 @@
  */
 
 #include <linux/ref_tracker.h>
+#ifdef __FreeBSD__
+#include <linux/string_helpers.h>
+#endif
 #include <linux/types.h>
 
 #include <drm/drm_atomic_state_helper.h>
