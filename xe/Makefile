@@ -136,6 +136,7 @@ SRCS+=  xe_hwmon.c
 SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_config.c \
 	xe_gt_sriov_pf_control.c \
+	xe_gt_sriov_pf_debugfs.c \
 	xe_gt_sriov_pf_policy.c \
 	xe_gt_sriov_pf_service.c \
 	xe_lmtt.c \
