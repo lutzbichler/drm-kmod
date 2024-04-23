@@ -137,6 +137,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_config.c \
 	xe_gt_sriov_pf_control.c \
 	xe_gt_sriov_pf_policy.c \
+	xe_gt_sriov_pf_service.c \
 	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
