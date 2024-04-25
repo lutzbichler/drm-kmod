@@ -154,6 +154,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hubp/dcn31 \
 	${SRCDIR}/display/dc/hubp/dcn32 \
 	${SRCDIR}/display/dc/hubp/dcn35 \
+	${SRCDIR}/display/dc/hubp/dcn401 \
 	${SRCDIR}/display/dc/hwss/dce \
 	${SRCDIR}/display/dc/hwss/dce100 \
 	${SRCDIR}/display/dc/hwss/dce110 \
