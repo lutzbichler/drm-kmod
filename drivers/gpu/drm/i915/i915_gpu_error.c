@@ -28,9 +28,7 @@
  */
 
 #include <linux/ascii85.h>
-#ifdef __FreeBSD__
 #include <linux/debugfs.h>
-#endif
 #include <linux/highmem.h>
 #include <linux/nmi.h>
 #include <linux/pagevec.h>
