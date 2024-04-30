@@ -122,7 +122,8 @@ SRCS+=	intel_fb_bo.c \
 	xe_dsb_buffer.c \
 	xe_fb_pin.c \
 	xe_hdcp_gsc.c \
-	xe_plane_initial.c
+	xe_plane_initial.c \
+	xe_tdf.c
 
 # xe/display/ext
 SRCS+=	i915_irq.c \
