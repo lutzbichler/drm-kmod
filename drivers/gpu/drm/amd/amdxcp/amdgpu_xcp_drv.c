@@ -50,13 +50,19 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 {
 	struct platform_device *pdev;
 	struct xcp_device *pxcp_dev;
+#ifdef __linux__
+	char dev_name[20];
+#elif defined(__FreeBSD__)
+	char *dev_name;
+#endif
 	int ret;
 
 	if (pdev_num >= MAX_XCP_PLATFORM_DEVICE)
 		return -ENODEV;
 
 #ifdef __linux__
-	pdev = platform_device_register_simple("amdgpu_xcp", pdev_num, NULL, 0);
+	snprintf(dev_name, sizeof(dev_name), "amdgpu_xcp_%d", pdev_num);
+	pdev = platform_device_register_simple(dev_name, -1, NULL, 0);
 	if (IS_ERR(pdev))
 		return PTR_ERR(pdev);
 
@@ -69,7 +75,9 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 	pdev = kzalloc(sizeof(struct platform_device), GFP_KERNEL);
 	if (pdev != NULL)
 		return (-ENOMEM);
-	pdev->name = "amdgpu_xcp";
+	dev_name = kzalloc(sizeof(char) * 20 + 1, GFP_KERNEL);
+	snprintf(dev_name, sizeof(char) * 20, "amdgpu_xcp_%d", pdev_num);
+	pdev->name = dev_name;
 	pdev->id = pdev_num;
 #endif
 
@@ -108,6 +116,7 @@ void amdgpu_xcp_drv_release(void)
 		devres_release_group(&pdev->dev, NULL);
 		platform_device_unregister(pdev);
 #elif defined(__FreeBSD__)
+		kfree(xcp_dev[pdev_num]->pdev->name);
 		kfree(xcp_dev[pdev_num]->pdev);
 #endif
 		xcp_dev[pdev_num] = NULL;
