@@ -997,42 +997,6 @@ SRCS+=  dml2_top_optimization.c \
 # display/dc/dml2/dml2/inc
 SRCS+=	dml2_debug.c
 
-# display/dc/dml2/dml21
-SRCS+=	dml21_translation_helper.c \
-	dml21_utils.c \
-	dml21_wrapper.c
-
-# display/dc/dml2/dml21/src/dm2_core
-SRCS+=	dml2_core_dcn4.c \
-	dml2_core_dcn4_calcs.c \
-	dml2_core_factory.c \
-	dml2_core_shared.c
-
-# display/dc/dml2/dml21/src/dml2_dpmm
-SRCS+=	dml2_dpmm_dcn4.c \
-	dml2_dpmm_factory.c
-
-# display/dc/dml2/dml21/src/dml2_mcg
-SRCS+=  dml2_mcg_dcn4.c \
-        dml2_mcg_factory.c
-
-# display/dc/dml2/dml21/src/dml2_pmo
-SRCS+=  dml2_pmo_dcn3.c \
-	dml2_pmo_dcn4.c \
-	dml2_pmo_dcn4_fams2.c \
-        dml2_pmo_factory.c
-
-# display/dc/dml2/dml21/src/dml2_standalone_libraries
-SRCS+=  lib_float_math.c
-
-# display/dc/dml2/dml21/src/dml2_top
-SRCS+=  dml2_top_optimization.c \
-        dml_top.c \
-	dml_top_mcache.c
-
-# display/dc/dml2/dml2/inc
-SRCS+=	dml2_debug.c
-
 # display/dc/dml/dcn10
 SRCS+=	dcn10_fpu.c
 
@@ -1186,13 +1150,7 @@ SRCS+=	color_gamma.c \
 # display/dc
 SRCS+=	dc_helper.c \
 	dc_dmub_srv.c \
-	dc_edid_parser.c \
-	dc_spl_translate.c
-
-# display/dc/spl
-SRCS+=	dc_spl.c \
-	dc_spl_isharp_filters.c \
-	dc_spl_scl_filters.c
+	dc_edid_parser.c
 
 # display/dc/spl
 SRCS+=	dc_spl.c \
@@ -1463,7 +1421,6 @@ CFLAGS.dml_top_mcache.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4_calcs.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml2_core_shared.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_dpmm_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_pmo_dcn4_fams2.c= ${FPUFLAGS} -mstack-alignment=4
