@@ -5,6 +5,10 @@
 
 #include <linux/align.h>
 #include <linux/bitfield.h>
+#ifdef __FreeBSD__
+#include <linux/bitops.h>
+#include <linux/kernel.h>
+#endif
 #include <linux/log2.h>
 #include <linux/sizes.h>
 
@@ -106,7 +110,9 @@ static unsigned int lmtt_ml_pte_shift(unsigned int level)
 {
 	switch (level) {
 	case 1:
+#ifdef __linux__
 		BUILD_BUG_ON(BIT_ULL(LMTT_ML_PDE_L2_SHIFT) != SZ_32G);
+#endif
 		return ilog2(SZ_32G);
 	case 0:
 		return ilog2(SZ_2M);
