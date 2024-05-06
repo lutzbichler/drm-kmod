@@ -139,6 +139,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_config.c \
 	xe_gt_sriov_pf_control.c \
 	xe_gt_sriov_pf_debugfs.c \
+	xe_gt_sriov_pf_monitor.c \
 	xe_gt_sriov_pf_policy.c \
 	xe_gt_sriov_pf_service.c \
 	xe_lmtt.c \
@@ -290,6 +291,7 @@ SRCS	+=			\
 CWARNFLAGS += -Wno-pointer-arith -Wno-format -Wno-cast-qual
 
 CWARNFLAGS.xe_dsb_buffer.c=		-Wno-uninitialized
+CWARNFLAGS.xe_gt_sriov_pf_config.c=	-Wno-integer-overflow
 CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
