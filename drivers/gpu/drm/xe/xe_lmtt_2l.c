@@ -5,6 +5,12 @@
 
 #include <linux/align.h>
 #include <linux/bitfield.h>
+#ifdef __FreeBSD__
+#include <linux/bitops.h>
+#include <linux/build_bug.h>
+#include <linux/kconfig.h>
+#include <linux/kernel.h>
+#endif
 #include <linux/log2.h>
 #include <linux/sizes.h>
 
