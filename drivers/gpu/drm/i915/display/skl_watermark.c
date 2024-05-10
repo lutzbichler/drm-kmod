@@ -25,6 +25,7 @@
 #include "intel_fixed.h"
 #include "intel_pcode.h"
 #include "intel_wm.h"
+#include "skl_universal_plane_regs.h"
 #include "skl_watermark.h"
 #include "skl_watermark_regs.h"
 
