@@ -2367,7 +2367,7 @@ static void psr_force_hw_tracking_exit(struct intel_dp *intel_dp)
 	 * but testing proved that it works for up display 13, for newer
 	 * than that testing will be needed.
 	 */
-	intel_de_write(dev_priv, CURSURFLIVE(intel_dp->psr.pipe), 0);
+	intel_de_write(dev_priv, CURSURFLIVE(dev_priv, intel_dp->psr.pipe), 0);
 }
 
 void intel_psr2_program_trans_man_trk_ctl(const struct intel_crtc_state *crtc_state)
@@ -3115,7 +3115,9 @@ static void _psr_invalidate_handle(struct intel_dp *intel_dp)
 
 		if (intel_dp->psr.psr2_sel_fetch_cff_enabled) {
 			/* Send one update otherwise lag is observed in screen */
-			intel_de_write(dev_priv, CURSURFLIVE(intel_dp->psr.pipe), 0);
+			intel_de_write(dev_priv,
+				       CURSURFLIVE(dev_priv, intel_dp->psr.pipe),
+				       0);
 			return;
 		}
 
@@ -3125,7 +3127,8 @@ static void _psr_invalidate_handle(struct intel_dp *intel_dp)
 		intel_de_write(dev_priv,
 			       PSR2_MAN_TRK_CTL(dev_priv, cpu_transcoder),
 			       val);
-		intel_de_write(dev_priv, CURSURFLIVE(intel_dp->psr.pipe), 0);
+		intel_de_write(dev_priv,
+			       CURSURFLIVE(dev_priv, intel_dp->psr.pipe), 0);
 		intel_dp->psr.psr2_sel_fetch_cff_enabled = true;
 	} else {
 		intel_psr_exit(intel_dp);
@@ -3225,7 +3228,9 @@ static void _psr_flush_handle(struct intel_dp *intel_dp)
 				intel_de_write(dev_priv,
 					       PSR2_MAN_TRK_CTL(dev_priv, cpu_transcoder),
 					       val);
-				intel_de_write(dev_priv, CURSURFLIVE(intel_dp->psr.pipe), 0);
+				intel_de_write(dev_priv,
+					       CURSURFLIVE(dev_priv, intel_dp->psr.pipe),
+					       0);
 				intel_dp->psr.psr2_sel_fetch_cff_enabled = false;
 			}
 		} else {
