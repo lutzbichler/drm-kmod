@@ -51,6 +51,7 @@
 #include "i915_utils.h"
 #include "i915_vgpu.h"
 #include "i915_vma.h"
+#include "i9xx_plane_regs.h"
 #include "intel_cdclk.h"
 #include "intel_de.h"
 #include "intel_display_device.h"
