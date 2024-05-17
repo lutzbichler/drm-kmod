@@ -175,6 +175,7 @@ struct drm_printer {
 	void (*printfn)(struct drm_printer *p, struct va_format *vaf);
 	void (*puts)(struct drm_printer *p, const char *str);
 	void *arg;
+	const void *origin;
 	const char *prefix;
 	enum drm_debug_category category;
 };
@@ -332,6 +333,11 @@ static inline struct drm_printer drm_dbg_printer(struct drm_device *drm,
 	struct drm_printer p = {
 		.printfn = __drm_printfn_dbg,
 		.arg = drm,
+#ifdef __linux__
+		.origin = (const void *)_THIS_IP_, /* it's fine as we will be inlined */
+#elif defined(__FreeBSD__)
+		.origin = NULL,
+#endif
 		.prefix = prefix,
 		.category = category,
 	};
