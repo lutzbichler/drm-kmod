@@ -291,7 +291,9 @@ SRCS=	acp_hw.c
 # amdgpu_acp.c \ # not yet - need i2s
 # amdgpu_hmm.c \  # disabled
 
-SRCS+=	amdgpu_aca.c \
+SRCS+=	aldebaran.c \
+	aldebaran_reg_init.c \
+	amdgpu_aca.c \
 	amdgpu_afmt.c \
 	amdgpu_amdkfd.c \
 	amdgpu_atombios.c \
@@ -439,8 +441,6 @@ SRCS+=	amdgpu_aca.c \
 	hdp_v5_2.c \
 	hdp_v6_0.c \
 	hdp_v7_0.c \
-	aldebaran_reg_init.c \
-	aldebaran.c \
 	iceland_ih.c \
 	ih_v6_0.c \
 	ih_v6_1.c \
@@ -448,6 +448,8 @@ SRCS+=	amdgpu_aca.c \
 	imu_v11_0.c \
 	imu_v11_0_3.c \
 	imu_v12_0.c \
+	isp_v4_1_0.c \
+	isp_v4_1_1.c \
 	jpeg_v1_0.c \
 	jpeg_v2_0.c \
 	jpeg_v2_5.c \
