@@ -6,8 +6,9 @@
 #ifndef _XE_GSC_H_
 #define _XE_GSC_H_
 
-#include "xe_gsc_types.h"
+#include <linux/types.h>
 
+struct xe_gsc;
 struct xe_gt;
 
 int xe_gsc_init(struct xe_gsc *gsc);
