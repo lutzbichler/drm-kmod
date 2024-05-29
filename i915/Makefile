@@ -110,6 +110,7 @@ SRCS+=	dvo_ch7017.c \
 	g4x_hdmi.c \
 	hsw_ips.c \
 	icl_dsi.c \
+	intel_alpm.c \
 	intel_backlight.c \
 	intel_crt.c \
 	intel_crtc_state_dump.c \
