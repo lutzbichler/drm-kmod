@@ -165,6 +165,7 @@ SRCS+=	intel_freebsd.c
 # i915/display
 SRCS+=	icl_dsi.c \
     intel_acpi.c \
+    intel_alpm.c \
     intel_atomic.c \
     intel_atomic_plane.c \
     intel_audio.c \
