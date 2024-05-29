@@ -5,14 +5,13 @@
 
 #include <drm/drm_fb_helper.h>
 
-#include "intel_fbdev_fb.h"
-
-#include "xe_gt.h"
-#include "xe_ttm_stolen_mgr.h"
-
 #include "i915_drv.h"
 #include "intel_display_types.h"
-
+#include "intel_fbdev_fb.h"
+#include "xe_bo.h"
+#include "xe_gt.h"
+#include "xe_ttm_stolen_mgr.h"
+ 
 struct intel_framebuffer *intel_fbdev_fb_alloc(struct drm_fb_helper *helper,
 					       struct drm_fb_helper_surface_size *sizes)
 {
