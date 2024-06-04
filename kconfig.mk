@@ -71,7 +71,8 @@ KCONFIG+=	AGP
 KCONFIG+=	64BIT \
 		AS_MOVNTDQA \
 		COMPAT \
-		X86_64
+		X86_64 \
+		PGTABLE_LEVELS=2	# Check this (might be 4, but this requires additional constants to be defined)
 
 KCONFIG+=	DRM_AMD_DC_FP
 .endif
