@@ -12,16 +12,6 @@
 #include "xe_vm_types.h"
 
 static inline void
-trace_xe_bo_move(struct xe_bo *bo, u32 new_mem_type, u32 old_mem_type, bool move_lacks_source)
-{
-}
-
-static inline void
-trace_xe_bo_cpu_fault(struct xe_bo *bo)
-{
-}
-
-static inline void
 trace_xe_gt_tlb_invalidation_fence_timeout(struct xe_gt_tlb_invalidation_fence *fence) 
 {
 }
@@ -231,91 +221,6 @@ trace_xe_sched_job_error(struct xe_sched_job *job)
 
 static inline void
 trace_xe_sched_job_set_error(struct xe_sched_job *job)
-{
-}
-
-static inline void
-trace_xe_vm_cpu_bind(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_create(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_free(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_kill(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_rebind_worker_enter(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_rebind_worker_exit(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vm_rebind_worker_retry(struct xe_vm *vm)
-{
-}
-
-static inline void
-trace_xe_vma_evict(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_pagefault(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_pf_bind(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_acc(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_rebind_worker(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_rebind_exec(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_bind(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_unbind(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_fail(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_invalidate(struct xe_vma *vma)
 {
 }
 
