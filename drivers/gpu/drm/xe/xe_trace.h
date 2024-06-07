@@ -12,39 +12,39 @@
 #include "xe_vm_types.h"
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_timeout(struct xe_gt_tlb_invalidation_fence *fence) 
+trace_xe_gt_tlb_invalidation_fence_timeout(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_signal(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_signal(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_send(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_send(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_recv(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_recv(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_create(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_create(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_work_func(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_work_func(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
     
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_cb(struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_invalidation_fence_cb(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
     
 }
