@@ -25,6 +25,7 @@ static void xe_gt_tlb_fence_timeout(struct work_struct *work)
 {
 	struct xe_gt *gt = container_of(work, struct xe_gt,
 					tlb_invalidation.fence_tdr.work);
+	struct xe_device *xe = gt_to_xe(gt);
 	struct xe_gt_tlb_invalidation_fence *fence, *next;
 
 	spin_lock_irq(&gt->tlb_invalidation.pending_lock);
@@ -36,7 +37,7 @@ static void xe_gt_tlb_fence_timeout(struct work_struct *work)
 		if (msecs_to_jiffies(since_inval_ms) < TLB_TIMEOUT)
 			break;
 
-		trace_xe_gt_tlb_invalidation_fence_timeout(fence);
+		trace_xe_gt_tlb_invalidation_fence_timeout(xe, fence);
 		xe_gt_err(gt, "TLB invalidation fence timeout, seqno=%d recv=%d",
 			  fence->seqno, gt->tlb_invalidation.seqno_recv);
 
@@ -74,18 +75,18 @@ int xe_gt_tlb_invalidation_init(struct xe_gt *gt)
 }
 
 static void
-__invalidation_fence_signal(struct xe_gt_tlb_invalidation_fence *fence)
+__invalidation_fence_signal(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
-	trace_xe_gt_tlb_invalidation_fence_signal(fence);
+	trace_xe_gt_tlb_invalidation_fence_signal(xe, fence);
 	dma_fence_signal(&fence->base);
 	dma_fence_put(&fence->base);
 }
 
 static void
-invalidation_fence_signal(struct xe_gt_tlb_invalidation_fence *fence)
+invalidation_fence_signal(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
 {
 	list_del(&fence->link);
-	__invalidation_fence_signal(fence);
+	__invalidation_fence_signal(xe, fence);
 }
 
 /**
@@ -124,7 +125,7 @@ void xe_gt_tlb_invalidation_reset(struct xe_gt *gt)
 
 	list_for_each_entry_safe(fence, next,
 				 &gt->tlb_invalidation.pending_fences, link)
-		invalidation_fence_signal(fence);
+		invalidation_fence_signal(gt_to_xe(gt), fence);
 	spin_unlock_irq(&gt->tlb_invalidation.pending_lock);
 	mutex_unlock(&gt->uc.guc.ct.lock);
 }
@@ -147,6 +148,7 @@ static int send_tlb_invalidation(struct xe_guc *guc,
 				 u32 *action, int len)
 {
 	struct xe_gt *gt = guc_to_gt(guc);
+	struct xe_device *xe = gt_to_xe(gt);
 	int seqno;
 	int ret;
 
@@ -160,7 +162,7 @@ static int send_tlb_invalidation(struct xe_guc *guc,
 	seqno = gt->tlb_invalidation.seqno;
 	if (fence) {
 		fence->seqno = seqno;
-		trace_xe_gt_tlb_invalidation_fence_send(fence);
+		trace_xe_gt_tlb_invalidation_fence_send(xe, fence);
 	}
 	action[1] = seqno;
 	ret = xe_guc_ct_send_locked(&guc->ct, action, len,
@@ -174,7 +176,7 @@ static int send_tlb_invalidation(struct xe_guc *guc,
 		 * we can just go ahead and signal the fence here.
 		 */
 		if (tlb_invalidation_seqno_past(gt, seqno)) {
-			__invalidation_fence_signal(fence);
+			__invalidation_fence_signal(xe, fence);
 		} else {
 			fence->invalidation_time = ktime_get();
 			list_add_tail(&fence->link,
@@ -187,7 +189,7 @@ static int send_tlb_invalidation(struct xe_guc *guc,
 		}
 		spin_unlock_irq(&gt->tlb_invalidation.pending_lock);
 	} else if (ret < 0 && fence) {
-		__invalidation_fence_signal(fence);
+		__invalidation_fence_signal(xe, fence);
 	}
 	if (!ret) {
 		gt->tlb_invalidation.seqno = (gt->tlb_invalidation.seqno + 1) %
@@ -297,7 +299,7 @@ int xe_gt_tlb_invalidation_range(struct xe_gt *gt,
 	/* Execlists not supported */
 	if (gt_to_xe(gt)->info.force_execlist) {
 		if (fence)
-			__invalidation_fence_signal(fence);
+			__invalidation_fence_signal(xe, fence);
 
 		return 0;
 	}
@@ -439,6 +441,7 @@ int xe_gt_tlb_invalidation_wait(struct xe_gt *gt, int seqno)
 int xe_guc_tlb_invalidation_done_handler(struct xe_guc *guc, u32 *msg, u32 len)
 {
 	struct xe_gt *gt = guc_to_gt(guc);
+	struct xe_device *xe = gt_to_xe(gt);
 	struct xe_gt_tlb_invalidation_fence *fence, *next;
 	unsigned long flags;
 
@@ -475,12 +478,12 @@ int xe_guc_tlb_invalidation_done_handler(struct xe_guc *guc, u32 *msg, u32 len)
 
 	list_for_each_entry_safe(fence, next,
 				 &gt->tlb_invalidation.pending_fences, link) {
-		trace_xe_gt_tlb_invalidation_fence_recv(fence);
+		trace_xe_gt_tlb_invalidation_fence_recv(xe, fence);
 
 		if (!tlb_invalidation_seqno_past(gt, fence->seqno))
 			break;
 
-		invalidation_fence_signal(fence);
+		invalidation_fence_signal(xe, fence);
 	}
 
 	if (!list_empty(&gt->tlb_invalidation.pending_fences))
