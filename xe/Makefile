@@ -210,6 +210,7 @@ SRCS+=	icl_dsi.c \
     intel_dsi.c \
     intel_dsi_dcs_backlight.c \
     intel_dsi_vbt.c \
+    intel_encoder.c \
     intel_fb.c \
     intel_fbc.c \
     intel_fbdev.c \
