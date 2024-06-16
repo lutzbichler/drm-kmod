@@ -145,6 +145,26 @@ drmm_add_action_or_reset(struct drm_device *dev, drmm_func_t f, void *cookie)
 }
 
 void
+drmm_release_action(struct drm_device *dev, drmm_func_t f, void *cookie)
+{
+	struct drmm_node *n, *t;
+
+	spin_lock(&dev->managed.lock);
+	list_for_each_entry_safe(n, t, &dev->managed.resources, list) {
+		if (!cookie || cookie == n->p) {
+			list_del(&n->list);
+			if (n->func)
+				n->func(dev, n->p);
+			else
+				free(n->p, DRM_MEM_MANAGED);
+			free(n, DRM_MEM_MANAGED);
+			break;
+		}
+	}
+	spin_unlock(&dev->managed.lock);	
+}
+
+void
 drm_managed_release(struct drm_device *dev)
 {
 	struct drmm_node *n, *t;
