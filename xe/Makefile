@@ -301,6 +301,7 @@ CWARNFLAGS.xe_dsb_buffer.c=		-Wno-uninitialized
 CWARNFLAGS.xe_gt_sriov_pf_config.c=	-Wno-integer-overflow
 CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.xe_guc.c=			-Wno-uninitialized
+CWARNFLAGS.xe_oa.c=			-Wno-uninitialized
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
 CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
