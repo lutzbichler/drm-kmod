@@ -85,6 +85,7 @@ SRCS=	xe_bb.c \
 	xe_pci.c \
 	xe_pci_sriov.c \
 	xe_pcode.c \
+	xe_perf.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
 	xe_pt.c \
