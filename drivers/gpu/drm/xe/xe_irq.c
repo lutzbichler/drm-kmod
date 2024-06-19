@@ -132,6 +132,9 @@ void xe_irq_enable_hwe(struct xe_gt *gt)
 	u32 irqs, dmask, smask;
 	u32 gsc_mask = 0;
 
+	if (IS_SRIOV_VF(xe) && xe_device_has_memirq(xe))
+		return;
+
 	if (xe_device_uc_enabled(xe)) {
 		irqs = GT_RENDER_USER_INTERRUPT |
 			GT_RENDER_PIPECTL_NOTIFY_INTERRUPT;
