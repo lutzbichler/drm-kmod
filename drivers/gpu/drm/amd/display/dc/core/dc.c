@@ -5163,6 +5163,8 @@ void dc_set_power_state(struct dc *dc, enum dc_acpi_cm_power_state power_state)
 
 		dc_z10_restore(dc);
 
+		dc_dmub_srv_notify_fw_dc_power_state(dc->ctx->dmub_srv, power_state);
+
 		dc->hwss.init_hw(dc);
 
 		if (dc->hwss.init_sys_ctx != NULL &&
@@ -5173,6 +5175,8 @@ void dc_set_power_state(struct dc *dc, enum dc_acpi_cm_power_state power_state)
 		break;
 	default:
 		ASSERT(dc->current_state->stream_count == 0);
+
+		dc_dmub_srv_notify_fw_dc_power_state(dc->ctx->dmub_srv, power_state);
 
 		dc_state_destruct(dc->current_state);
 
