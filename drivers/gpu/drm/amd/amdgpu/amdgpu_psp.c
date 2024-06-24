@@ -3788,9 +3788,11 @@ void psp_copy_fw(struct psp_context *psp, uint8_t *start_addr, uint32_t bin_size
  * Reading from this file will retrieve the USB-C PD firmware version. Writing to
  * this file will trigger the update process.
  */
+#ifdef __linux__
 static DEVICE_ATTR(usbc_pd_fw, 0644,
 		   psp_usbc_pd_fw_sysfs_read,
 		   psp_usbc_pd_fw_sysfs_write);
+#endif
 
 int is_psp_fw_valid(struct psp_bin_desc bin)
 {
