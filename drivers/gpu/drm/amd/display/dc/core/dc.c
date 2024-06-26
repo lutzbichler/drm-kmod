@@ -1258,7 +1258,8 @@ static void disable_dangling_plane(struct dc *dc, struct dc_state *context)
 			disable_all_writeback_pipes_for_stream(dc, old_stream, dangling_context);
 
 			if (pipe->stream && pipe->plane_state) {
-				set_p_state_switch_method(dc, context, pipe);
+				if (!dc->debug.using_dml2)
+					set_p_state_switch_method(dc, context, pipe);
 				dc_update_visual_confirm_color(dc, context, pipe);
 			}
 
@@ -3708,7 +3709,8 @@ static void commit_planes_for_stream_fast(struct dc *dc,
 		struct pipe_ctx *pipe = &context->res_ctx.pipe_ctx[i];
 
 		if (pipe->stream && pipe->plane_state) {
-			set_p_state_switch_method(dc, context, pipe);
+			if (!dc->debug.using_dml2)
+				set_p_state_switch_method(dc, context, pipe);
 
 			if (dc->debug.visual_confirm)
 				dc_update_visual_confirm_color(dc, context, pipe);
@@ -3843,7 +3845,8 @@ static void commit_planes_for_stream(struct dc *dc,
 		struct pipe_ctx *pipe = &context->res_ctx.pipe_ctx[i];
 
 		if (pipe->stream && pipe->plane_state) {
-			set_p_state_switch_method(dc, context, pipe);
+			if (!dc->debug.using_dml2)
+				set_p_state_switch_method(dc, context, pipe);
 
 			if (dc->debug.visual_confirm)
 				dc_update_visual_confirm_color(dc, context, pipe);
