@@ -491,6 +491,7 @@ void drm_file_update_pid(struct drm_file *filp)
 	dev = filp->minor->dev;
 	mutex_lock(&dev->filelist_mutex);
 #ifdef __linux__
+	get_pid(pid);
 	old = rcu_replace_pointer(filp->pid, pid, 1);
 #elif defined(__FreeBSD__)
 	old = filp->pid;
@@ -498,13 +499,8 @@ void drm_file_update_pid(struct drm_file *filp)
 #endif
 	mutex_unlock(&dev->filelist_mutex);
 
-	if (pid != old) {
-#ifdef __linux__
-		get_pid(pid);
-#endif
-		synchronize_rcu();
-		put_pid(old);
-	}
+	synchronize_rcu();
+	put_pid(old);
 }
 
 /**
