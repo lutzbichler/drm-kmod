@@ -84,7 +84,6 @@ SRCS=	xe_bb.c \
 	xe_oa.c \
 	xe_pat.c \
 	xe_pci.c \
-	xe_pci_sriov.c \
 	xe_pcode.c \
 	xe_perf.c \
 	xe_pm.c \
@@ -150,6 +149,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
+	xe_pci_sriov.c \
 	xe_sriov_pf.c
 .endif
 

@@ -71,6 +71,7 @@ KCONFIG+=	AGP
 KCONFIG+=	64BIT \
 		AS_MOVNTDQA \
 		COMPAT \
+		PCI_IOV \
 		X86_64 \
 		PGTABLE_LEVELS=2	# Check this (might be 4, but this requires additional constants to be defined)
 
