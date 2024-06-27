@@ -84,7 +84,6 @@ SRCS=	xe_bb.c \
 	xe_oa.c \
 	xe_pat.c \
 	xe_pci.c \
-	xe_pci_sriov.c \
 	xe_pcode.c \
 	xe_perf.c \
 	xe_pm.c \
@@ -150,6 +149,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
+	xe_pci_sriov.c \
 	xe_sriov_pf.c
 .endif
 
@@ -198,6 +198,7 @@ SRCS+=	icl_dsi.c \
     intel_display_wa.c \
     intel_dkl_phy.c \
     intel_dmc.c \
+    intel_dmc_wl.c \
     intel_dp.c \
     intel_dp_aux.c \
     intel_dp_aux_backlight.c \
@@ -222,6 +223,7 @@ SRCS+=	icl_dsi.c \
     intel_global_state.c \
     intel_gmbus.c \
     intel_hdcp.c \
+    intel_hdcp_gsc_message.c \
     intel_hdmi.c \
     intel_hotplug.c \
     intel_hotplug_irq.c \
