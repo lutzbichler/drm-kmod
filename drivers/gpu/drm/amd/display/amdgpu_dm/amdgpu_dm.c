@@ -7214,6 +7214,9 @@ create_validate_stream_for_sink(struct amdgpu_dm_connector *aconnector,
 	int requested_bpc = drm_state ? drm_state->max_requested_bpc : 8;
 	enum dc_status dc_result = DC_OK;
 
+	if (!dm_state)
+		return NULL;
+
 	do {
 		stream = create_stream_for_sink(aconnector, drm_mode,
 						dm_state, old_stream,
@@ -9324,9 +9327,13 @@ static void amdgpu_dm_commit_streams(struct drm_atomic_state *state,
 		if (acrtc)
 			old_crtc_state = drm_atomic_get_old_crtc_state(state, &acrtc->base);
 
+		if (!acrtc && !acrtc->wb_enabled)
+			continue;
+
 		dm_old_crtc_state = to_dm_crtc_state(old_crtc_state);
 
 		dm_clear_writeback(dm, dm_old_crtc_state);
+		acrtc->wb_enabled = false;
 	}
 
 	for_each_oldnew_crtc_in_state(state, crtc, old_crtc_state,
@@ -9713,9 +9720,10 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
 
 			DRM_INFO("[HDCP_DM] hdcp_update_display enable_encryption = %x\n", enable_encryption);
 
-			hdcp_update_display(
-				adev->dm.hdcp_workqueue, aconnector->dc_link->link_index, aconnector,
-				new_con_state->hdcp_content_type, enable_encryption);
+			if (aconnector->dc_link)
+				hdcp_update_display(
+					adev->dm.hdcp_workqueue, aconnector->dc_link->link_index, aconnector,
+					new_con_state->hdcp_content_type, enable_encryption);
 		}
 	}
 
@@ -9915,9 +9923,13 @@ static void amdgpu_dm_atomic_commit_tail(struct drm_atomic_state *state)
 		if (!new_crtc_state)
 			continue;
 
+		if (acrtc->wb_enabled)
+			continue;
+
 		dm_new_crtc_state = to_dm_crtc_state(new_crtc_state);
 
 		dm_set_writeback(dm, dm_new_crtc_state, connector, new_con_state);
+		acrtc->wb_enabled = true;
 	}
 
 	/* Update audio instances for each connector. */
