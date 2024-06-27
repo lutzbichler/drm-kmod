@@ -961,11 +961,13 @@ static void xe_vma_destroy_late(struct xe_vma *vma)
 	}
 
 	if (xe_vma_is_userptr(vma)) {
+#ifdef __linux__
 		struct xe_userptr_vma *uvma = to_userptr_vma(vma);
 		struct xe_userptr *userptr = &uvma->userptr;
 
 		if (userptr->sg)
 			xe_hmm_userptr_free_sg(uvma);
+#endif
 
 		/*
 		 * Since userptr pages are not pinned, we can't remove
