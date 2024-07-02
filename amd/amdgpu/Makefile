@@ -131,6 +131,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dpp/dcn32 \
 	${SRCDIR}/display/dc/dpp/dcn35 \
 	${SRCDIR}/display/dc/dpp/dcn401 \
+	${SRCDIR}/display/dc/dwb/dcn30 \
 	${SRCDIR}/display/dc/dwb/dcn35 \
 	${SRCDIR}/display/dc/gpio \
 	${SRCDIR}/display/dc/gpio/dce110 \
