@@ -972,13 +972,12 @@ SRCS+=	dml2_dpmm_dcn4.c \
 
 # display/dc/dml2/dml21/src/dml2_mcg
 SRCS+=  dml2_mcg_dcn4.c \
-        dml2_mcg_factory.c
+    dml2_mcg_factory.c
 
 # display/dc/dml2/dml21/src/dml2_pmo
 SRCS+=  dml2_pmo_dcn3.c \
-	dml2_pmo_dcn4.c \
 	dml2_pmo_dcn4_fams2.c \
-        dml2_pmo_factory.c
+    dml2_pmo_factory.c
 
 # display/dc/dml2/dml21/src/dml2_standalone_libraries
 SRCS+=  lib_float_math.c
