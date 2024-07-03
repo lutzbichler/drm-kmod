@@ -1154,7 +1154,8 @@ SRCS+=	dc_spl.c \
 	dc_spl_isharp_filters.c \
 	dc_spl_filters.c \
 	dc_spl_scl_filters.c \
-	dc_spl_translate.c
+	dc_spl_translate.c \
+	spl_fixpt31_32.c
 
 # display/dmub/src
 SRCS+=	dmub_dcn20.c \
@@ -1563,6 +1564,9 @@ CWARNFLAGS.rn_clk_mgr_vbios_smu.c=	-Wno-missing-prototypes
 CWARNFLAGS.rn_clk_mgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.rv1_clk_mgr_vbios_smu.c=	-Wno-missing-prototypes
 CWARNFLAGS.rv1_clk_mgr.c=		-Wno-missing-prototypes
+CWARNFLAGS.dc_dmub_srv.c=		-Wno-unused-but-set-variable -Wno-missing-prototypes
+CWARNFLAGS.dc_helper.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
+CWARNFLAGS.dcn_calcs.c+=		-Wno-missing-prototypes
 CWARNFLAGS.dcn10_dpp.c=			-Wno-missing-prototypes
 CWARNFLAGS.dcn10_dpp_dscl.c=		-Wno-missing-prototypes
 CWARNFLAGS.dcn10_hwseq.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable -Wno-unused-variable
@@ -1610,7 +1614,6 @@ CWARNFLAGS.dcn301_init.c=		-Wno-missing-prototypes
 CWARNFLAGS.dcn301_panel_cntl.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.dcn301_resource.c=		-Wno-initializer-overrides -Wno-missing-prototypes -Wno-unused-const-variable
 CWARNFLAGS.dcn301_smu.c=		-Wno-missing-prototypes
-CWARNFLAGS.vg_clk_mgr.c=		-Wno-missing-prototypes -Wno-incompatible-pointer-types
 CWARNFLAGS.dcn302_init.c=		-Wno-missing-prototypes
 CWARNFLAGS.dcn302_resource.c=		-Wno-initializer-overrides -Wno-unused-const-variable
 CWARNFLAGS.dcn303_init.c=		-Wno-missing-prototypes
@@ -1661,8 +1664,11 @@ CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn351_fpu.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn401_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dmub_psr.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.dmub_abm.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.dmub_abm_lcd.c=		-Wno-missing-prototypes
+CWARNFLAGS.dmub_hw_lock_mgr.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
-
 CWARNFLAGS.hw_ddc.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.hw_factory.c=		-Wno-missing-prototypes
 CWARNFLAGS.hw_factory_diag.c=		-Wno-missing-prototypes
@@ -1683,13 +1689,8 @@ CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.link_validation.c=		-Wno-missing-prototypes
 CWARNFLAGS.power_helpers.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
-CWARNFLAGS.dc_helper.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
-CWARNFLAGS.dcn_calcs.c+=		-Wno-missing-prototypes
-CWARNFLAGS.dc_dmub_srv.c=		-Wno-unused-but-set-variable -Wno-missing-prototypes
-CWARNFLAGS.dmub_psr.c=			-Wno-unused-but-set-variable
-CWARNFLAGS.dmub_abm.c=			-Wno-unused-but-set-variable
-CWARNFLAGS.dmub_abm_lcd.c=		-Wno-missing-prototypes
-CWARNFLAGS.dmub_hw_lock_mgr.c=		-Wno-unused-but-set-variable
+CWARNFLAGS.spl_fixpt31_32.c=		-Wno-incompatible-pointer-types
+CWARNFLAGS.vg_clk_mgr.c=		-Wno-missing-prototypes -Wno-incompatible-pointer-types
 CWARNFLAGS.virtual_link_hwss.c=		-Wno-missing-prototypes
 
 # display/dmub/*
