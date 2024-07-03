@@ -440,9 +440,14 @@ enum ras_event_type {
 	RAS_EVENT_TYPE_COUNT,
 };
 
+struct ras_event_state {
+	u64 last_seqno;
+	atomic64_t count;
+};
+
 struct ras_event_manager {
 	atomic64_t seqno;
-	u64 last_seqno[RAS_EVENT_TYPE_COUNT];
+	struct ras_event_state event_state[RAS_EVENT_TYPE_COUNT];
 };
 
 struct ras_event_id {
@@ -496,7 +501,10 @@ struct amdgpu_ras {
 	struct device_attribute features_attr;
 	struct device_attribute version_attr;
 	struct device_attribute schema_attr;
+	struct device_attribute event_state_attr;
+#ifdef __linux__
 	struct bin_attribute badpages_attr;
+#endif
 	struct dentry *de_ras_eeprom_table;
 	/* block array */
 	struct ras_manager *objs;
