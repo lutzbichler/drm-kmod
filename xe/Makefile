@@ -82,10 +82,10 @@ SRCS=	xe_bb.c \
 	xe_mocs.c \
 	xe_module.c \
 	xe_oa.c \
+	xe_observation.c \
 	xe_pat.c \
 	xe_pci.c \
 	xe_pcode.c \
-	xe_perf.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
 	xe_pt.c \
