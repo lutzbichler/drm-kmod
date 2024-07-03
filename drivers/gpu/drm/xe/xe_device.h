@@ -169,6 +169,7 @@ static inline bool xe_device_wedged(struct xe_device *xe)
 void xe_device_declare_wedged(struct xe_device *xe);
 
 void xe_device_td_flush(struct xe_device *xe);
+void xe_device_l2_flush(struct xe_device *xe);
 
 struct xe_file *xe_file_get(struct xe_file *xef);
 void xe_file_put(struct xe_file *xef);
