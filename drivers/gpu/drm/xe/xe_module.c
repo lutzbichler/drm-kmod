@@ -11,7 +11,7 @@
 #include "xe_drv.h"
 #include "xe_hw_fence.h"
 #include "xe_pci.h"
-#include "xe_perf.h"
+#include "xe_observation.h"
 #include "xe_sched_job.h"
 
 #ifdef __FreeBSD__
@@ -88,8 +88,8 @@ static const struct init_funcs init_funcs[] = {
 		.exit = xe_unregister_pci_driver,
 	},
 	{
-		.init = xe_perf_sysctl_register,
-		.exit = xe_perf_sysctl_unregister,
+		.init = xe_observation_sysctl_register,
+		.exit = xe_observation_sysctl_unregister,
 	},
 };
 
