@@ -303,6 +303,7 @@ CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifier
 CWARNFLAGS.xe_guc.c=			-Wno-uninitialized
 CWARNFLAGS.xe_oa.c=			-Wno-uninitialized
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
+CWARNFLAGS.xe_pt.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
 CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
