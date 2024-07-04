@@ -56,6 +56,11 @@ trace_xe_vm_rebind_worker_retry(struct xe_vm *vm)
 }
 
 static inline void
+trace_xe_vm_ops_fail(struct xe_vm *vm)
+{
+}
+
+static inline void
 trace_xe_vma_evict(struct xe_vma *vma)
 {
 }
@@ -92,11 +97,6 @@ trace_xe_vma_bind(struct xe_vma *vma)
 
 static inline void
 trace_xe_vma_unbind(struct xe_vma *vma)
-{
-}
-
-static inline void
-trace_xe_vma_fail(struct xe_vma *vma)
 {
 }
 
