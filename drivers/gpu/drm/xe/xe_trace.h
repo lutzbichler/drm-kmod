@@ -55,11 +55,6 @@ trace_xe_hw_fence_create(struct xe_hw_fence *fence)
 }
 
 static inline void
-trace_xe_hw_fence_free(struct xe_hw_fence *fence)
-{
-}
-
-static inline void
 trace_xe_hw_fence_signal(struct xe_hw_fence *fence)
 {
 }
