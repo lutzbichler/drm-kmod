@@ -1030,12 +1030,10 @@ SRCS+=	rc_calc.c \
 	rc_calc_dpi.c \
 	dc_dsc.c \
 	dc_spl.c \
-	dc_spl_filters.c \
 	dc_spl_isharp_filters.c \
-	dc_spl_scl_easf_filters.c \
 	dc_spl_scl_filters.c \
-	dc_spl_translate.c \
-	spl_fixpt31_32.c
+	dc_spl_scl_filters_old.c \
+	dc_spl_translate.c
 	
 # display/dc/gpio/*
 SRCS+=	gpio_base.c \
@@ -1665,7 +1663,6 @@ CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.link_validation.c=		-Wno-missing-prototypes
 CWARNFLAGS.power_helpers.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
-CWARNFLAGS.spl_fixpt31_32.c=		-Wno-incompatible-pointer-types
 CWARNFLAGS.vg_clk_mgr.c=		-Wno-missing-prototypes -Wno-incompatible-pointer-types
 CWARNFLAGS.virtual_link_hwss.c=		-Wno-missing-prototypes
 
