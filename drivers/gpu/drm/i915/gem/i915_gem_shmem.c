@@ -59,8 +59,8 @@ void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
 	for_each_sgt_page(page, sgt_iter, st) {
 		struct folio *folio = page_folio(page);
 #elif defined(__FreeBSD__)
-        for_each_sgt_page(p, sgt_iter, st) {
-                struct folio *folio = page_folio(p);
+	for_each_sgt_page(p, sgt_iter, st) {
+		struct folio *folio = page_folio(p);
 #endif
 		if (folio == last)
 			continue;
@@ -480,7 +480,8 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 	const struct address_space_operations *aops = mapping->a_ops;
 #endif
 	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
-	u64 remain, offset;
+	u64 remain;
+	loff_t pos;
 	unsigned int pg;
 
 	/* Caller already validated user args */
@@ -513,12 +514,12 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 	 */
 
 	remain = arg->size;
-	offset = arg->offset;
-	pg = offset_in_page(offset);
+	pos = arg->offset;
+	pg = offset_in_page(pos);
 
 	do {
 		unsigned int len, unwritten;
-		struct page *page;
+		struct folio *folio;
 		void *data, *vaddr;
 		int err;
 #ifdef __linux__
@@ -529,11 +530,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 		if (len > remain)
 			len = remain;
 
-#ifdef __FreeBSD__
-		(void)data;
-		(void)err;
-		page = shmem_read_mapping_page(mapping, OFF_TO_IDX(offset));
-#else
+#ifdef __linux__
 		/* Prefault the user page to reduce potential recursion */
 		err = __get_user(c, user_data);
 		if (err)
@@ -544,22 +541,26 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 			return err;
 
 		err = aops->write_begin(obj->base.filp, mapping, offset, len,
-					&page, &data);
+					&folio, &data);
 		if (err < 0)
 			return err;
+
+		vaddr = kmap_local_page(folio, offset_in_folio(folio, pos));
+#elif defined(__FreeBSD__)
+		(void)data;
+		(void)err;
+		folio = shmem_read_mapping_page(mapping, OFF_TO_IDX(pos));
+		vaddr = kmap_local_page(folio);
 #endif
 
-		vaddr = kmap_local_page(page);
 		pagefault_disable();
-		unwritten = __copy_from_user_inatomic(vaddr + pg,
-						      user_data,
-						      len);
+		unwritten = __copy_from_user_inatomic(vaddr, user_data, len);
 		pagefault_enable();
 		kunmap_local(vaddr);
 
 #ifdef __linux__
-		err = aops->write_end(obj->base.filp, mapping, offset, len,
-				      len - unwritten, page_folio(page), data);
+		err = aops->write_end(obj->base.filp, mapping, pos, len,
+				      len - unwritten, folio, data);
 		if (err < 0)
 			return err;
 #else
@@ -572,7 +573,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 
 		remain -= len;
 		user_data += len;
-		offset += len;
+		pos += len;
 		pg = 0;
 	} while (remain);
 
@@ -741,7 +742,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 #ifdef __linux__
 	const struct address_space_operations *aops;
 #endif
-	resource_size_t offset;
+	loff_t pos;
 	int err;
 
 	GEM_WARN_ON(IS_DGFX(i915));
@@ -755,30 +756,32 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 #ifdef __linux__
 	aops = file->f_mapping->a_ops;
 #endif
-	offset = 0;
+	pos = 0;
 	do {
 		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
-		struct page *page;
-		void *pgdata, *vaddr;
+		struct folio *folio;
+		void *fsdata;
 
 #ifdef __linux__
-		err = aops->write_begin(file, file->f_mapping, offset, len,
-					&page, &pgdata);
+		err = aops->write_begin(file, file->f_mapping, pos, len,
+					&folio, &fsdata);
 		if (err < 0)
 			goto fail;
+
+		memcpy_to_folio(folio, offset_in_folio(folio, pos), data, len);
 #elif defined(__FreeBSD__)
 		(void)err;
-		(void)pgdata;
-		page = shmem_read_mapping_page(obj->base.filp->f_shmem, OFF_TO_IDX(offset));
+		page = shmem_read_mapping_page(obj->base.filp->f_shmem, OFF_TO_IDX(pos));
+
+		fsdata = kmap(folio);
+		memcpy(fsdata, data, len);
+		kunmap(folio);
 #endif
 
-		vaddr = kmap(page);
-		memcpy(vaddr, data, len);
-		kunmap(page);
 
 #ifdef __linux__
-		err = aops->write_end(file, file->f_mapping, offset, len, len,
-				      page_folio(page), pgdata);
+		err = aops->write_end(file, file->f_mapping, pos, len, len,
+				      folio, fsdata);
 		if (err < 0)
 			goto fail;
 #elif defined(__FreeBSD__)
@@ -787,7 +790,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 
 		size -= len;
 		data += len;
-		offset += len;
+		pos += len;
 	} while (size);
 
 	return obj;
