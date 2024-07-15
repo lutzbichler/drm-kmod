@@ -751,7 +751,11 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 	pos = 0;
 	do {
 		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
+#ifdef __linux__
 		struct folio *folio;
+#elif defined(__FreeBSD__)
+		struct page *page;
+#endif
 		void *fsdata;
 
 #ifdef __linux__
@@ -765,9 +769,9 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 		(void)err;
 		page = shmem_read_mapping_page(obj->base.filp->f_shmem, OFF_TO_IDX(pos));
 
-		fsdata = kmap(folio);
+		fsdata = kmap(page);
 		memcpy(fsdata, data, len);
-		kunmap(folio);
+		kunmap(page);
 #endif
 
 
