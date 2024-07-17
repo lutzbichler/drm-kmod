@@ -313,4 +313,14 @@ drm_edid_load_firmware(struct drm_connector *connector)
 }
 #endif
 
+/* drm_panic.c */
+#ifdef CONFIG_DRM_PANIC
+bool drm_panic_is_enabled(struct drm_device *dev);
+#else
+#ifdef __FreeBSD__
+static inline
+#endif
+bool drm_panic_is_enabled(struct drm_device *dev) {return false; }
+#endif
+
 #endif /* __DRM_CRTC_INTERNAL_H__ */
