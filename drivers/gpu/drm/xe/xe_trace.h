@@ -204,5 +204,40 @@ trace_xe_reg_rw(struct xe_gt *gt, bool read, u32 addr, u8 val, size_t size)
 {
 }
 
+static inline void
+trace_xe_pm_runtime_get(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_runtime_put(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_resume(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_suspend(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_runtime_resume(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_runtime_suspend(struct xe_device *xe, void *caller)
+{
+}
+
+static inline void
+trace_xe_pm_runtime_get_ioctl(struct xe_device *xe, void *caller)
+{
+}
+
 #endif /* _XE_TRACE_FREEBSD_H_ */
 
