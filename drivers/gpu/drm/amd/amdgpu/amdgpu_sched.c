@@ -35,21 +35,30 @@ static int amdgpu_sched_process_priority_override(struct amdgpu_device *adev,
 						  int fd,
 						  int32_t priority)
 {
+#ifdef __linux__
+	CLASS(fd, f)(fd);
+#elif defined(__FreeBSD__)
 	struct fd f = fdget(fd);
+#endif
 	struct amdgpu_fpriv *fpriv;
 	struct amdgpu_ctx_mgr *mgr;
 	struct amdgpu_ctx *ctx;
 	uint32_t id;
 	int r;
 
-	if (!fd_file(f))
+	if (fd_empty(f))
 		return -EINVAL;
 
 	r = amdgpu_file_to_fpriv(fd_file(f), &fpriv);
+#ifdef __linux__
+	if (r)
+		return r;
+#elif defined(__FreeBSD__)
 	if (r) {
 		fdput(f);
 		return r;
 	}
+#endif
 
 	mgr = &fpriv->ctx_mgr;
 	mutex_lock(&mgr->lock);
@@ -57,7 +66,9 @@ static int amdgpu_sched_process_priority_override(struct amdgpu_device *adev,
 		amdgpu_ctx_priority_override(ctx, priority);
 	mutex_unlock(&mgr->lock);
 
+#ifdef __FreeBSD__
 	fdput(f);
+#endif
 	return 0;
 }
 
@@ -66,31 +77,39 @@ static int amdgpu_sched_context_priority_override(struct amdgpu_device *adev,
 						  unsigned ctx_id,
 						  int32_t priority)
 {
+#ifdef __linux__
+	CLASS(fd, f)(fd);
+#elif defined(__FreeBSD__)
 	struct fd f = fdget(fd);
+#endif
 	struct amdgpu_fpriv *fpriv;
 	struct amdgpu_ctx *ctx;
 	int r;
 
-	if (!fd_file(f))
+	if (fd_empty(f))
 		return -EINVAL;
 
 	r = amdgpu_file_to_fpriv(fd_file(f), &fpriv);
+#ifdef __linux__
+	if (r)
+		return r;
+#elif defined(__FreeBSD__)
 	if (r) {
 		fdput(f);
 		return r;
 	}
+#endif
 
 	ctx = amdgpu_ctx_get(fpriv, ctx_id);
 
-	if (!ctx) {
-		fdput(f);
+	if (!ctx)
 		return -EINVAL;
-	}
 
 	amdgpu_ctx_priority_override(ctx, priority);
 	amdgpu_ctx_put(ctx);
+#ifdef __FreeBSD__
 	fdput(f);
-
+#endif
 	return 0;
 }
 
