@@ -722,16 +722,25 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
 				    int fd, u32 *handle)
 {
 	struct drm_syncobj *syncobj;
+#ifdef __linux__
+	CLASS(fd, f)(fd);
+#elif defined(__FreeBSD__)
 	struct fd f = fdget(fd);
+#endif
 	int ret;
 
-	if (!fd_file(f))
+	if (fd_empty(f))
 		return -EINVAL;
 
+#ifdef __linux__
+	if (fd_file(f)->f_op != &drm_syncobj_file_fops)
+		return -EINVAL;
+#elif defined(__FreeBSD__)
 	if (fd_file(f)->f_op != &drm_syncobj_file_fops) {
 		fdput(f);
 		return -EINVAL;
 	}
+#endif
 
 	/* take a reference to put in the idr */
 	syncobj = fd_file(f)->private_data;
@@ -749,7 +758,9 @@ static int drm_syncobj_fd_to_handle(struct drm_file *file_private,
 	} else
 		drm_syncobj_put(syncobj);
 
+#ifdef __FreeBSD__
 	fdput(f);
+#endif
 	return ret;
 }
 
