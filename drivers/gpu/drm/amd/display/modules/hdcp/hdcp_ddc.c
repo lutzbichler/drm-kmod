@@ -25,7 +25,7 @@
 
 #include "hdcp.h"
 
-#ifdef __linux__
+#ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
 #define HDCP_I2C_ADDR 0x3a	/* 0x74 >> 1*/

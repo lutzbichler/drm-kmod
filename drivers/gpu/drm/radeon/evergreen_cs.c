@@ -33,7 +33,7 @@
 #include "evergreen_reg_safe.h"
 #include "cayman_reg_safe.h"
 
-#ifdef __linux__
+#ifndef MIN
 #define MAX(a, b)                   (((a) > (b)) ? (a) : (b))
 #define MIN(a, b)                   (((a) < (b)) ? (a) : (b))
 #endif
