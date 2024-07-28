@@ -35,7 +35,7 @@
 #include "dc_stream_priv.h"
 
 #define DC_LOGGER dc->ctx->logger
-#ifdef __linux__
+#ifndef MIN
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))
 #define MAX(x, y) ((x > y) ? x : y)
 #endif
