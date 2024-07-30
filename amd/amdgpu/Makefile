@@ -1717,6 +1717,26 @@ CWARNFLAGS.display_mode_vba_32.c=	-Wno-enum-conversion -Wno-unused-const-variabl
 CWARNFLAGS.display_mode_vba_util_32.c=	-Wno-enum-conversion -Wno-missing-prototypes -Wno-unused-local-typedef
 CWARNFLAGS.display_rq_dlg_calc_314.c=	-Wno-unused-but-set-variable
 
+# display/dc/link
+CWARNFLAGS.link_detection.c=		-Wno-unused-but-set-variable
+CWARNFLAGS.link_validation.c=		-Wno-missing-prototypes
+
+# display/dc/link/accessories
+CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
+
+# display/dc/link/protocols
+CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable	
+CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
+
+# modules/*
+CWARNFLAGS.freesync.c=                  -Wno-unused-but-set-variable
+
+# pm/*
+CWARNFLAGS.smu_v13_0_0_ppt.c=           -Wno-unused-variable
+CWARNFLAGS.smu_v13_0_6_ppt.c=           -Wno-uninitialized -Wno-missing-prototypes -Wno-initializer-overrides
+CWARNFLAGS.smu_v13_0_7_ppt.c=		-Wno-unused-variable
+CWARNFLAGS.smu_v14_0_2_ppt.c=		-Wno-unused-variable
+
 # powerplay/*
 CWARNFLAGS.amdgpu_smu.c=		-Wno-unused-function -Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.ci_smumgr.c=			-Wno-unused-but-set-variable
@@ -1731,9 +1751,6 @@ CWARNFLAGS.smu7_hwmgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.smu8_hwmgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.smu9_smumgr.c=		-Wno-missing-prototypes
 CWARNFLAGS.smu_cmn.c=			-Wno-implicit-function-declaration -Wno-sometimes-uninitialized
-CWARNFLAGS.smu_v13_0_0_ppt.c=		-Wno-unused-variable
-CWARNFLAGS.smu_v13_0_6_ppt.c=		-Wno-missing-prototypes -Wno-initializer-overrides
-CWARNFLAGS.smu_v13_0_7_ppt.c=		-Wno-unused-variable
 CWARNFLAGS.tonga_smumgr.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.vega10_hwmgr.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.vega10_processpptables.c=	-Wno-missing-prototypes
