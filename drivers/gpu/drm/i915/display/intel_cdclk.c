@@ -26,7 +26,10 @@
 #endif
 #include <linux/time.h>
 
+#include <drm/drm_fixed.h>
+
 #include "soc/intel_dram.h"
+
 #include "hsw_ips.h"
 #include "i915_reg.h"
 #include "intel_atomic.h"
@@ -2753,7 +2756,7 @@ static int intel_vdsc_min_cdclk(const struct intel_crtc_state *crtc_state)
 		 */
 		int bigjoiner_interface_bits = DISPLAY_VER(i915) >= 14 ? 36 : 24;
 		int min_cdclk_bj =
-			(to_bpp_int_roundup(crtc_state->dsc.compressed_bpp_x16) *
+			(fxp_q4_to_int_roundup(crtc_state->dsc.compressed_bpp_x16) *
 			 pixel_clock) / (2 * bigjoiner_interface_bits);
 
 		min_cdclk = max(min_cdclk, min_cdclk_bj);
