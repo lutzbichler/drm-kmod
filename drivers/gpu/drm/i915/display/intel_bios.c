@@ -622,7 +622,9 @@ static int opregion_get_panel_type(struct drm_i915_private *i915,
 				   const struct intel_bios_encoder_data *devdata,
 				   const struct drm_edid *drm_edid, bool use_fallback)
 {
-	return intel_opregion_get_panel_type(i915);
+	struct intel_display *display = &i915->display;
+
+	return intel_opregion_get_panel_type(display);
 }
 
 static int vbt_get_panel_type(struct drm_i915_private *i915,
@@ -2991,13 +2993,6 @@ bool intel_bios_is_valid_vbt(struct drm_i915_private *i915,
 	return vbt;
 }
 
-#ifdef __FreeBSD__
-#define	pci_map_rom(pdev, sizep)			\
-	vga_pci_map_bios(device_get_parent(pdev->dev.bsddev), sizep)
-#define	pci_unmap_rom(pdev, bios)			\
-	vga_pci_unmap_bios(device_get_parent(pdev->dev.bsddev), bios)
-#endif
-
 static struct vbt_header *firmware_get_vbt(struct drm_i915_private *i915,
 					   size_t *size)
 {
@@ -3097,6 +3092,13 @@ err_not_found:
 	return NULL;
 }
 
+#ifdef __FreeBSD__
+#define	pci_map_rom(pdev, sizep)			\
+	vga_pci_map_bios(device_get_parent(pdev->dev.bsddev), sizep)
+#define	pci_unmap_rom(pdev, bios)			\
+	vga_pci_unmap_bios(device_get_parent(pdev->dev.bsddev), bios)
+#endif
+
 static struct vbt_header *oprom_get_vbt(struct drm_i915_private *i915,
 					size_t *sizep)
 {
@@ -3165,13 +3167,14 @@ err_unmap_oprom:
 static const struct vbt_header *intel_bios_get_vbt(struct drm_i915_private *i915,
 						   size_t *sizep)
 {
+	struct intel_display *display = &i915->display;
 	const struct vbt_header *vbt = NULL;
 	intel_wakeref_t wakeref;
 
 	vbt = firmware_get_vbt(i915, sizep);
 
 	if (!vbt)
-		vbt = intel_opregion_get_vbt(i915, sizep);
+		vbt = intel_opregion_get_vbt(display, sizep);
 
 	/*
 	 * If the OpRegion does not have VBT, look in SPI flash
@@ -3385,6 +3388,7 @@ bool intel_bios_is_tv_present(struct drm_i915_private *i915)
  */
 bool intel_bios_is_lvds_present(struct drm_i915_private *i915, u8 *i2c_pin)
 {
+	struct intel_display *display = &i915->display;
 	const struct intel_bios_encoder_data *devdata;
 
 	if (list_empty(&i915->display.vbt.display_devices))
@@ -3417,7 +3421,7 @@ bool intel_bios_is_lvds_present(struct drm_i915_private *i915, u8 *i2c_pin)
 		 * additional data.  Trust that if the VBT was written into
 		 * the OpRegion then they have validated the LVDS's existence.
 		 */
-		return intel_opregion_vbt_present(i915);
+		return intel_opregion_vbt_present(display);
 	}
 
 	return false;
