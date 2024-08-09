@@ -540,6 +540,9 @@ static const struct file_operations radeon_driver_kms_fops = {
 #ifdef CONFIG_COMPAT
 	.compat_ioctl = radeon_kms_compat_ioctl,
 #endif
+#ifdef __linux__
+	.fop_flags = FOP_UNSIGNED_OFFSET,
+#endif
 };
 
 static const struct drm_ioctl_desc radeon_ioctls_kms[] = {
