@@ -11,6 +11,10 @@
 #endif
 #include <linux/types.h>
 
+#ifdef __FreeBSD__
+#include <linux/llist.h>
+#endif
+
 #include "xe_pt_walk.h"
 
 struct xe_bo;
