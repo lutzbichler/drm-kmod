@@ -257,6 +257,9 @@ static const struct file_operations xe_driver_fops = {
 #ifdef CONFIG_PROC_FS
 	.show_fdinfo = drm_show_fdinfo,
 #endif
+#ifdef __linux__
+	.fop_flags = FOP_UNSIGNED_OFFSET,
+#endif
 };
 
 static struct drm_driver driver = {
