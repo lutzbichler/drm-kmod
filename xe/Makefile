@@ -54,6 +54,7 @@ SRCS=	xe_bb.c \
 	xe_gt_idle.c \
 	xe_gt_mcr.c \
 	xe_gt_pagefault.c \
+	xe_gt_stats.c \
 	xe_gt_sysfs.c \
 	xe_gt_throttle.c \
 	xe_gt_tlb_invalidation.c \
