@@ -971,7 +971,7 @@ SRCS+=	dml21_translation_helper.c \
 SRCS+=	dml2_core_dcn4.c \
 	dml2_core_dcn4_calcs.c \
 	dml2_core_factory.c \
-	dml2_core_shared.c
+	dml2_core_utils.c
 
 # display/dc/dml2/dml21/src/dml2_dpmm
 SRCS+=	dml2_dpmm_dcn4.c \
@@ -1418,7 +1418,7 @@ CFLAGS.dml_top_mcache.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4_calcs.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml2_core_shared.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_core_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_dpmm_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_pmo_dcn4_fams2.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
