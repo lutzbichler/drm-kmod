@@ -1154,10 +1154,12 @@ SRCS+=	dc_helper.c \
 
 # display/dc/spl
 SRCS+=	dc_spl.c \
+	dc_spl_filters.c \
 	dc_spl_isharp_filters.c \
+	dc_spl_scl_easf_filters.c \
 	dc_spl_scl_filters.c \
-	dc_spl_scl_filters_old.c \
-	dc_spl_translate.c
+	dc_spl_translate.c \
+	spl_fixpt31_32.c
 
 # display/dmub/src
 SRCS+=	dmub_dcn20.c \
@@ -1727,6 +1729,9 @@ CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 # display/dc/link/protocols
 CWARNFLAGS.link_dp_capability.c=	-Wno-unused-but-set-variable	
 CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
+
+# display/dc/spl
+CWARNFLAGS.spl_fixpt31_32.c=	-Wno-incompatible-pointer-types
 
 # modules/*
 CWARNFLAGS.freesync.c=                  -Wno-unused-but-set-variable
