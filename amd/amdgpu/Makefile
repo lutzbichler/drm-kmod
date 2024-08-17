@@ -1037,6 +1037,7 @@ SRCS+=	rc_calc.c \
 	dc_spl_scl_easf_filters.c \
 	dc_spl_scl_filters.c \
 	dc_spl_translate.c \
+	spl_custom_float.c \
 	spl_fixpt31_32.c
 	
 # display/dc/gpio/*
