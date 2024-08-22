@@ -1081,6 +1081,7 @@ static const struct file_operations drm_stub_fops = {
 static void drm_core_exit(void)
 {
 	drm_privacy_screen_lookup_exit();
+	drm_panic_exit();
 	accel_core_exit();
 	unregister_chrdev(DRM_MAJOR, "drm");
 #ifdef CONFIG_DEBUG_FS
@@ -1121,6 +1122,8 @@ static int __init drm_core_init(void)
 	ret = accel_core_init();
 	if (ret < 0)
 		goto error;
+
+	drm_panic_init();
 
 	drm_privacy_screen_lookup_init();
 
