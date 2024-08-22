@@ -688,15 +688,11 @@ int intel_vblank_evade(struct intel_vblank_evade_ctx *evade)
 			break;
 		}
 
-#ifdef __linux__
 		local_irq_enable();
-#endif
 
 		timeout = schedule_timeout(timeout);
 
-#ifdef __linux__
 		local_irq_disable();
-#endif
 	}
 
 	finish_wait(wq, &wait);
