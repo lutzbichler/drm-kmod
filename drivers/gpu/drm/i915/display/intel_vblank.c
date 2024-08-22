@@ -293,6 +293,38 @@ int intel_crtc_scanline_to_hw(struct intel_crtc *crtc, int scanline)
 	return (scanline + vtotal - crtc->scanline_offset) % vtotal;
 }
 
+/*
+ * The uncore version of the spin lock functions is used to decide
+ * whether we need to lock the uncore lock or not.  This is only
+ * needed in i915, not in Xe.
+ *
+ * This lock in i915 is needed because some old platforms (at least
+ * IVB and possibly HSW as well), which are not supported in Xe, need
+ * all register accesses to the same cacheline to be serialized,
+ * otherwise they may hang.
+ */
+#ifdef I915
+static void intel_vblank_section_enter(struct drm_i915_private *i915)
+	__acquires(i915->uncore.lock)
+{
+	spin_lock(&i915->uncore.lock);
+}
+
+static void intel_vblank_section_exit(struct drm_i915_private *i915)
+	__releases(i915->uncore.lock)
+{
+	spin_unlock(&i915->uncore.lock);
+}
+#else
+static void intel_vblank_section_enter(struct drm_i915_private *i915)
+{
+}
+
+static void intel_vblank_section_exit(struct drm_i915_private *i915)
+{
+}
+#endif
+
 static bool i915_get_crtc_scanoutpos(struct drm_crtc *_crtc,
 				     bool in_vblank_irq,
 				     int *vpos, int *hpos,
@@ -657,15 +689,11 @@ int intel_vblank_evade(struct intel_vblank_evade_ctx *evade)
 			break;
 		}
 
-#ifdef __linux__
 		local_irq_enable();
-#endif
 
 		timeout = schedule_timeout(timeout);
 
-#ifdef __linux__
 		local_irq_disable();
-#endif
 	}
 
 	finish_wait(wq, &wait);
