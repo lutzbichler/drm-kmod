@@ -688,19 +688,11 @@ int intel_vblank_evade(struct intel_vblank_evade_ctx *evade)
 			break;
 		}
 
-#ifdef __linux__
 		local_irq_enable();
-#elif defined(__FreeBSD__)
-		preempt_enable();
-#endif
 
 		timeout = schedule_timeout(timeout);
 
-#ifdef __linux__
 		local_irq_disable();
-#elif defined(__FreeBSD__)
-		preempt_disable();
-#endif
 	}
 
 	finish_wait(wq, &wait);
