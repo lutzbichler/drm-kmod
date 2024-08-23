@@ -28,6 +28,10 @@
 #ifndef _DRM_ACCEL_H_
 #define _DRM_ACCEL_H_
 
+#define ACCEL_MAX_MINORS        256
+
+extern struct xarray accel_minors_xa;
+
 struct device;
 struct drm_device;
 struct drm_minor;
