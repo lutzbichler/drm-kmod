@@ -225,7 +225,7 @@ static inline void svm_range_list_fini(struct kfd_process *p)
 static inline int svm_range_restore_pages(struct amdgpu_device *adev,
 					  unsigned int pasid,
 					  uint32_t client_id, uint32_t node_id,
-					  uint64_t addr, bool write_fault)
+					  uint64_t addr, uint64_t ts, bool write_fault)
 {
 	return -EFAULT;
 }
