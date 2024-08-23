@@ -30,6 +30,10 @@
 
 #include <drm/drm_file.h>
 
+#define ACCEL_MAX_MINORS        256
+
+extern struct xarray accel_minors_xa;
+
 static inline void
 accel_core_exit(void)
 {
