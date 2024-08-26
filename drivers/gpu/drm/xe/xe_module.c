@@ -13,6 +13,7 @@
 #include "xe_drv.h"
 #include "xe_hw_fence.h"
 #include "xe_pci.h"
+#include "xe_pm.h"
 #include "xe_observation.h"
 #include "xe_sched_job.h"
 
@@ -84,6 +85,10 @@ struct init_funcs {
 	void (*exit)(void);
 };
 
+static void xe_dummy_exit(void)
+{
+}
+
 static const struct init_funcs init_funcs[] = {
 	{
 		.init = xe_check_nomodeset,
@@ -103,6 +108,10 @@ static const struct init_funcs init_funcs[] = {
 	{
 		.init = xe_observation_sysctl_register,
 		.exit = xe_observation_sysctl_unregister,
+	},
+	{
+		.init = xe_pm_module_init,
+		.exit = xe_dummy_exit,
 	},
 };
 
