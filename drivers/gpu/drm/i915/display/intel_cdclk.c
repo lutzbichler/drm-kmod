@@ -21,9 +21,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-#ifdef __FreeBSD__
 #include <linux/debugfs.h>
-#endif
 #include <linux/time.h>
 
 #include <drm/drm_fixed.h>
