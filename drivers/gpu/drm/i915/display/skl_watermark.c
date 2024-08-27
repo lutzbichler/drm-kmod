@@ -7,6 +7,8 @@
 #include <linux/debugfs.h>
 #endif
 
+#include <linux/debugfs.h>
+
 #include <drm/drm_blend.h>
 
 #include "i915_drv.h"
