@@ -25,6 +25,8 @@
 #include <linux/debugfs.h>
 #endif
 
+#include <linux/debugfs.h>
+
 #include <drm/drm_atomic_helper.h>
 #include <drm/drm_damage_helper.h>
 #include <drm/drm_debugfs.h>
