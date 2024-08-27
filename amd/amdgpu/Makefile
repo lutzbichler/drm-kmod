@@ -334,6 +334,7 @@ SRCS+=	aldebaran.c \
 	amdgpu_drv.c \
 	amdgpu_eeprom.c \
 	amdgpu_encoders.c \
+	amdgpu_eviction_fence.c \
 	amdgpu_fdinfo.c \
 	amdgpu_fence.c \
 	amdgpu_freebsd.c \
