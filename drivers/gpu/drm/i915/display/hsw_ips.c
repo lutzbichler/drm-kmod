@@ -7,6 +7,8 @@
 #include <linux/debugfs.h>
 #endif
 
+#include <linux/debugfs.h>
+
 #include "hsw_ips.h"
 #include "i915_drv.h"
 #include "i915_reg.h"

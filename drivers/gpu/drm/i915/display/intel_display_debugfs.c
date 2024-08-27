@@ -3,9 +3,7 @@
  * Copyright © 2020 Intel Corporation
  */
 
-#ifdef __FreeBSD__
 #include <linux/debugfs.h>
-#endif
 #include <linux/string_helpers.h>
 
 #include <drm/drm_debugfs.h>
