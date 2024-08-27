@@ -25,6 +25,8 @@
 #include <linux/debugfs.h>
 #endif
 
+#include <linux/debugfs.h>
+
 #include <drm/display/drm_dp_helper.h>
 
 #include "i915_drv.h"
