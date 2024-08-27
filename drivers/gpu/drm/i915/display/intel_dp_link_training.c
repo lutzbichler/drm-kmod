@@ -21,7 +21,7 @@
  * IN THE SOFTWARE.
  */
 
-#include <drm/display/drm_dp_helper.h>
+#include <linux/debugfs.h>
 
 #include "i915_drv.h"
 #include "intel_display_types.h"
