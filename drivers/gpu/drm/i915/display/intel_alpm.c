@@ -7,6 +7,8 @@
 #include <linux/debugfs.h>
 #endif
 
+#include <linux/debugfs.h>
+
 #include "intel_alpm.h"
 #include "intel_crtc.h"
 #include "intel_de.h"
