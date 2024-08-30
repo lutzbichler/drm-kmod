@@ -28,9 +28,12 @@ static void vlv_steal_power_sequencer(struct drm_i915_private *dev_priv,
 static void pps_init_delays(struct intel_dp *intel_dp);
 static void pps_init_registers(struct intel_dp *intel_dp, bool force_disable_vdd);
 
-static const char *pps_name(struct drm_i915_private *i915,
-			    struct intel_pps *pps)
+static const char *pps_name(struct intel_dp *intel_dp)
 {
+	struct intel_display *display = to_intel_display(intel_dp);
+	struct drm_i915_private *i915 = to_i915(display->drm);
+	struct intel_pps *pps = &intel_dp->pps;
+
 	if (IS_VALLEYVIEW(i915) || IS_CHERRYVIEW(i915)) {
 		switch (pps->pps_pipe) {
 		case INVALID_PIPE:
@@ -101,13 +104,13 @@ vlv_power_sequencer_kick(struct intel_dp *intel_dp)
 	if (drm_WARN(&dev_priv->drm,
 		     intel_de_read(dev_priv, intel_dp->output_reg) & DP_PORT_EN,
 		     "skipping %s kick due to [ENCODER:%d:%s] being active\n",
-		     pps_name(dev_priv, &intel_dp->pps),
+		     pps_name(intel_dp),
 		     dig_port->base.base.base.id, dig_port->base.base.name))
 		return;
 
 	drm_dbg_kms(&dev_priv->drm,
 		    "kicking %s for [ENCODER:%d:%s]\n",
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    dig_port->base.base.base.id, dig_port->base.base.name);
 
 	/* Preserve the BIOS-computed detected bit. This is
@@ -231,7 +234,7 @@ vlv_power_sequencer_pipe(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&dev_priv->drm,
 		    "picked %s for [ENCODER:%d:%s]\n",
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    dig_port->base.base.base.id, dig_port->base.base.name);
 
 	/* init power sequencer on this pipe and port */
@@ -344,7 +347,7 @@ vlv_initial_power_sequencer_setup(struct intel_dp *intel_dp)
 	drm_dbg_kms(&dev_priv->drm,
 		    "[ENCODER:%d:%s] initial power sequencer: %s\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 }
 
 static int intel_num_pps(struct drm_i915_private *i915)
@@ -428,12 +431,12 @@ pps_initial_setup(struct intel_dp *intel_dp)
 		drm_dbg_kms(&i915->drm,
 			    "[ENCODER:%d:%s] no initial power sequencer, assuming %s\n",
 			    encoder->base.base.id, encoder->base.name,
-			    pps_name(i915, &intel_dp->pps));
+			    pps_name(intel_dp));
 	} else {
 		drm_dbg_kms(&i915->drm,
 			    "[ENCODER:%d:%s] initial power sequencer: %s\n",
 			    encoder->base.base.id, encoder->base.name,
-			    pps_name(i915, &intel_dp->pps));
+			    pps_name(intel_dp));
 	}
 
 	return intel_pps_is_valid(intel_dp);
@@ -569,11 +572,11 @@ void intel_pps_check_power_unlocked(struct intel_dp *intel_dp)
 		drm_WARN(&dev_priv->drm, 1,
 			 "[ENCODER:%d:%s] %s powered off while attempting AUX CH communication.\n",
 			 dig_port->base.base.base.id, dig_port->base.base.name,
-			 pps_name(dev_priv, &intel_dp->pps));
+			 pps_name(intel_dp));
 		drm_dbg_kms(&dev_priv->drm,
 			    "[ENCODER:%d:%s] %s PP_STATUS: 0x%08x PP_CONTROL: 0x%08x\n",
 			    dig_port->base.base.base.id, dig_port->base.base.name,
-			    pps_name(dev_priv, &intel_dp->pps),
+			    pps_name(intel_dp),
 			    intel_de_read(dev_priv, _pp_stat_reg(intel_dp)),
 			    intel_de_read(dev_priv, _pp_ctrl_reg(intel_dp)));
 	}
@@ -607,7 +610,7 @@ static void wait_panel_status(struct intel_dp *intel_dp,
 	drm_dbg_kms(&dev_priv->drm,
 		    "[ENCODER:%d:%s] %s mask: 0x%08x value: 0x%08x PP_STATUS: 0x%08x PP_CONTROL: 0x%08x\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    mask, value,
 		    intel_de_read(dev_priv, pp_stat_reg),
 		    intel_de_read(dev_priv, pp_ctrl_reg));
@@ -616,7 +619,7 @@ static void wait_panel_status(struct intel_dp *intel_dp,
 		drm_err(&dev_priv->drm,
 			"[ENCODER:%d:%s] %s panel status timeout: PP_STATUS: 0x%08x PP_CONTROL: 0x%08x\n",
 			dig_port->base.base.base.id, dig_port->base.base.name,
-			pps_name(dev_priv, &intel_dp->pps),
+			pps_name(intel_dp),
 			intel_de_read(dev_priv, pp_stat_reg),
 			intel_de_read(dev_priv, pp_ctrl_reg));
 
@@ -630,7 +633,7 @@ static void wait_panel_on(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&i915->drm, "[ENCODER:%d:%s] %s wait for panel power on\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(i915, &intel_dp->pps));
+		    pps_name(intel_dp));
 	wait_panel_status(intel_dp, IDLE_ON_MASK, IDLE_ON_VALUE);
 }
 
@@ -641,7 +644,7 @@ static void wait_panel_off(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&i915->drm, "[ENCODER:%d:%s] %s wait for panel power off time\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(i915, &intel_dp->pps));
+		    pps_name(intel_dp));
 	wait_panel_status(intel_dp, IDLE_OFF_MASK, IDLE_OFF_VALUE);
 }
 
@@ -654,7 +657,7 @@ static void wait_panel_power_cycle(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&i915->drm, "[ENCODER:%d:%s] %s wait for panel power cycle\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(i915, &intel_dp->pps));
+		    pps_name(intel_dp));
 
 	/* take the difference of current time and panel power off time
 	 * and then make panel wait for t11_t12 if needed. */
@@ -746,7 +749,7 @@ bool intel_pps_vdd_on_unlocked(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s turning VDD on\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 
 	if (!edp_have_panel_power(intel_dp))
 		wait_panel_power_cycle(intel_dp);
@@ -758,7 +761,7 @@ bool intel_pps_vdd_on_unlocked(struct intel_dp *intel_dp)
 	intel_de_posting_read(dev_priv, pp_ctrl_reg);
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s PP_STATUS: 0x%08x PP_CONTROL: 0x%08x\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    intel_de_read(dev_priv, pp_stat_reg),
 		    intel_de_read(dev_priv, pp_ctrl_reg));
 	/*
@@ -768,7 +771,7 @@ bool intel_pps_vdd_on_unlocked(struct intel_dp *intel_dp)
 		drm_dbg_kms(&dev_priv->drm,
 			    "[ENCODER:%d:%s] %s panel power wasn't enabled\n",
 			    dig_port->base.base.base.id, dig_port->base.base.name,
-			    pps_name(dev_priv, &intel_dp->pps));
+			    pps_name(intel_dp));
 		msleep(intel_dp->pps.panel_power_up_delay);
 	}
 
@@ -796,7 +799,7 @@ void intel_pps_vdd_on(struct intel_dp *intel_dp)
 	I915_STATE_WARN(i915, !vdd, "[ENCODER:%d:%s] %s VDD already requested on\n",
 			dp_to_dig_port(intel_dp)->base.base.base.id,
 			dp_to_dig_port(intel_dp)->base.base.name,
-			pps_name(i915, &intel_dp->pps));
+			pps_name(intel_dp));
 }
 
 static void intel_pps_vdd_off_sync_unlocked(struct intel_dp *intel_dp)
@@ -816,7 +819,7 @@ static void intel_pps_vdd_off_sync_unlocked(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s turning VDD off\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 
 	pp = ilk_get_pp_control(intel_dp);
 	pp &= ~EDP_FORCE_VDD;
@@ -830,7 +833,7 @@ static void intel_pps_vdd_off_sync_unlocked(struct intel_dp *intel_dp)
 	/* Make sure sequencer is idle before allowing subsequent activity */
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s PP_STATUS: 0x%08x PP_CONTROL: 0x%08x\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    intel_de_read(dev_priv, pp_stat_reg),
 		    intel_de_read(dev_priv, pp_ctrl_reg));
 
@@ -911,7 +914,7 @@ void intel_pps_vdd_off_unlocked(struct intel_dp *intel_dp, bool sync)
 			"[ENCODER:%d:%s] %s VDD not forced on",
 			dp_to_dig_port(intel_dp)->base.base.base.id,
 			dp_to_dig_port(intel_dp)->base.base.name,
-			pps_name(dev_priv, &intel_dp->pps));
+			pps_name(intel_dp));
 
 	intel_dp->pps.want_panel_vdd = false;
 
@@ -935,13 +938,13 @@ void intel_pps_on_unlocked(struct intel_dp *intel_dp)
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s turn panel power on\n",
 		    dp_to_dig_port(intel_dp)->base.base.base.id,
 		    dp_to_dig_port(intel_dp)->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 
 	if (drm_WARN(&dev_priv->drm, edp_have_panel_power(intel_dp),
 		     "[ENCODER:%d:%s] %s panel power already on\n",
 		     dp_to_dig_port(intel_dp)->base.base.base.id,
 		     dp_to_dig_port(intel_dp)->base.base.name,
-		     pps_name(dev_priv, &intel_dp->pps)))
+		     pps_name(intel_dp)))
 		return;
 
 	wait_panel_power_cycle(intel_dp);
@@ -1009,12 +1012,12 @@ void intel_pps_off_unlocked(struct intel_dp *intel_dp)
 
 	drm_dbg_kms(&dev_priv->drm, "[ENCODER:%d:%s] %s turn panel power off\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 
 	drm_WARN(&dev_priv->drm, !intel_dp->pps.want_panel_vdd,
 		 "[ENCODER:%d:%s] %s need VDD to turn off panel\n",
 		 dig_port->base.base.base.id, dig_port->base.base.name,
-		 pps_name(dev_priv, &intel_dp->pps));
+		 pps_name(intel_dp));
 
 	pp = ilk_get_pp_control(intel_dp);
 	/* We need to switch off panel power _and_ force vdd, for otherwise some
@@ -1150,7 +1153,7 @@ static void vlv_detach_power_sequencer(struct intel_dp *intel_dp)
 	 */
 	drm_dbg_kms(&dev_priv->drm,
 		    "detaching %s from [ENCODER:%d:%s]\n",
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    dig_port->base.base.base.id, dig_port->base.base.name);
 	intel_de_write(dev_priv, pp_on_reg, 0);
 	intel_de_posting_read(dev_priv, pp_on_reg);
@@ -1223,7 +1226,7 @@ void vlv_pps_init(struct intel_encoder *encoder,
 
 	drm_dbg_kms(&dev_priv->drm,
 		    "initializing %s for [ENCODER:%d:%s]\n",
-		    pps_name(dev_priv, &intel_dp->pps),
+		    pps_name(intel_dp),
 		    encoder->base.base.id, encoder->base.name);
 
 	/* init power sequencer on this pipe and port */
@@ -1250,7 +1253,7 @@ static void pps_vdd_init(struct intel_dp *intel_dp)
 	drm_dbg_kms(&dev_priv->drm,
 		    "[ENCODER:%d:%s] %s VDD left on by BIOS, adjusting state tracking\n",
 		    dig_port->base.base.base.id, dig_port->base.base.name,
-		    pps_name(dev_priv, &intel_dp->pps));
+		    pps_name(intel_dp));
 	drm_WARN_ON(&dev_priv->drm, intel_dp->pps.vdd_wakeref);
 	intel_dp->pps.vdd_wakeref = intel_display_power_get(dev_priv,
 							    intel_aux_power_domain(dig_port));
