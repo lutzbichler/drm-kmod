@@ -91,7 +91,8 @@ static inline void
 trace_intel_cpu_fifo_underrun(struct drm_i915_private *dev_priv, enum pipe pipe)
 {
 #ifdef KTR
-	struct intel_crtc *crtc = intel_crtc_for_pipe(dev_priv, pipe);
+	struct intel_display *display = &dev_priv->display;
+	struct intel_crtc *crtc = intel_crtc_for_pipe(display, pipe);
 #endif
 
 	CTR4(KTR_DRM,
@@ -104,8 +105,9 @@ static inline void
 trace_intel_pch_fifo_underrun(struct drm_i915_private *dev_priv, enum pipe pch_transcoder)
 {
 #ifdef KTR
+	struct intel_display *display = &dev_priv->display;
 	enum pipe pipe = pch_transcoder;
-	struct intel_crtc *crtc = intel_crtc_for_pipe(dev_priv, pipe);
+	struct intel_crtc *crtc = intel_crtc_for_pipe(display, pipe);
 #endif
 
 	CTR4(KTR_DRM,
@@ -245,8 +247,8 @@ static inline void
 trace_intel_fbc_activate(struct intel_plane *plane)
 {
 #ifdef KTR
-	struct intel_crtc *crtc = intel_crtc_for_pipe(to_i915(plane->base.dev),
-	    plane->pipe);
+	struct intel_display *display = to_intel_display(plane->base.dev);
+	struct intel_crtc *crtc = intel_crtc_for_pipe(display, plane->pipe);
 #endif
 
 	CTR5(KTR_DRM,
@@ -259,8 +261,8 @@ static inline void
 trace_intel_fbc_deactivate(struct intel_plane *plane)
 {
 #ifdef KTR
-	struct intel_crtc *crtc = intel_crtc_for_pipe(to_i915(plane->base.dev),
-	    plane->pipe);
+	struct intel_display *display = to_intel_display(plane->base.dev);
+	struct intel_crtc *crtc = intel_crtc_for_pipe(display, plane->pipe);
 #endif
 
 	CTR5(KTR_DRM,
@@ -273,8 +275,8 @@ static inline void
 trace_intel_fbc_nuke(struct intel_plane *plane)
 {
 #ifdef KTR
-	struct intel_crtc *crtc = intel_crtc_for_pipe(to_i915(plane->base.dev),
-	    plane->pipe);
+	struct intel_display *display = to_intel_display(plane->base.dev);
+	struct intel_crtc *crtc = intel_crtc_for_pipe(display, plane->pipe);
 #endif
 
 	CTR5(KTR_DRM,
