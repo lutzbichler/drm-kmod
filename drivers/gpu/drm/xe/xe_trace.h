@@ -200,7 +200,7 @@ trace_xe_sched_job_set_error(struct xe_sched_job *job)
 }
 
 static inline void
-trace_xe_reg_rw(struct xe_gt *gt, bool read, u32 addr, u8 val, size_t size)
+trace_xe_reg_rw(struct xe_mmio *mmio, bool read, u32 addr, u8 val, size_t size)
 {
 }
 
