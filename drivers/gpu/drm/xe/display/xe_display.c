@@ -18,7 +18,6 @@
 #include <drm/xe_drm.h>
 
 #include "soc/intel_dram.h"
-#include "i915_drv.h"		/* FIXME: HAS_DISPLAY() depends on this */
 #include "intel_acpi.h"
 #include "intel_audio.h"
 #include "intel_bw.h"
@@ -39,7 +38,7 @@
 
 static bool has_display(struct xe_device *xe)
 {
-	return HAS_DISPLAY(xe);
+	return HAS_DISPLAY(&xe->display);
 }
 
 /**
