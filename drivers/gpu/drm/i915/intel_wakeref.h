@@ -23,6 +23,8 @@
 
 typedef unsigned long intel_wakeref_t;
 
+#define INTEL_WAKEREF_DEF ((intel_wakeref_t)(-1))
+
 #define INTEL_REFTRACK_DEAD_COUNT 16
 #define INTEL_REFTRACK_PRINT_LIMIT 16
 
@@ -314,7 +316,7 @@ static inline void intel_wakeref_untrack(struct intel_wakeref *wf,
 
 static inline intel_wakeref_t intel_wakeref_track(struct intel_wakeref *wf)
 {
-	return -1;
+	return INTEL_WAKEREF_DEF;
 }
 
 static inline void intel_wakeref_untrack(struct intel_wakeref *wf,
