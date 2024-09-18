@@ -8,9 +8,9 @@
 
 #include <linux/types.h>
 
-typedef unsigned long intel_wakeref_t;
+typedef struct ref_tracker *intel_wakeref_t;
 
-#define INTEL_WAKEREF_DEF ((intel_wakeref_t)(-1))
+#define INTEL_WAKEREF_DEF ERR_PTR(-ENOENT)
 
 #endif /* COMPAT_I915_HEADER_INTEL_WAKEREF_ */
 
