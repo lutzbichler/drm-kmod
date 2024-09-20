@@ -210,6 +210,7 @@ SRCS+=	icl_dsi.c \
 	intel_dp_hdcp.c \
 	intel_dp_link_training.c \
 	intel_dp_mst.c \
+	intel_dp_test.c \
 	intel_dpll.c \
 	intel_dpll_mgr.c \
 	intel_dpt_common.c \
