@@ -305,7 +305,8 @@ SRCS+=	intel_pxp.c \
 # soc/*
 SRCS+=	intel_dram.c \
 	intel_gmch.c \
-	intel_pch.c
+	intel_pch.c \
+	intel_rom.c
 
 .if !empty(KCONFIG:MCOMPAT)
 SRCS+=	i915_ioc32.c
