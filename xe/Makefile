@@ -260,7 +260,8 @@ SRCS+=	icl_dsi.c \
 
 # i915/soc
 SRCS+=	intel_dram.c \
-	intel_pch.c
+	intel_pch.c \
+	intel_rom.c
 
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
