@@ -132,6 +132,10 @@ SRCS+=	drm_dp_tunnel.c
 SRCS+=	drm_exec.c
 .endif
 
+.if !empty(KCONFIG:MDRM_CLIENT_SETUP)
+SRCS+=	drm_client_setup.c
+.endif
+
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
 CFLAGS+= -I${.CURDIR:H}/linuxkpi/gplv2/include
