@@ -1770,7 +1770,8 @@ failed:
 int smu_v11_0_set_soft_freq_limited_range(struct smu_context *smu,
 					  enum smu_clk_type clk_type,
 					  uint32_t min,
-					  uint32_t max)
+					  uint32_t max,
+					  bool automatic)
 {
 	int ret = 0, clk_id = 0;
 	uint32_t param;
@@ -1785,7 +1786,10 @@ int smu_v11_0_set_soft_freq_limited_range(struct smu_context *smu,
 		return clk_id;
 
 	if (max > 0) {
-		param = (uint32_t)((clk_id << 16) | (max & 0xffff));
+		if (automatic)
+			param = (uint32_t)((clk_id << 16) | 0xffff);
+		else
+			param = (uint32_t)((clk_id << 16) | (max & 0xffff));
 		ret = smu_cmn_send_smc_msg_with_param(smu, SMU_MSG_SetSoftMaxByFreq,
 						  param, NULL);
 		if (ret)
@@ -1793,7 +1797,10 @@ int smu_v11_0_set_soft_freq_limited_range(struct smu_context *smu,
 	}
 
 	if (min > 0) {
-		param = (uint32_t)((clk_id << 16) | (min & 0xffff));
+		if (automatic)
+			param = (uint32_t)((clk_id << 16) | 0);
+		else
+			param = (uint32_t)((clk_id << 16) | (min & 0xffff));
 		ret = smu_cmn_send_smc_msg_with_param(smu, SMU_MSG_SetSoftMinByFreq,
 						  param, NULL);
 		if (ret)
@@ -1861,6 +1868,7 @@ int smu_v11_0_set_performance_level(struct smu_context *smu,
 	uint32_t mclk_min = 0, mclk_max = 0;
 	uint32_t socclk_min = 0, socclk_max = 0;
 	int ret = 0;
+	bool auto_level = false;
 
 	switch (level) {
 	case AMD_DPM_FORCED_LEVEL_HIGH:
@@ -1880,6 +1888,7 @@ int smu_v11_0_set_performance_level(struct smu_context *smu,
 		mclk_max = mem_table->max;
 		socclk_min = soc_table->min;
 		socclk_max = soc_table->max;
+		auto_level = true;
 		break;
 	case AMD_DPM_FORCED_LEVEL_PROFILE_STANDARD:
 		sclk_min = sclk_max = pstate_table->gfxclk_pstate.standard;
@@ -1912,13 +1921,15 @@ int smu_v11_0_set_performance_level(struct smu_context *smu,
 	if (amdgpu_ip_version(adev, MP1_HWIP, 0) == IP_VERSION(11, 0, 2)) {
 		mclk_min = mclk_max = 0;
 		socclk_min = socclk_max = 0;
+		auto_level = false;
 	}
 
 	if (sclk_min && sclk_max) {
 		ret = smu_v11_0_set_soft_freq_limited_range(smu,
 							    SMU_GFXCLK,
 							    sclk_min,
-							    sclk_max);
+							    sclk_max,
+							    auto_level);
 		if (ret)
 			return ret;
 	}
@@ -1927,7 +1938,8 @@ int smu_v11_0_set_performance_level(struct smu_context *smu,
 		ret = smu_v11_0_set_soft_freq_limited_range(smu,
 							    SMU_MCLK,
 							    mclk_min,
-							    mclk_max);
+							    mclk_max,
+							    auto_level);
 		if (ret)
 			return ret;
 	}
@@ -1936,7 +1948,8 @@ int smu_v11_0_set_performance_level(struct smu_context *smu,
 		ret = smu_v11_0_set_soft_freq_limited_range(smu,
 							    SMU_SOCCLK,
 							    socclk_min,
-							    socclk_max);
+							    socclk_max,
+							    auto_level);
 		if (ret)
 			return ret;
 	}
