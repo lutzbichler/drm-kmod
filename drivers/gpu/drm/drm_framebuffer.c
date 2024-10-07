@@ -870,7 +870,11 @@ int drm_framebuffer_init(struct drm_device *dev, struct drm_framebuffer *fb,
 	INIT_LIST_HEAD(&fb->filp_head);
 
 	fb->funcs = funcs;
-	strcpy(fb->comm, current->comm);
+#ifdef __linux__
+	strscpy(fb->comm, current->comm);
+#elif defined(__FreeBSD__)
+	strscpy(fb->comm, current->comm, TASK_COMM_LEN);
+#endif
 
 	ret = __drm_mode_object_add(dev, &fb->base, DRM_MODE_OBJECT_FB,
 				    false, drm_framebuffer_free);
