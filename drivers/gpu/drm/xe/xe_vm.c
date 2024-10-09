@@ -3221,10 +3221,8 @@ int xe_vm_invalidate_vma(struct xe_vma *vma)
 
 			ret = xe_gt_tlb_invalidation_vma(tile->primary_gt,
 							 &fence[fence_id], vma);
-			if (ret < 0) {
-				xe_gt_tlb_invalidation_fence_fini(&fence[fence_id]);
+			if (ret)
 				goto wait;
-			}
 			++fence_id;
 
 			if (!tile->media_gt)
@@ -3236,10 +3234,8 @@ int xe_vm_invalidate_vma(struct xe_vma *vma)
 
 			ret = xe_gt_tlb_invalidation_vma(tile->media_gt,
 							 &fence[fence_id], vma);
-			if (ret < 0) {
-				xe_gt_tlb_invalidation_fence_fini(&fence[fence_id]);
+			if (ret)
 				goto wait;
-			}
 			++fence_id;
 		}
 	}
