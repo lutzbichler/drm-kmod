@@ -179,6 +179,7 @@ struct dc_panel_patch {
 	unsigned int mst_start_top_delay;
 	unsigned int remove_sink_ext_caps;
 	unsigned int disable_colorimetry;
+	bool oled_optimize_display_on;
 };
 
 struct dc_edid_caps {
