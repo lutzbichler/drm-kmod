@@ -19,7 +19,6 @@ SRCS=	drm_atomic.c \
 	drm_bridge.c \
 	drm_cache.c \
 	drm_client.c \
-	drm_client_event.c \
 	drm_client_modeset.c \
 	drm_color_mgmt.c \
 	drm_connector.c \
@@ -131,6 +130,10 @@ SRCS+=	drm_dp_tunnel.c
 
 .if !empty(KCONFIG:MDRM_EXEC)
 SRCS+=	drm_exec.c
+.endif
+
+.if !empty(KCONFIG:MDRM_CLIENT)
+SRCS+=	drm_client_event.c
 .endif
 
 .if !empty(KCONFIG:MDRM_CLIENT_SETUP)
