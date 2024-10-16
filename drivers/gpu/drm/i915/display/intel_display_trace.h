@@ -18,6 +18,17 @@
 #define _TRACE_PIPE_A	0
 #define _TRACE_PIPE_B	1
 #define _TRACE_PIPE_C	2
+#define _TRACE_PIPE_D	3
+
+/*
+ * FIXME: Several TP_printk() calls below display frame and scanline numbers for
+ * all possible pipes (regardless of whether they are available) and that is
+ * done with a constant format string. A better approach would be to generate
+ * that info dynamically based on available pipes, but, while we do not have
+ * that implemented yet, let's assert that the constant format string indeed
+ * covers all possible pipes.
+ */
+static_assert(I915_MAX_PIPES - 1 == _TRACE_PIPE_D);
 
 /*
  * Paranoid sanity check that at least the enumeration starts at the
@@ -40,14 +51,18 @@ trace_intel_pipe_enable(struct intel_crtc *crtc)
 #endif
 
 	CTR2(KTR_DRM,
-	    "intel_pipe_enable[1/2]: dev %s, pipe %c enable",
+	    "intel_pipe_enable[1/3]: dev %s, pipe %c enable",
 	    __dev_name_kms(crtc), pipe_name(crtc->pipe));
-	CTR6(KTR_DRM,
-	    "intel_pipe_enable[2/2]: "
-	    "pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u, pipe C: frame=%u, scanline=%u",
-	    frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
-	    frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B],
-	    frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C]);
+	CTR4(KTR_DRM,
+	    "intel_pipe_enable[2/3]: "
+		"pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
+		frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B]);
+	CTR4(KTR_DRM,
+	    "intel_pipe_enable[3/3]: "
+		"pipe C: frame=%u, scanline=%u, pipe D: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C],
+		frame[_TRACE_PIPE_D], scanline[_TRACE_PIPE_D]);
 }
 
 static inline void
@@ -65,14 +80,18 @@ trace_intel_pipe_disable(struct intel_crtc *crtc)
 #endif
 
 	CTR2(KTR_DRM,
-	    "intel_pipe_disable[1/2]: dev %s, pipe %c enable",
+	    "intel_pipe_disable[1/3]: dev %s, pipe %c enable",
 	    __dev_name_kms(crtc), pipe_name(crtc->pipe));
-	CTR6(KTR_DRM,
-	    "intel_pipe_disable[2/2]: "
-	    "pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u, pipe C: frame=%u, scanline=%u",
-	    frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
-	    frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B],
-	    frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C]);
+	CTR4(KTR_DRM,
+	    "intel_pipe_disable[2/3]: "
+		"pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
+		frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B]);
+	CTR4(KTR_DRM,
+	    "intel_pipe_disable[3/3]: "
+		"pipe C: frame=%u, scanline=%u, pipe D: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C],
+		frame[_TRACE_PIPE_D], scanline[_TRACE_PIPE_D]);
 }
 
 static inline void
@@ -129,14 +148,18 @@ trace_intel_memory_cxsr(struct intel_display *display, bool old, bool new)
 #endif
 
 	CTR3(KTR_DRM,
-	    "intel_memory_cxsr[1/2]: dev %s, cxsr %s->%s",
+	    "intel_memory_cxsr[1/3]: dev %s, cxsr %s->%s",
 	    __dev_name_display(display), str_on_off(old), str_on_off(new));
-	CTR6(KTR_DRM, 
-	    "intel_memory_cxsr[2/2]: "
-	    "pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u, pipe C: frame=%u, scanline=%u",
-	    frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
-	    frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B],
-	    frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C]);
+	CTR4(KTR_DRM,
+	    "intel_memory_cxsr[2/3]: "
+		"pipe A: frame=%u, scanline=%u, pipe B: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_A], scanline[_TRACE_PIPE_A],
+		frame[_TRACE_PIPE_B], scanline[_TRACE_PIPE_B]);
+	CTR4(KTR_DRM,
+	    "intel_memory_cxsr[3/3]: "
+		"pipe C: frame=%u, scanline=%u, pipe D: frame=%u, scanline=%u",
+		frame[_TRACE_PIPE_C], scanline[_TRACE_PIPE_C],
+		frame[_TRACE_PIPE_D], scanline[_TRACE_PIPE_D]);
 }
 
 static inline void
