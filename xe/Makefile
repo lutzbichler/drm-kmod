@@ -242,6 +242,7 @@ SRCS+=	icl_dsi.c \
 	intel_modeset_verify.c \
 	intel_opregion.c \
 	intel_panel.c \
+	intel_pfit.c \
 	intel_pipe_crc.c \
 	intel_pmdemand.c \
 	intel_pps.c \
