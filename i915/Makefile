@@ -165,6 +165,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_panel.c \
 	intel_pch_display.c \
 	intel_pch_refclk.c \
+	intel_pfit.c \
 	intel_plane_initial.c \
 	intel_pmdemand.c \
 	intel_pps.c \
