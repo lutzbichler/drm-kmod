@@ -23,10 +23,12 @@
  */
 #include "amdgpu.h"
 #include "amdgpu_gfx.h"
-#include "v11_structs.h"
-#include "mes_v11_0.h"
 #include "mes_v11_0_userqueue.h"
 #include "amdgpu_userq_fence.h"
+
+#ifdef __FreeBSD__
+#include "v11_structs.h"
+#endif
 
 #define AMDGPU_USERQ_PROC_CTX_SZ PAGE_SIZE
 #define AMDGPU_USERQ_GANG_CTX_SZ PAGE_SIZE
@@ -183,52 +185,6 @@ static int mes_v11_0_userq_create_ctx_space(struct amdgpu_userq_mgr *uq_mgr,
 		return r;
 	}
 
-	/* Shadow, GDS and CSA objects come directly from userspace */
-	if (mqd_user->ip_type == AMDGPU_HW_IP_GFX) {
-		struct v11_gfx_mqd *mqd = queue->mqd.cpu_ptr;
-		struct drm_amdgpu_userq_mqd_gfx11 *mqd_gfx_v11;
-
-		if (mqd_user->mqd_size != sizeof(*mqd_gfx_v11) || !mqd_user->mqd) {
-			DRM_ERROR("Invalid GFX MQD\n");
-			return -EINVAL;
-		}
-
-		mqd_gfx_v11 = memdup_user(u64_to_user_ptr(mqd_user->mqd), mqd_user->mqd_size);
-		if (IS_ERR(mqd_gfx_v11)) {
-			DRM_ERROR("Failed to read user MQD\n");
-			amdgpu_userqueue_destroy_object(uq_mgr, ctx);
-			return -ENOMEM;
-		}
-
-		mqd->shadow_base_lo = mqd_gfx_v11->shadow_va & 0xFFFFFFFC;
-		mqd->shadow_base_hi = upper_32_bits(mqd_gfx_v11->shadow_va);
-
-		mqd->gds_bkup_base_lo = 0;
-		mqd->gds_bkup_base_hi = 0;
-
-		mqd->fw_work_area_base_lo = mqd_gfx_v11->csa_va & 0xFFFFFFFC;
-		mqd->fw_work_area_base_hi = upper_32_bits(mqd_gfx_v11->csa_va);
-		kfree(mqd_gfx_v11);
-	} else if (mqd_user->ip_type == AMDGPU_HW_IP_DMA) {
-		struct v11_sdma_mqd *mqd = queue->mqd.cpu_ptr;
-		struct drm_amdgpu_userq_mqd_sdma_gfx11 *mqd_sdma_v11;
-
-		if (mqd_user->mqd_size != sizeof(*mqd_sdma_v11) || !mqd_user->mqd) {
-			DRM_ERROR("Invalid SDMA MQD\n");
-			return -EINVAL;
-		}
-
-		mqd_sdma_v11 = memdup_user(u64_to_user_ptr(mqd_user->mqd), mqd_user->mqd_size);
-		if (IS_ERR(mqd_sdma_v11)) {
-			DRM_ERROR("Failed to read sdma user MQD\n");
-			amdgpu_userqueue_destroy_object(uq_mgr, ctx);
-			return -ENOMEM;
-		}
-
-		mqd->sdmax_rlcx_csa_addr_lo = mqd_sdma_v11->csa_va & 0xFFFFFFFC;
-		mqd->sdmax_rlcx_csa_addr_hi = upper_32_bits(mqd_sdma_v11->csa_va);
-	}
-
 	return 0;
 }
 
@@ -248,6 +204,9 @@ static int mes_v11_0_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
 	struct amdgpu_mqd *mqd_hw_default = &adev->mqds[queue->queue_type];
 	struct drm_amdgpu_userq_in *mqd_user = args_in;
 	struct amdgpu_mqd_prop *userq_props;
+#ifdef __FreeBSD__
+	struct amdgpu_userq_obj *ctx = &queue->fw_obj;
+#endif
 	int r;
 
 	/* Structure to initialize MQD for userqueue using generic MQD init function */
@@ -300,6 +259,41 @@ static int mes_v11_0_userq_mqd_create(struct amdgpu_userq_mgr *uq_mgr,
 		userq_props->hqd_queue_priority = AMDGPU_GFX_QUEUE_PRIORITY_MINIMUM;
 		userq_props->hqd_active = false;
 		kfree(compute_mqd);
+	} else if (queue->queue_type == AMDGPU_HW_IP_GFX) {
+		struct drm_amdgpu_userq_mqd_gfx11 *mqd_gfx_v11;
+
+		if (mqd_user->mqd_size != sizeof(*mqd_gfx_v11) || !mqd_user->mqd) {
+			DRM_ERROR("Invalid GFX MQD\n");
+			return -EINVAL;
+		}
+
+		mqd_gfx_v11 = memdup_user(u64_to_user_ptr(mqd_user->mqd), mqd_user->mqd_size);
+		if (IS_ERR(mqd_gfx_v11)) {
+			DRM_ERROR("Failed to read user MQD\n");
+			amdgpu_userqueue_destroy_object(uq_mgr, ctx);
+			return -ENOMEM;
+		}
+
+		userq_props->shadow_addr = mqd_gfx_v11->shadow_va;
+		userq_props->csa_addr = mqd_gfx_v11->csa_va;
+		kfree(mqd_gfx_v11);
+	} else if (queue->queue_type == AMDGPU_HW_IP_DMA) {
+		struct drm_amdgpu_userq_mqd_sdma_gfx11 *mqd_sdma_v11;
+
+		if (mqd_user->mqd_size != sizeof(*mqd_sdma_v11) || !mqd_user->mqd) {
+			DRM_ERROR("Invalid SDMA MQD\n");
+			return -EINVAL;
+		}
+
+		mqd_sdma_v11 = memdup_user(u64_to_user_ptr(mqd_user->mqd), mqd_user->mqd_size);
+		if (IS_ERR(mqd_sdma_v11)) {
+			DRM_ERROR("Failed to read sdma user MQD\n");
+			amdgpu_userqueue_destroy_object(uq_mgr, ctx);
+			return -ENOMEM;
+		}
+
+		userq_props->csa_addr = mqd_sdma_v11->csa_va;
+		kfree(mqd_sdma_v11);
 	}
 
 	queue->userq_prop = userq_props;
