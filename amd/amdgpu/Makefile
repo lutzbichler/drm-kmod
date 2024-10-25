@@ -387,6 +387,7 @@ SRCS+=	aldebaran.c \
 	amdgpu_ucode.c \
 	amdgpu_umc.c \
 	amdgpu_userqueue.c \
+	amdgpu_userq_fence.c \
 	amdgpu_uvd.c \
 	amdgpu_vce.c \
 	amdgpu_vcn.c \
