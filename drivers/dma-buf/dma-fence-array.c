@@ -178,6 +178,34 @@ const struct dma_fence_ops dma_fence_array_ops = {
 };
 
 /*
+ * Allocate a custom fence array
+ */
+struct dma_fence_array *
+dma_fence_array_alloc(int num_fences)
+{
+	return malloc(sizeof(struct dma_fence_array) +
+	    (num_fences * sizeof(struct dma_fence_array_cb)),
+	    M_DMABUF, M_WAITOK | M_ZERO);
+}
+
+/*
+ * Initialize a custom fence array
+ */
+void dma_fence_array_init(struct dma_fence_array *array,
+	int num_fences, struct dma_fence **fences,
+	u64 context, unsigned seqno,
+    bool signal_on_any)
+{
+	spin_lock_init(&array->lock);
+	dma_fence_init(&array->base, &dma_fence_array_ops,
+	  &array->lock, context, seqno);
+	init_irq_work(&array->work, irq_dma_fence_array_work);
+	array->num_fences = num_fences;
+	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
+	array->fences = fences;
+}
+
+/*
  * Create a custom fence array
  */
 struct dma_fence_array *
@@ -188,17 +216,11 @@ dma_fence_array_create(int num_fences,
 {
 	struct dma_fence_array *array;
 
-	array = malloc(sizeof(*array) +
-	    (num_fences * sizeof(struct dma_fence_array_cb)),
-	    M_DMABUF, M_WAITOK | M_ZERO);
-
-	spin_lock_init(&array->lock);
-	dma_fence_init(&array->base, &dma_fence_array_ops,
-	  &array->lock, context, seqno);
-	init_irq_work(&array->work, irq_dma_fence_array_work);
-	array->num_fences = num_fences;
-	atomic_set(&array->num_pending, signal_on_any ? 1 : num_fences);
-	array->fences = fences;
+	array = dma_fence_array_alloc(num_fences);
+	if (array) {
+		dma_fence_array_init(array, num_fences, fences, context, seqno,
+			signal_on_any);
+	}
 
 	return (array);
 }
