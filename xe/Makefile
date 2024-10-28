@@ -321,7 +321,7 @@ CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
 CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
 
 CWARNFLAGS.intel_bios.c=		-Wno-incompatible-pointer-types-discards-qualifiers
-CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides
+CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides -Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.intel_dpll_mgr.c=		-Wno-compare-distinct-pointer-types
 CWARNFLAGS.intel_fbdev.c=		-Wno-initializer-overrides
 CWARNFLAGS.intel_hdmi.c=		-Wno-unused-variable
