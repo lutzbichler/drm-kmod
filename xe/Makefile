@@ -102,6 +102,7 @@ SRCS=	xe_bb.c \
 	xe_sa.c \
 	xe_sched_job.c \
 	xe_sriov.c \
+	xe_sriov_vf.c \
 	xe_step.c \
 	xe_sync.c \
 	xe_tile.c \
@@ -148,7 +149,6 @@ SRCS+=  xe_hwmon.c
 SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_config.c \
 	xe_gt_sriov_pf_control.c \
-	xe_gt_sriov_pf_debugfs.c \
 	xe_gt_sriov_pf_migration.c \
 	xe_gt_sriov_pf_monitor.c \
 	xe_gt_sriov_pf_policy.c \
@@ -158,6 +158,11 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt_ml.c \
 	xe_pci_sriov.c \
 	xe_sriov_pf.c
+
+.if !empty(KCONFIG:MDEBUGFS)
+SRCS+=	xe_gt_sriov_pf_debugfs.c
+.endif
+
 .endif
 
 .if !empty(KCONFIG:MDEBUG_FS)
