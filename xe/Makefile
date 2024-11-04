@@ -156,7 +156,8 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
 	xe_pci_sriov.c \
-	xe_sriov_pf.c
+	xe_sriov_pf.c \
+	xe_sriov_vf.c
 .endif
 
 .if !empty(KCONFIG:MDEBUG_FS)
