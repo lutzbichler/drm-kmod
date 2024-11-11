@@ -51,6 +51,8 @@ SRCS=	drm_atomic.c \
 	drm_modeset_helper.c \
 	drm_os_freebsd.c \
 	drm_panel.c \
+	drm_panel_backlight_quirks.c \
+	drm_panel_orientation_quirks.c \
 	drm_pci.c \
 	drm_plane.c \
 	drm_plane_helper.c \
@@ -89,10 +91,6 @@ SRCS+=	\
 
 .if !empty(KCONFIG:MDRM_MIPI_DSI)
 SRCS+=	drm_mipi_dsi.c
-.endif
-
-.if !empty(KCONFIG:MDRM_PANEL_ORIENTATION_QUIRKS)
-SRCS+=	drm_panel_orientation_quirks.c
 .endif
 
 .if !empty(KCONFIG:MDRM_PRIVACY_SCREEN)
