@@ -39,7 +39,6 @@ SRCS=	\
 	i915_request.c \
 	i915_scatterlist.c \
 	i915_scheduler.c \
-	i915_suspend.c \
 	i915_sw_fence.c \
 	i915_sw_fence_work.c \
 	i915_switcheroo.c \
@@ -106,6 +105,7 @@ SRCS+=	dvo_ch7017.c \
 	g4x_dp.c \
 	g4x_hdmi.c \
 	hsw_ips.c \
+	i9xx_display_sr.c \
 	i9xx_plane.c \
 	i9xx_wm.c \
 	icl_dsi.c \
