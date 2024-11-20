@@ -12,7 +12,7 @@
 #include "xe_wa.h"
 
 #include <generated/xe_wa_oob.h>
- 
+
 struct intel_framebuffer *intel_fbdev_fb_alloc(struct drm_fb_helper *helper,
 					       struct drm_fb_helper_surface_size *sizes)
 {
