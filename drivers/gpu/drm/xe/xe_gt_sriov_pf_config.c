@@ -1389,7 +1389,6 @@ static int pf_provision_vf_lmem(struct xe_gt *gt, unsigned int vfid, u64 size)
 
 		pf_reset_vf_lmtt(xe, vfid);
 		pf_release_vf_config_lmem(gt, config);
-		pf_update_vf_lmtt(gt_to_xe(gt), vfid);
 	}
 	xe_gt_assert(gt, !config->lmem_obj);
 
