@@ -12,7 +12,7 @@
 
 #include <drm/drm_managed.h>
 #include <drm/drm_print.h>
- 
+
 #include "regs/xe_bars.h"
 #include "regs/xe_regs.h"
 #include "xe_device.h"
