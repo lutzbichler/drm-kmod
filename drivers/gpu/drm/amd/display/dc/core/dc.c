@@ -444,8 +444,6 @@ bool dc_stream_adjust_vmin_vmax(struct dc *dc,
 
 	dc_exit_ips_for_hw_access(dc);
 
-	dc_exit_ips_for_hw_access(dc);
-
 	stream->adjust.v_total_max = adjust->v_total_max;
 	stream->adjust.v_total_mid = adjust->v_total_mid;
 	stream->adjust.v_total_mid_frame_num = adjust->v_total_mid_frame_num;
