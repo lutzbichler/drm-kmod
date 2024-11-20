@@ -813,7 +813,8 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 	struct xe_device *xe = uc_fw_to_xe(uc_fw);
 	struct xe_gt *gt = uc_fw_to_gt(uc_fw);
 #ifdef __FreeBSD__
-	struct xe_tile *tile = gt_to_tile(gt);
+	struct xe_tile *tile;
+	u8 id;
 #endif
 	struct xe_mmio *mmio = &gt->mmio;
 	u64 src_offset;
@@ -833,8 +834,9 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 	 * in the GSM are current and forces a fresh TLB fill on the next
 	 * access.
 	 */
-	if (uc_fw->bo && uc_fw->bo->ggtt_node)
-		xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo);
+	for_each_tile(tile, xe, id)
+		if (uc_fw->bo && uc_fw->bo->ggtt_node[id])
+			xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo);
 #endif
 
 	/* Set the source address for the uCode */
