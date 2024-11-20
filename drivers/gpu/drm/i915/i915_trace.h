@@ -438,13 +438,6 @@ trace_i915_ppgtt_release(void *base)
 }
 
 static inline void
-trace_i915_reg_rw(boolean_t rw, i915_reg_t reg, uint64_t val, int sz, bool trace)
-{
-
-        CTR4(KTR_DRM_REG, "[%x/%d] %c %x", reg.reg, sz, rw ? "w" : "r", val);
-}
-
-static inline void
 trace_intel_gpu_freq_change(uint32_t freq)
 {
 	CTR1(KTR_DRM, "gpu_freq_change %x", freq);
@@ -456,4 +449,4 @@ trace_intel_engine_notify(struct intel_engine_cs *engine, bool waiters)
 	CTR2(KTR_DRM, "engine_notify engine %p waiters %x", engine, waiters);
 }
 
-#endif /* _I915_TRACE_H_ */
+#endif /* _I915_TRACE_FREEBSD_H_ */
