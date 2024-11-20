@@ -233,7 +233,6 @@ int amdgpu_amdkfd_evict_userptr(struct mmu_interval_notifier *mni,
 {
 	return 0;
 }
-
 static inline
 int amdgpu_amdkfd_bo_validate_and_fence(struct amdgpu_bo *bo,
 					uint32_t domain,
@@ -242,7 +241,6 @@ int amdgpu_amdkfd_bo_validate_and_fence(struct amdgpu_bo *bo,
 	return 0;
 }
 #endif
-
 /* Shared API */
 int amdgpu_amdkfd_alloc_gtt_mem(struct amdgpu_device *adev, size_t size,
 				void **mem_obj, uint64_t *gpu_addr,
