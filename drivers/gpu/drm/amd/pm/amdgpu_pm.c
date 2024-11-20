@@ -3226,7 +3226,7 @@ static ssize_t amdgpu_hwmon_show_power_avg(struct device *dev,
 {
 	ssize_t val;
 
-	val = amdgpu_hwmon_get_power(dev, AMDGPU_PP_SENSOR_GPU_INPUT_POWER);
+	val = amdgpu_hwmon_get_power(dev, AMDGPU_PP_SENSOR_GPU_AVG_POWER);
 	if (val < 0)
 		return val;
 
@@ -4491,9 +4491,7 @@ err_out:
 
 int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
 {
-#ifdef __linux__
 	enum amdgpu_sriov_vf_mode mode;
-#endif
 	uint32_t mask = 0;
 	int ret;
 
@@ -4505,9 +4503,9 @@ int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
 	if (adev->pm.dpm_enabled == 0)
 		return 0;
 
-#ifdef __linux__
 	mode = amdgpu_virt_get_sriov_vf_mode(adev);
 
+#ifdef __linux__
 	/* under multi-vf mode, the hwmon attributes are all not supported */
 	if (mode != SRIOV_VF_MODE_MULTI_VF) {
 		adev->pm.int_hwmon_dev = hwmon_device_register_with_groups(adev->dev,
@@ -4518,9 +4516,10 @@ int amdgpu_pm_sysfs_init(struct amdgpu_device *adev)
 			dev_err(adev->dev, "Unable to register hwmon device: %d\n", ret);
 			return ret;
 		}
+	}
 #endif
 
-	switch (amdgpu_virt_get_sriov_vf_mode(adev)) {
+	switch (mode) {
 	case SRIOV_VF_MODE_ONE_VF:
 		mask = ATTR_FLAG_ONEVF;
 		break;
