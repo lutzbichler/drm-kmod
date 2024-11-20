@@ -1010,9 +1010,8 @@ static struct xe_vma *xe_vma_create(struct xe_vm *vm,
 			err = 0;
 #endif
 			if (err) {
-				kfree(vma);
-				vma = ERR_PTR(err);
-				return vma;
+				xe_vma_free(vma);
+				return ERR_PTR(err);
 			}
 
 			userptr->notifier_seq = LONG_MAX;
@@ -1421,9 +1420,9 @@ struct xe_vm *xe_vm_create(struct xe_device *xe, u32 flags)
 	init_rwsem(&vm->userptr.notifier_lock);
 	spin_lock_init(&vm->userptr.invalidated_lock);
 
-	INIT_WORK(&vm->destroy_work, vm_destroy_work_func);
-
 	ttm_lru_bulk_move_init(&vm->lru_bulk_move);
+
+	INIT_WORK(&vm->destroy_work, vm_destroy_work_func);
 
 	INIT_LIST_HEAD(&vm->preempt.exec_queues);
 	vm->preempt.min_run_period_ms = 10;	/* FIXME: Wire up to uAPI */
@@ -1674,6 +1673,8 @@ static void vm_destroy_work_func(struct work_struct *w)
 		XE_WARN_ON(vm->pt_root[id]);
 
 	trace_xe_vm_free(vm);
+
+	ttm_lru_bulk_move_fini(&xe->ttm, &vm->lru_bulk_move);
 
 	if (vm->xef)
 		xe_file_put(vm->xef);
