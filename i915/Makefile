@@ -120,6 +120,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_cx0_phy.c \
 	intel_ddi.c \
 	intel_ddi_buf_trans.c \
+	intel_display_conversion.c \
 	intel_display_debugfs_params.c \
 	intel_display_device.c \
 	intel_display_driver.c \
