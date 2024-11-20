@@ -98,6 +98,7 @@ void amdgpu_umc_handle_bad_pages(struct amdgpu_device *adev,
 	struct amdgpu_ras *con = amdgpu_ras_get_context(adev);
 	unsigned int error_query_mode;
 	int ret = 0;
+	unsigned long err_count;
 
 	amdgpu_ras_get_error_query_mode(adev, &error_query_mode);
 
@@ -160,16 +161,13 @@ void amdgpu_umc_handle_bad_pages(struct amdgpu_device *adev,
 	}
 
 	/* only uncorrectable error needs gpu reset */
-	if (err_data->ue_count) {
-		dev_info(adev->dev, "%ld uncorrectable hardware errors "
-				"detected in UMC block\n",
-				err_data->ue_count);
-
+	if (err_data->ue_count || err_data->de_count) {
+		err_count = err_data->ue_count + err_data->de_count;
 		if ((amdgpu_bad_page_threshold != 0) &&
 			err_data->err_addr_cnt) {
 			amdgpu_ras_add_bad_pages(adev, err_data->err_addr,
 						err_data->err_addr_cnt);
-			amdgpu_ras_save_bad_pages(adev, &(err_data->ue_count));
+			amdgpu_ras_save_bad_pages(adev, &err_count);
 
 			amdgpu_dpm_send_hbm_bad_pages_num(adev, con->eeprom_control.ras_num_recs);
 
