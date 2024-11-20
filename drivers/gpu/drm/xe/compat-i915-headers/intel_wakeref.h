@@ -3,12 +3,12 @@
  * Copyright © 2023 Intel Corporation
  */
 
-#include <linux/types.h>
+#ifndef COMPAT_I915_HEADER_INTEL_WAKEREF_
+#define COMPAT_I915_HEADER_INTEL_WAKEREF_
 
-#ifndef _COMPAT_I915_INTEL_WAKEREF_H_
-#define _COMPAT_I915_INTEL_WAKEREF_H_
+#include <linux/types.h>
 
 typedef unsigned long intel_wakeref_t;
 
-#endif /* _COMPAT_I915_INTEL_WAKEREF_H_ */
+#endif /* COMPAT_I915_HEADER_INTEL_WAKEREF_ */
 
