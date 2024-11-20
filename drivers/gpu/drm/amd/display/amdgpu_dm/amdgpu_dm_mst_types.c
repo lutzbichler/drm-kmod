@@ -1865,7 +1865,6 @@ enum dc_status dm_dp_mst_is_port_support_mode(
 			((stream->timing.pix_clk_100hz / 10) >  branch_max_throughput_mps * 1000)) {
 			DRM_DEBUG_DRIVER("MST_DSC require dsc but max throughput mps fails\n");
 			return DC_FAIL_BANDWIDTH_VALIDATE;
-
 		}
 	} else {
 		DRM_DEBUG_DRIVER("MST_DSC require dsc but can't find common dsc config\n");
