@@ -22,6 +22,7 @@
 #include "xe_gt_printk.h"
 #include "xe_map.h"
 #include "xe_mmio.h"
+#include "xe_pm.h"
 
 /*
  * GSC proxy:
@@ -68,6 +69,30 @@ bool xe_gsc_proxy_init_done(struct xe_gsc *gsc)
 
 	return REG_FIELD_GET(HECI1_FWSTS1_CURRENT_STATE, fwsts1) ==
 	       HECI1_FWSTS1_PROXY_STATE_NORMAL;
+}
+
+static void __gsc_proxy_irq_rmw(struct xe_gsc *gsc, u32 clr, u32 set)
+{
+	struct xe_gt *gt = gsc_to_gt(gsc);
+
+	/* make sure we never accidentally write the RST bit */
+	clr |= HECI_H_CSR_RST;
+
+	xe_mmio_rmw32(gt, HECI_H_CSR(MTL_GSC_HECI2_BASE), clr, set);
+}
+
+static void gsc_proxy_irq_clear(struct xe_gsc *gsc)
+{
+	/* The status bit is cleared by writing to it */
+	__gsc_proxy_irq_rmw(gsc, 0, HECI_H_CSR_IS);
+}
+
+static void gsc_proxy_irq_toggle(struct xe_gsc *gsc, bool enabled)
+{
+	u32 set = enabled ? HECI_H_CSR_IE : 0;
+	u32 clr = enabled ? 0 : HECI_H_CSR_IE;
+
+	__gsc_proxy_irq_rmw(gsc, clr, set);
 }
 
 static int proxy_send_to_csme(struct xe_gsc *gsc, u32 size)
@@ -260,7 +285,7 @@ proxy_error:
 	return ret < 0 ? ret : 0;
 }
 
-static int gsc_proxy_request_handler(struct xe_gsc *gsc)
+int xe_gsc_proxy_request_handler(struct xe_gsc *gsc)
 {
 	struct xe_gt *gt = gsc_to_gt(gsc);
 	int slept;
@@ -282,10 +307,34 @@ static int gsc_proxy_request_handler(struct xe_gsc *gsc)
 		xe_gt_err(gt, "GSC proxy component not bound!\n");
 		err = -EIO;
 	} else {
+		/*
+		 * clear the pending interrupt and allow new proxy requests to
+		 * be generated while we handle the current one
+		 */
+		gsc_proxy_irq_clear(gsc);
 		err = proxy_query(gsc);
 	}
 	mutex_unlock(&gsc->proxy.mutex);
 	return err;
+}
+
+void xe_gsc_proxy_irq_handler(struct xe_gsc *gsc, u32 iir)
+{
+	struct xe_gt *gt = gsc_to_gt(gsc);
+
+	if (unlikely(!iir))
+		return;
+
+	if (!gsc->proxy.component) {
+		xe_gt_err(gt, "GSC proxy irq received without the component being bound!\n");
+		return;
+	}
+
+	spin_lock(&gsc->lock);
+	gsc->work_actions |= GSC_ACTION_SW_PROXY;
+	spin_unlock(&gsc->lock);
+
+	queue_work(gsc->wq, &gsc->work);
 }
 
 static int xe_gsc_proxy_component_bind(struct device *xe_kdev,
@@ -409,10 +458,26 @@ void xe_gsc_proxy_remove(struct xe_gsc *gsc)
 	struct xe_gt *gt = gsc_to_gt(gsc);
 	struct xe_device *xe = gt_to_xe(gt);
 
-	if (gsc->proxy.component_added) {
-		component_del(xe->drm.dev, &xe_gsc_proxy_component_ops);
-		gsc->proxy.component_added = false;
-	}
+	if (!gsc->proxy.component_added)
+		return;
+
+	/* disable HECI2 IRQs */
+	xe_pm_runtime_get(xe);
+	err = xe_force_wake_get(gt_to_fw(gt), XE_FW_GSC);
+	if (err)
+		xe_gt_err(gt, "failed to get forcewake to disable GSC interrupts\n");
+
+	/* try do disable irq even if forcewake failed */
+	gsc_proxy_irq_toggle(gsc, false);
+
+	if (!err)
+		xe_force_wake_put(gt_to_fw(gt), XE_FW_GSC);
+	xe_pm_runtime_put(xe);
+
+	xe_gsc_wait_for_worker_completion(gsc);
+
+	component_del(xe->drm.dev, &xe_gsc_proxy_component_ops);
+	gsc->proxy.component_added = false;
 #endif
 }
 
@@ -426,11 +491,14 @@ int xe_gsc_proxy_start(struct xe_gsc *gsc)
 {
 	int err;
 
+	/* enable the proxy interrupt in the GSC shim layer */
+	gsc_proxy_irq_toggle(gsc, true);
+
 	/*
 	 * The handling of the first proxy request must be manually triggered to
 	 * notify the GSC that we're ready to support the proxy flow.
 	 */
-	err = gsc_proxy_request_handler(gsc);
+	err = xe_gsc_proxy_request_handler(gsc);
 	if (err)
 		return err;
 
