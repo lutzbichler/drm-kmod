@@ -28,8 +28,6 @@
 
 #include "os_types.h"
 
-#define MAX_NAME_LEN 32
-
 #define DC_LOG_ERROR(...) drm_err((DC_LOGGER)->dev, __VA_ARGS__)
 #define DC_LOG_WARNING(...) drm_warn((DC_LOGGER)->dev, __VA_ARGS__)
 #define DC_LOG_DEBUG(...) drm_dbg((DC_LOGGER)->dev, __VA_ARGS__)
