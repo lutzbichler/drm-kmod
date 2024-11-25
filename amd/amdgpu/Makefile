@@ -971,11 +971,10 @@ SRCS+=	dml21_translation_helper.c \
 	dml21_utils.c \
 	dml21_wrapper.c
 
-# display/dc/dml2/dml21/src/dm2_core
+# display/dc/dml2/dml21/src/dml2_core
 SRCS+=	dml2_core_dcn4.c \
 	dml2_core_dcn4_calcs.c \
-	dml2_core_factory.c \
-	dml2_core_utils.c
+	dml2_core_factory.c
 
 # display/dc/dml2/dml21/src/dml2_dpmm
 SRCS+=	dml2_dpmm_dcn4.c \
@@ -994,9 +993,9 @@ SRCS+=  dml2_pmo_dcn3.c \
 SRCS+=  lib_float_math.c
 
 # display/dc/dml2/dml21/src/dml2_top
-SRCS+=  dml2_top_optimization.c \
-        dml_top.c \
-	dml_top_mcache.c
+SRCS+=  dml2_top_interfaces.c \
+	dml2_top_legacy.c \
+	dml2_top_soc15.c
 
 # display/dc/dml2/dml2/inc
 SRCS+=	dml2_debug.c
@@ -1428,7 +1427,7 @@ CFLAGS.dml2_core_dcn4_calcs.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_dpmm_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_pmo_dcn4_fams2.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_top_soc15.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.lib_float_math.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.soc_bounding_box.c= ${FPUFLAGS} -mstack-alignment=4
 
