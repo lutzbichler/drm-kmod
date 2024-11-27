@@ -1428,6 +1428,7 @@ CFLAGS.dml2_core_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_dpmm_dcn4.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_pmo_dcn4_fams2.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_top_soc15.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.lib_float_math.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.soc_bounding_box.c= ${FPUFLAGS} -mstack-alignment=4
 
