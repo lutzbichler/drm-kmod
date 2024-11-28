@@ -296,12 +296,13 @@ sanitize_target_dc_state(struct drm_i915_private *i915,
 void intel_display_power_set_target_dc_state(struct drm_i915_private *dev_priv,
 					     u32 state)
 {
+	struct intel_display *display = &dev_priv->display;
 	struct i915_power_well *power_well;
 	bool dc_off_enabled;
 	struct i915_power_domains *power_domains = &dev_priv->display.power.domains;
 
 	mutex_lock(&power_domains->lock);
-	power_well = lookup_power_well(dev_priv, SKL_DISP_DC_OFF);
+	power_well = lookup_power_well(display, SKL_DISP_DC_OFF);
 
 	if (drm_WARN_ON(&dev_priv->drm, !power_well))
 		goto unlock;
@@ -311,18 +312,18 @@ void intel_display_power_set_target_dc_state(struct drm_i915_private *dev_priv,
 	if (state == power_domains->target_dc_state)
 		goto unlock;
 
-	dc_off_enabled = intel_power_well_is_enabled(dev_priv, power_well);
+	dc_off_enabled = intel_power_well_is_enabled(display, power_well);
 	/*
 	 * If DC off power well is disabled, need to enable and disable the
 	 * DC off power well to effect target DC state.
 	 */
 	if (!dc_off_enabled)
-		intel_power_well_enable(dev_priv, power_well);
+		intel_power_well_enable(display, power_well);
 
 	power_domains->target_dc_state = state;
 
 	if (!dc_off_enabled)
-		intel_power_well_disable(dev_priv, power_well);
+		intel_power_well_disable(display, power_well);
 
 unlock:
 	mutex_unlock(&power_domains->lock);
@@ -498,7 +499,7 @@ __intel_display_power_get_domain(struct drm_i915_private *dev_priv,
 		return;
 
 	for_each_power_domain_well(display, power_well, domain)
-		intel_power_well_get(dev_priv, power_well);
+		intel_power_well_get(display, power_well);
 
 	power_domains->domain_use_count[domain]++;
 }
@@ -595,7 +596,7 @@ __intel_display_power_put_domain(struct drm_i915_private *dev_priv,
 	power_domains->domain_use_count[domain]--;
 
 	for_each_power_domain_well_reverse(display, power_well, domain)
-		intel_power_well_put(dev_priv, power_well);
+		intel_power_well_put(display, power_well);
 }
 
 static void __intel_display_power_put(struct drm_i915_private *dev_priv,
@@ -1040,7 +1041,7 @@ static void intel_power_domains_sync_hw(struct drm_i915_private *dev_priv)
 
 	mutex_lock(&power_domains->lock);
 	for_each_power_well(display, power_well)
-		intel_power_well_sync_hw(dev_priv, power_well);
+		intel_power_well_sync_hw(display, power_well);
 	mutex_unlock(&power_domains->lock);
 }
 
@@ -1440,11 +1441,11 @@ static void skl_display_core_init(struct drm_i915_private *dev_priv,
 	/* enable PG1 and Misc I/O */
 	mutex_lock(&power_domains->lock);
 
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_enable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_enable(display, well);
 
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_MISC_IO);
-	intel_power_well_enable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_MISC_IO);
+	intel_power_well_enable(display, well);
 
 	mutex_unlock(&power_domains->lock);
 
@@ -1483,8 +1484,8 @@ static void skl_display_core_uninit(struct drm_i915_private *dev_priv)
 	 * Note that even though the driver's request is removed power well 1
 	 * may stay enabled after this due to DMC's own request on it.
 	 */
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_disable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_disable(display, well);
 
 	mutex_unlock(&power_domains->lock);
 
@@ -1513,8 +1514,8 @@ static void bxt_display_core_init(struct drm_i915_private *dev_priv, bool resume
 	/* Enable PG1 */
 	mutex_lock(&power_domains->lock);
 
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_enable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_enable(display, well);
 
 	mutex_unlock(&power_domains->lock);
 
@@ -1551,8 +1552,8 @@ static void bxt_display_core_uninit(struct drm_i915_private *dev_priv)
 	 */
 	mutex_lock(&power_domains->lock);
 
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_disable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_disable(display, well);
 
 	mutex_unlock(&power_domains->lock);
 
@@ -1662,8 +1663,8 @@ static void icl_display_core_init(struct drm_i915_private *dev_priv,
 	 *    The AUX IO power wells will be enabled on demand.
 	 */
 	mutex_lock(&power_domains->lock);
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_enable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_enable(display, well);
 	mutex_unlock(&power_domains->lock);
 
 	if (DISPLAY_VER(dev_priv) == 14)
@@ -1746,8 +1747,8 @@ static void icl_display_core_uninit(struct drm_i915_private *dev_priv)
 	 *    disabled at this point.
 	 */
 	mutex_lock(&power_domains->lock);
-	well = lookup_power_well(dev_priv, SKL_DISP_PW_1);
-	intel_power_well_disable(dev_priv, well);
+	well = lookup_power_well(display, SKL_DISP_PW_1);
+	intel_power_well_disable(display, well);
 	mutex_unlock(&power_domains->lock);
 
 	/* 5. */
@@ -1756,10 +1757,11 @@ static void icl_display_core_uninit(struct drm_i915_private *dev_priv)
 
 static void chv_phy_control_init(struct drm_i915_private *dev_priv)
 {
+	struct intel_display *display = &dev_priv->display;
 	struct i915_power_well *cmn_bc =
-		lookup_power_well(dev_priv, VLV_DISP_PW_DPIO_CMN_BC);
+		lookup_power_well(display, VLV_DISP_PW_DPIO_CMN_BC);
 	struct i915_power_well *cmn_d =
-		lookup_power_well(dev_priv, CHV_DISP_PW_DPIO_CMN_D);
+		lookup_power_well(display, CHV_DISP_PW_DPIO_CMN_D);
 
 	/*
 	 * DISPLAY_PHY_CONTROL can get corrupted if read. As a
@@ -1782,7 +1784,7 @@ static void chv_phy_control_init(struct drm_i915_private *dev_priv)
 	 * override and set the lane powerdown bits accding to the
 	 * current lane status.
 	 */
-	if (intel_power_well_is_enabled(dev_priv, cmn_bc)) {
+	if (intel_power_well_is_enabled(display, cmn_bc)) {
 		u32 status = intel_de_read(dev_priv, DPLL(dev_priv, PIPE_A));
 		unsigned int mask;
 
@@ -1813,7 +1815,7 @@ static void chv_phy_control_init(struct drm_i915_private *dev_priv)
 		dev_priv->display.power.chv_phy_assert[DPIO_PHY0] = true;
 	}
 
-	if (intel_power_well_is_enabled(dev_priv, cmn_d)) {
+	if (intel_power_well_is_enabled(display, cmn_d)) {
 		u32 status = intel_de_read(dev_priv, DPIO_PHY_STATUS);
 		unsigned int mask;
 
@@ -1843,21 +1845,22 @@ static void chv_phy_control_init(struct drm_i915_private *dev_priv)
 
 static void vlv_cmnlane_wa(struct drm_i915_private *dev_priv)
 {
+	struct intel_display *display = &dev_priv->display;
 	struct i915_power_well *cmn =
-		lookup_power_well(dev_priv, VLV_DISP_PW_DPIO_CMN_BC);
+		lookup_power_well(display, VLV_DISP_PW_DPIO_CMN_BC);
 	struct i915_power_well *disp2d =
-		lookup_power_well(dev_priv, VLV_DISP_PW_DISP2D);
+		lookup_power_well(display, VLV_DISP_PW_DISP2D);
 
 	/* If the display might be already active skip this */
-	if (intel_power_well_is_enabled(dev_priv, cmn) &&
-	    intel_power_well_is_enabled(dev_priv, disp2d) &&
+	if (intel_power_well_is_enabled(display, cmn) &&
+	    intel_power_well_is_enabled(display, disp2d) &&
 	    intel_de_read(dev_priv, DPIO_CTL) & DPIO_CMNRST)
 		return;
 
 	drm_dbg_kms(&dev_priv->drm, "toggling display PHY side reset\n");
 
 	/* cmnlane needs DPLL registers */
-	intel_power_well_enable(dev_priv, disp2d);
+	intel_power_well_enable(display, disp2d);
 
 	/*
 	 * From VLV2A0_DP_eDP_HDMI_DPIO_driver_vbios_notes_11.docx:
@@ -1866,7 +1869,7 @@ static void vlv_cmnlane_wa(struct drm_i915_private *dev_priv)
 	 * Simply ungating isn't enough to reset the PHY enough to get
 	 * ports and lanes running.
 	 */
-	intel_power_well_disable(dev_priv, cmn);
+	intel_power_well_disable(display, cmn);
 }
 
 static bool vlv_punit_is_power_gated(struct drm_i915_private *dev_priv, u32 reg0)
@@ -2018,13 +2021,13 @@ void intel_power_domains_sanitize_state(struct drm_i915_private *i915)
 
 	for_each_power_well_reverse(display, power_well) {
 		if (power_well->desc->always_on || power_well->count ||
-		    !intel_power_well_is_enabled(i915, power_well))
+		    !intel_power_well_is_enabled(display, power_well))
 			continue;
 
 		drm_dbg_kms(&i915->drm,
 			    "BIOS left unused %s power well enabled, disabling it\n",
 			    intel_power_well_name(power_well));
-		intel_power_well_disable(i915, power_well);
+		intel_power_well_disable(display, power_well);
 	}
 
 	mutex_unlock(&power_domains->lock);
@@ -2198,7 +2201,7 @@ static void intel_power_domains_verify_state(struct drm_i915_private *i915)
 		int domains_count;
 		bool enabled;
 
-		enabled = intel_power_well_is_enabled(i915, power_well);
+		enabled = intel_power_well_is_enabled(display, power_well);
 		if ((intel_power_well_refcount(power_well) ||
 		     intel_power_well_is_always_on(power_well)) !=
 		    enabled)
