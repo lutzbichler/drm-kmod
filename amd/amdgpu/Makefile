@@ -900,7 +900,8 @@ SRCS+=	dcn35_clk_mgr.c \
 	dcn35_smu.c
 
 # display/dc/dc351
-SRCS+=	dcn351_init.c \
+SRCS+=	dcn351_clk_mgr.c \
+	dcn351_init.c \
 	dcn351_hwseq.c \
 	dcn351_resource.c
 
