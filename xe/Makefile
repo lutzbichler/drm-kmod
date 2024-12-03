@@ -115,6 +115,7 @@ SRCS=	xe_bb.c \
 	xe_vm.c \
 	xe_vram.c \
 	xe_vram_freq.c \
+	xe_vsec.c \
 	xe_wa.c \
 	xe_wait_user_fence.c \
 	xe_wopcm.c
