@@ -25,6 +25,11 @@ trace_xe_bo_cpu_fault(struct xe_bo *bo)
 }
 
 static inline void
+trace_xe_bo_validate(struct xe_bo *bo)
+{
+}
+
+static inline void
 trace_xe_vm_cpu_bind(struct xe_vm *vm)
 {
 	CTR2(KTR_DRM, "xe_vm_cpu_bind vm %p asid %u", vm, vm->usm.asid);
