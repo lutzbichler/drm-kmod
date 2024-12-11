@@ -1668,17 +1668,6 @@ void intel_psr_compute_config(struct intel_dp *intel_dp,
 		return;
 	}
 
-	/*
-	 * FIXME figure out what is wrong with PSR+joiner and
-	 * fix it. Presumably something related to the fact that
-	 * PSR is a transcoder level feature.
-	 */
-	if (crtc_state->joiner_pipes) {
-		drm_dbg_kms(display->drm,
-			    "PSR disabled due to joiner\n");
-		return;
-	}
-
 	crtc_state->has_panel_replay = _panel_replay_compute_config(intel_dp,
 								    crtc_state,
 								    conn_state);
