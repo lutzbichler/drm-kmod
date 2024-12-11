@@ -23,8 +23,8 @@ static inline unsigned long totalram_pages(void) { return physmem; }
 #endif
 
 /*
- * Move pages to appropriate lru and release the pagevec, decrementing the
- * ref count of those pages.
+ * Move folios to appropriate lru and release the batch, decrementing the
+ * ref count of those folios.
  */
 static void check_release_pagevec(struct pagevec *pvec)
 {

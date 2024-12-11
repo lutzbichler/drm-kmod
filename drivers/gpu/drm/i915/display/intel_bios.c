@@ -27,8 +27,8 @@
 
 #ifdef __FreeBSD__
 #include <linux/debugfs.h>
-#include <linux/firmware.h>
 #endif
+#include <linux/firmware.h>
 
 #include <drm/display/drm_dp_helper.h>
 #include <drm/display/drm_dsc_helper.h>

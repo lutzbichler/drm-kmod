@@ -293,7 +293,7 @@ static void gsc_irq_handler(struct intel_gt *gt, unsigned int intf_id)
 
 	ret = generic_handle_irq(gt->gsc.intf[intf_id].irq);
 	if (ret)
-		gt_err_ratelimited(&gt->i915->drm, "error handling GSC irq: %d\n", ret);
+		gt_err_ratelimited(gt, "error handling GSC irq: %d\n", ret);
 #endif
 }
 

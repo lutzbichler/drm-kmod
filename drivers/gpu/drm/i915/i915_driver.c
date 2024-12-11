@@ -1462,10 +1462,8 @@ static int intel_runtime_suspend(struct device *kdev)
 	struct drm_i915_private *dev_priv = kdev_to_i915(kdev);
 	struct intel_display *display = &dev_priv->display;
 	struct intel_runtime_pm *rpm = &dev_priv->runtime_pm;
-#ifdef __linux__
 	struct pci_dev *pdev = to_pci_dev(dev_priv->drm.dev);
 	struct pci_dev *root_pdev;
-#endif
 	struct intel_gt *gt;
 	int ret, i;
 
@@ -1522,11 +1520,9 @@ static int intel_runtime_suspend(struct device *kdev)
 	 * This should be totally removed when we handle the pci states properly
 	 * on runtime PM.
 	 */
-#ifdef __linux__
 	root_pdev = pcie_find_root_port(pdev);
 	if (root_pdev)
 		pci_d3cold_disable(root_pdev);
-#endif
 
 	/*
 	 * FIXME: We really should find a document that references the arguments
@@ -1565,10 +1561,8 @@ static int intel_runtime_resume(struct device *kdev)
 	struct drm_i915_private *dev_priv = kdev_to_i915(kdev);
 	struct intel_display *display = &dev_priv->display;
 	struct intel_runtime_pm *rpm = &dev_priv->runtime_pm;
-#ifdef __linux__
 	struct pci_dev *pdev = to_pci_dev(dev_priv->drm.dev);
 	struct pci_dev *root_pdev;
-#endif
 	struct intel_gt *gt;
 	int ret, i;
 
@@ -1582,11 +1576,9 @@ static int intel_runtime_resume(struct device *kdev)
 
 	intel_opregion_notify_adapter(display, PCI_D0);
 
-#ifdef __linux__
 	root_pdev = pcie_find_root_port(pdev);
 	if (root_pdev)
 		pci_d3cold_enable(root_pdev);
-#endif
 
 	if (intel_uncore_unclaimed_mmio(&dev_priv->uncore))
 		drm_dbg(&dev_priv->drm,
