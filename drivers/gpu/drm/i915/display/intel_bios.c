@@ -28,6 +28,7 @@
 #ifdef __FreeBSD__
 #include <linux/debugfs.h>
 #endif
+#include <linux/firmware.h>
 
 #include <linux/firmware.h>
 
