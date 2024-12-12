@@ -286,7 +286,7 @@ struct linux_fb_info *framebuffer_alloc(size_t size, struct device *dev);
 void framebuffer_release(struct linux_fb_info *info);
 
 static inline void
-fb_set_suspend(struct linux_fb_info *info, int state)
+fb_set_suspend(struct linux_fb_info *info __unused, bool suspend __unused)
 {
 }
 
