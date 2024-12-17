@@ -3,8 +3,16 @@
  * Copyright © 2023 Intel Corporation
  */
 
+#include <linux/moduleparam.h>
+#include <linux/slab.h>
+#include <linux/string_choices.h>
+
+#include <drm/drm_print.h>
+
+#ifdef __FreeBSD__
+#include "i915_drv.h" // SYSCTL_DECL(_hw_i915kms)
+#endif
 #include "intel_display_params.h"
-#include "i915_drv.h"
 
 #define intel_display_param_named(name, T, perm, desc) \
 	module_param_named(name, intel_display_modparams.name, T, perm); \
