@@ -216,10 +216,11 @@ trace_vlv_fifo_size(struct intel_crtc *crtc, u32 sprite0_start, u32 sprite1_star
 static inline void
 trace_intel_plane_update_noarm(const struct intel_plane_state *plane_state, struct intel_crtc *crtc)
 {
-	CTR5(KTR_DRM,
-	    "intel_plane_update_noarm[1/3]: dev %s, pipe %c %s, frame=%u, scanline=%u",
+	CTR6(KTR_DRM,
+	    "intel_plane_update_noarm[1/3]: dev %s, pipe %c %s, frame=%u, scanline=%u, format=%p4cc",
 	    __dev_name_kms(plane_state->uapi.plane), pipe_name(crtc->pipe), plane->base.name,
-	    intel_crtc_get_vblank_counter(crtc), intel_get_crtc_scanline(crtc));
+	    intel_crtc_get_vblank_counter(crtc), intel_get_crtc_scanline(crtc),
+	    &plane_state->hw.fb->format->format);
 	/* FIXME FreeBSD
 	CTR8(KTR_DRM,
 	    "intel_plane_update_noarm[2/3]: " DRM_RECT_FP_FMT " ->",
@@ -233,10 +234,11 @@ static inline void
 trace_intel_plane_update_arm(const struct intel_plane_state *plane_state,
 	struct intel_crtc *crtc)
 {
-	CTR5(KTR_DRM,
-	    "intel_plane_update_arm[1/3]: dev %s, pipe %c %s, frame=%u, scanline=%u",
+	CTR6(KTR_DRM,
+	    "intel_plane_update_arm[1/3]: dev %s, pipe %c %s, frame=%u, scanline=%u, format=%p4cc",
 	    __dev_name_kms(plane_state->uapi.plane), pipe_name(crtc->pipe), plane->base.name,
-	    intel_crtc_get_vblank_counter(crtc), intel_get_crtc_scanline(crtc));
+	    intel_crtc_get_vblank_counter(crtc), intel_get_crtc_scanline(crtc),
+	    &plane_state->hw.fb->format->format);
 	/* FIXME FreeBSD
 	CTR8(KTR_DRM,
 	    "intel_plane_update_arm[2/3]: " DRM_RECT_FP_FMT " ->",
