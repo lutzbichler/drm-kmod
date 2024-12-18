@@ -11,6 +11,11 @@
 #include "xe_vm.h"
 
 static inline void
+trace_xe_bo_create(struct xe_bo *bo)
+{
+}
+
+static inline void
 trace_xe_bo_move(struct xe_bo *bo, u32 new_mem_type, u32 old_mem_type, bool move_lacks_source)
 {
 }
