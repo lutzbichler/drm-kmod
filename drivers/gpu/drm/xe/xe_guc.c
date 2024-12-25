@@ -523,10 +523,12 @@ static int guc_xfer_rsa(struct xe_guc *guc)
  * microkernel status field or the boot ROM status field. Returns +1 for
  * successful completion, -1 for failure and 0 for any intermediate state.
  */
-static int guc_load_done(u32 status)
+static int guc_load_done(struct xe_gt *gt, u32 status)
 {
 	u32 uk_val = REG_FIELD_GET(GS_UKERNEL_MASK, status);
 	u32 br_val = REG_FIELD_GET(GS_BOOTROM_MASK, status);
+
+	xe_gt_dbg(gt, "guc_load_done: uk_val = %d, br_val = %d\n", uk_val, br_val);
 
 	switch (uk_val) {
 	case XE_GUC_LOAD_STATUS_READY:
@@ -637,7 +639,7 @@ static void guc_wait_ucode(struct xe_guc *guc)
 		delta = ktime_sub(after, before);
 		delta_ms = ktime_to_ms(delta);
 
-		load_done = guc_load_done(status);
+		load_done = guc_load_done(gt, status);
 		if (load_done != 0)
 			break;
 
