@@ -110,7 +110,7 @@ static void xe_gt_tlb_fence_timeout(struct work_struct *work)
 
 /**
  * xe_gt_tlb_invalidation_init_early - Initialize GT TLB invalidation state
- * @gt: graphics tile
+ * @gt: GT structure
  *
  * Initialize GT TLB invalidation state, purely software initialization, should
  * be called once during driver load.
@@ -131,7 +131,7 @@ int xe_gt_tlb_invalidation_init_early(struct xe_gt *gt)
 
 /**
  * xe_gt_tlb_invalidation_reset - Initialize GT TLB invalidation reset
- * @gt: graphics tile
+ * @gt: GT structure
  *
  * Signal any pending invalidation fences, should be called during a GT reset
  */
@@ -247,7 +247,7 @@ static int send_tlb_invalidation(struct xe_guc *guc,
 
 /**
  * xe_gt_tlb_invalidation_guc - Issue a TLB invalidation on this GT for the GuC
- * @gt: graphics tile
+ * @gt: GT structure
  * @fence: invalidation fence which will be signal on TLB invalidation
  * completion
  *
@@ -280,7 +280,7 @@ static int xe_gt_tlb_invalidation_guc(struct xe_gt *gt,
 
 /**
  * xe_gt_tlb_invalidation_ggtt - Issue a TLB invalidation on this GT for the GGTT
- * @gt: graphics tile
+ * @gt: GT structure
  *
  * Issue a TLB invalidation for the GGTT. Completion of TLB invalidation is
  * synchronous.
@@ -329,7 +329,7 @@ int xe_gt_tlb_invalidation_ggtt(struct xe_gt *gt)
  * xe_gt_tlb_invalidation_range - Issue a TLB invalidation on this GT for an
  * address range
  *
- * @gt: graphics tile
+ * @gt: GT structure
  * @fence: invalidation fence which will be signal on TLB invalidation
  * completion
  * @start: start address
@@ -415,7 +415,7 @@ int xe_gt_tlb_invalidation_range(struct xe_gt *gt,
 
 /**
  * xe_gt_tlb_invalidation_vma - Issue a TLB invalidation on this GT for a VMA
- * @gt: graphics tile
+ * @gt: GT structure
  * @fence: invalidation fence which will be signal on TLB invalidation
  * completion, can be NULL
  * @vma: VMA to invalidate
