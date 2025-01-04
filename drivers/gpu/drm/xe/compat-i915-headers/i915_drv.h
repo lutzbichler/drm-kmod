@@ -16,9 +16,9 @@
 #include "intel_runtime_pm.h"
 #include "xe_device_types.h"
 
-static inline struct drm_i915_private *to_i915(const struct drm_device *dev)
+static inline struct xe_device *to_xe(const struct drm_device *dev)
 {
-	return container_of(dev, struct drm_i915_private, drm);
+	return container_of(dev, struct xe_device, drm);
 }
 
 #define IS_PLATFORM(xe, x) ((xe)->info.platform == x)

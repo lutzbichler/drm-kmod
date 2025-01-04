@@ -20,7 +20,7 @@ struct intel_framebuffer *intel_fbdev_fb_alloc(struct drm_fb_helper *helper,
 	struct drm_device *dev = helper->dev;
 	struct xe_device *xe = to_xe_device(dev);
 	struct drm_mode_fb_cmd2 mode_cmd = {};
-	struct drm_i915_gem_object *obj;
+	struct xe_bo *obj;
 	int size;
 
 	/* we don't do packed 24bpp */
@@ -78,10 +78,10 @@ err:
 	return ERR_CAST(fb);
 }
 
-int intel_fbdev_fb_fill_info(struct drm_i915_private *i915, struct fb_info *info,
-			      struct drm_i915_gem_object *obj, struct i915_vma *vma)
+int intel_fbdev_fb_fill_info(struct xe_device *xe, struct fb_info *info,
+			      struct xe_bo *obj, struct i915_vma *vma)
 {
-	struct pci_dev *pdev = to_pci_dev(i915->drm.dev);
+	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 
 	if (!(obj->flags & XE_BO_FLAG_SYSTEM)) {
 		if (obj->flags & XE_BO_FLAG_STOLEN)

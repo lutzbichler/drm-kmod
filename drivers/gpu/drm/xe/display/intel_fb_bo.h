@@ -8,7 +8,6 @@
 
 struct drm_file;
 struct drm_mode_fb_cmd2;
-struct drm_i915_private;
 struct intel_framebuffer;
 struct xe_bo;
 
@@ -17,7 +16,7 @@ int intel_fb_bo_framebuffer_init(struct intel_framebuffer *intel_fb,
 				 struct xe_bo *bo,
 				 struct drm_mode_fb_cmd2 *mode_cmd);
 
-struct xe_bo *intel_fb_bo_lookup_valid_bo(struct drm_i915_private *i915,
+struct xe_bo *intel_fb_bo_lookup_valid_bo(struct xe_device *xe,
 					  struct drm_file *filp,
 					  const struct drm_mode_fb_cmd2 *mode_cmd);
 

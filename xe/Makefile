@@ -1,15 +1,12 @@
 # $FreeBSD$
 
 SRCDIR=	${.CURDIR:H}/drivers/gpu/drm/xe
-I915_SRCDIR= ${.CURDIR:H}/drivers/gpu/drm/i915
 
 .PATH:	${SRCDIR} \
 	${SRCDIR}/display \
 	${SRCDIR}/display/ext \
 	${SRCDIR}/generated \
-	${I915_SRCDIR} \
-	${I915_SRCDIR}/display \
-	${I915_SRCDIR}/soc
+	${SRCDIR}/shared
 
 .include "../kconfig.mk"
 .include "../linuxkpi_version.mk"
@@ -274,9 +271,11 @@ CFLAGS+= -I${SRCDIR:H:H}
 CFLAGS+= -I${SRCDIR}
 CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/display/ext
+CFLAGS+= -I${SRCDIR}/shared
 CFLAGS+= -I${SRCDIR}/compat-i915-headers
-CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
-CFLAGS+= -Ddrm_i915_gem_object=xe_bo -Ddrm_i915_private=xe_device
+CFLAGS+= -I${SRCDIR}/compat-i915-headers/soc
+#CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
+#CFLAGS+= -Ddrm_i915_gem_object=xe_bo -Ddrm_i915_private=xe_device
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
 CFLAGS+= '-DLINUXKPI_PARAM_PREFIX=xe_' -DDRM_SYSCTL_PARAM_PREFIX=_${KMOD}

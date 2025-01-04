@@ -8,10 +8,10 @@
 
 #include <linux/sched.h>
 
-struct drm_i915_private;
+struct xe_device;
 
 static inline unsigned long
-i915_fence_timeout(const struct drm_i915_private *i915)
+i915_fence_timeout(const struct xe_device *xe)
 {
 	return MAX_SCHEDULE_TIMEOUT;
 }

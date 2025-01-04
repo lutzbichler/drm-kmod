@@ -65,11 +65,11 @@ err:
 	return ret;
 }
 
-struct xe_bo *intel_fb_bo_lookup_valid_bo(struct drm_i915_private *i915,
+struct xe_bo *intel_fb_bo_lookup_valid_bo(struct xe_device *xe,
 					  struct drm_file *filp,
 					  const struct drm_mode_fb_cmd2 *mode_cmd)
 {
-	struct drm_i915_gem_object *bo;
+	struct xe_bo *bo;
 	struct drm_gem_object *gem = drm_gem_object_lookup(filp, mode_cmd->handles[0]);
 
 	if (!gem)
@@ -77,7 +77,7 @@ struct xe_bo *intel_fb_bo_lookup_valid_bo(struct drm_i915_private *i915,
 
 	bo = gem_to_xe_bo(gem);
 	/* Require vram placement or dma-buf import */
-	if (IS_DGFX(i915) &&
+	if (IS_DGFX(xe) &&
 	    !xe_bo_can_migrate(gem_to_xe_bo(gem), XE_PL_VRAM0) &&
 	    bo->ttm.type != ttm_bo_type_sg) {
 		drm_gem_object_put(gem);

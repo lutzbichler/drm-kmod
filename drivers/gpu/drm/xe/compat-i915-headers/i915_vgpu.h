@@ -8,9 +8,9 @@
 
 #include <linux/types.h>
 
-struct drm_i915_private;
+struct xe_device;
 
-static inline bool intel_vgpu_active(struct drm_i915_private *i915)
+static inline bool intel_vgpu_active(struct xe_device *xe)
 {
 	return false;
 }

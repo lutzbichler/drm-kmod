@@ -7,7 +7,7 @@
 #include "intel_display_types.h"
 #include "intel_tdf.h"
 
-void intel_td_flush(struct drm_i915_private *i915)
+void intel_td_flush(struct xe_device *xe)
 {
-	xe_device_td_flush(i915);
+	xe_device_td_flush(xe);
 }
