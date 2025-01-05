@@ -1210,3 +1210,29 @@ void xe_guc_declare_wedged(struct xe_guc *guc)
 	xe_guc_ct_stop(&guc->ct);
 	xe_guc_submit_wedge(guc);
 }
+
+void xe_guc_print_rsa(struct xe_gt *gt, u8 id) {
+	struct xe_guc *guc = &gt->uc.guc;
+	struct xe_uc_fw *fw = &guc->fw;
+	char line[49];
+	char val[4];
+	int i, j;
+
+	uint8_t *addr = (uint8_t *)(uint64_t)(xe_bo_ggtt_addr(fw->bo) + xe_uc_fw_rsa_offset(fw));
+	size_t len = guc->fw.rsa_size;
+
+	xe_gt_err(gt, "%s<%u>: Printing rsa addr=0x%x len=%lu\n", __func__, id, addr, len);
+
+	i = 0;
+	while (i < len) {
+		j = 0;
+		memset(line, 0, 49);
+		while (j < 16 && i < len) {
+			sprintf(val, "%02X ", *addr++);
+			strcat(line, val);
+			i++;
+			j++;
+		}
+		xe_gt_err(gt, "%s<%u>: %s\n", __func__, id, line);
+	}
+}

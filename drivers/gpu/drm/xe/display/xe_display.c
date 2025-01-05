@@ -34,6 +34,8 @@
 #include "intel_opregion.h"
 #include "xe_module.h"
 
+#include "xe_guc.h"
+
 /* Xe device functions */
 
 static bool has_display(struct xe_device *xe)
@@ -145,13 +147,22 @@ int xe_display_init_noirq(struct xe_device *xe)
 	struct intel_display *display = &xe->display;
 	int err;
 
+	struct xe_gt *gt;
+	u8 id;
+
 	if (!xe->info.probe_display)
 		return 0;
+
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 0);
 
 	intel_display_driver_early_probe(xe);
 
 	/* Early display init.. */
 	intel_opregion_setup(display);
+
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 1);
 
 	/*
 	 * Fill the dram structure to get the system dram info. This will be
@@ -159,15 +170,35 @@ int xe_display_init_noirq(struct xe_device *xe)
 	 */
 	intel_dram_detect(xe);
 
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 2);
+
 	intel_bw_init_hw(xe);
+
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 3);
 
 	intel_display_device_info_runtime_init(xe);
 
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 4);
+
 	err = intel_display_driver_probe_noirq(xe);
+
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 5);
+
 	if (err) {
 		intel_opregion_cleanup(display);
+
+		for_each_gt(gt, xe, id)
+			xe_guc_print_rsa(gt, 6);
+
 		return err;
 	}
+
+	for_each_gt(gt, xe, id)
+		xe_guc_print_rsa(gt, 7);
 
 	return devm_add_action_or_reset(xe->drm.dev, xe_display_fini_noirq, xe);
 }
