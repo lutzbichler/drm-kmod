@@ -1218,7 +1218,7 @@ void xe_guc_print_rsa(struct xe_gt *gt, u8 id) {
 	char val[4];
 	int i, j;
 
-	uint8_t *addr = (uint8_t *)(uint64_t)(xe_bo_ggtt_addr(fw->bo) + xe_uc_fw_rsa_offset(fw));
+	uint8_t *addr = (uint8_t *)(&fw->bo->vmap + xe_uc_fw_rsa_offset(fw));
 	size_t len = guc->fw.rsa_size;
 
 	xe_gt_err(gt, "%s<%u>: Printing rsa addr=0x%x len=%lu\n", __func__, id, addr, len);
