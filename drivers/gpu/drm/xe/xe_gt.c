@@ -60,6 +60,8 @@
 #include "xe_wa.h"
 #include "xe_wopcm.h"
 
+#include "xe_guc.h"
+
 static void gt_fini(struct drm_device *drm, void *arg)
 {
 	struct xe_gt *gt = arg;
@@ -616,9 +618,13 @@ int xe_gt_init(struct xe_gt *gt)
 
 	xe_force_wake_init_engines(gt, gt_to_fw(gt));
 
+	xe_guc_print_rsa(gt, 111);
+
 	err = all_fw_domain_init(gt);
 	if (err)
 		return err;
+
+	xe_guc_print_rsa(gt, 999);
 
 	xe_gt_record_user_engines(gt);
 

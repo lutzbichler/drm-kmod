@@ -1211,17 +1211,15 @@ void xe_guc_declare_wedged(struct xe_guc *guc)
 	xe_guc_submit_wedge(guc);
 }
 
-void xe_guc_print_rsa(struct xe_gt *gt, u8 id) {
+void xe_guc_print_rsa(struct xe_gt *gt, u32 id) {
 	struct xe_guc *guc = &gt->uc.guc;
 	struct xe_uc_fw *fw = &guc->fw;
 	char line[49];
 	char val[4];
 	int i, j;
-
-	uint8_t *addr = (uint8_t *)(&fw->bo->vmap + xe_uc_fw_rsa_offset(fw));
-	size_t len = guc->fw.rsa_size;
-
-	xe_gt_err(gt, "%s<%u>: Printing rsa addr=0x%x len=%lu\n", __func__, id, addr, len);
+	u32 rsa[UOS_RSA_SCRATCH_COUNT];
+	size_t len = xe_uc_fw_copy_rsa(fw, rsa, sizeof(rsa));
+	uint8_t *addr = (uint8_t *)rsa;
 
 	i = 0;
 	while (i < len) {

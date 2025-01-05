@@ -87,6 +87,6 @@ static inline struct drm_device *guc_to_drm(struct xe_guc *guc)
 	return &guc_to_xe(guc)->drm;
 }
 
-void xe_guc_print_rsa(struct xe_gt *gt, u8 id);
+void xe_guc_print_rsa(struct xe_gt *gt, u32 id);
 
 #endif
