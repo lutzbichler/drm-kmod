@@ -155,6 +155,7 @@ int xe_display_init_noirq(struct xe_device *xe)
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 0);
+	mdelay(500);
 
 	intel_display_driver_early_probe(xe);
 
@@ -163,6 +164,7 @@ int xe_display_init_noirq(struct xe_device *xe)
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 1);
+	mdelay(500);
 
 	/*
 	 * Fill the dram structure to get the system dram info. This will be
@@ -172,28 +174,32 @@ int xe_display_init_noirq(struct xe_device *xe)
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 2);
+	mdelay(500);
 
 	intel_bw_init_hw(xe);
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 3);
+	mdelay(500);
 
 	intel_display_device_info_runtime_init(xe);
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 4);
+	mdelay(500);
 
 	err = intel_display_driver_probe_noirq(xe);
 
 	for_each_gt(gt, xe, id)
 		xe_guc_print_rsa(gt, 5);
+	mdelay(500);
 
 	if (err) {
 		intel_opregion_cleanup(display);
 
 		for_each_gt(gt, xe, id)
 			xe_guc_print_rsa(gt, 6);
-
+		mdelay(500);
 		return err;
 	}
 
