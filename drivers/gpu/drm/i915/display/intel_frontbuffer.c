@@ -266,7 +266,6 @@ static void frontbuffer_release(struct kref *ref)
 
 	i915_active_fini(&front->write);
 
-	i915_gem_object_put(obj);
 	kfree_rcu(front, rcu);
 }
 
