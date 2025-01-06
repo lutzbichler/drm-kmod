@@ -104,7 +104,7 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     ':!drivers/gpu/drm/drm_vm.c' \
     ':!drivers/gpu/drm/drm_*vram*' \
     ':!drivers/gpu/drm/radeon/radeon_atpx_handler*' \
-    ':!drivers/gpu/drm/ttm/tests/*'
+    ':!drivers/gpu/drm/ttm/tests/*' \
     ':!include/drm/bridge/*' \
     ':!include/drm/intel-gtt*' \
     ':!include/drm/tinydrm/*' \
@@ -117,7 +117,6 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     ':!include/drm/drm_gem_dma_helper.h' \
     ':!include/drm/drm_gem_shmem*' \
     ':!include/drm/drm_gem_vram*' \
-    ':!include/drm/drm_gpuva_mgr.h' \
     ':!include/drm/drm_kunit_helpers.h' \
     ':!include/drm/drm_lease*' \
     ':!include/drm/drm_managed*' \
@@ -128,7 +127,7 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     ':!include/drm/drm_writeback.h' \
     ':!include/drm/gma*' \
     ':!include/drm/drm_*vram*' \
-    ':!include/drm/i915_hdcp_interface.h' \
+    ':!include/drm/intel/i915_hdcp_interface.h' \
     ':!include/uapi/drm/etnaviv*' \
     ':!include/uapi/drm/exynos_drm*' \
     ':!include/uapi/drm/habanalabs_accel.h' \
