@@ -540,6 +540,7 @@ SRCS+=	aldebaran.c \
 	sdma_v5_2.c \
 	sdma_v6_0.c \
 	sdma_v7_0.c \
+	sdma_v7_1.c \
 	si_dma.c \
 	si_dpm.c \
 	si_ih.c \
