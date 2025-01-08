@@ -207,6 +207,9 @@ out:
 static irqreturn_t valleyview_irq_handler(int irq, void *arg)
 {
 	struct drm_i915_private *dev_priv = arg;
+#ifdef __linux__
+	struct intel_display *display = &dev_priv->display;
+#endif
 	irqreturn_t ret = IRQ_NONE;
 
 	if (!intel_irqs_enabled(dev_priv))
@@ -262,7 +265,7 @@ static irqreturn_t valleyview_irq_handler(int irq, void *arg)
 		// Not yet supported in BSD
 		if (iir & (I915_LPE_PIPE_A_INTERRUPT |
 			   I915_LPE_PIPE_B_INTERRUPT))
-			intel_lpe_audio_irq_handler(dev_priv);
+			intel_lpe_audio_irq_handler(display);
 #endif
 
 		/*
@@ -296,6 +299,9 @@ static irqreturn_t valleyview_irq_handler(int irq, void *arg)
 static irqreturn_t cherryview_irq_handler(int irq, void *arg)
 {
 	struct drm_i915_private *dev_priv = arg;
+#ifdef __linux__
+	struct intel_display *display = &dev_priv->display;
+#endif
 	irqreturn_t ret = IRQ_NONE;
 
 	if (!intel_irqs_enabled(dev_priv))
@@ -348,7 +354,7 @@ static irqreturn_t cherryview_irq_handler(int irq, void *arg)
 		if (iir & (I915_LPE_PIPE_A_INTERRUPT |
 			   I915_LPE_PIPE_B_INTERRUPT |
 			   I915_LPE_PIPE_C_INTERRUPT))
-			intel_lpe_audio_irq_handler(dev_priv);
+			intel_lpe_audio_irq_handler(display);
 #endif
 
 		/*
