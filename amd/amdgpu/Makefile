@@ -271,6 +271,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn321 \
 	${SRCDIR}/display/dc/resource/dcn35 \
 	${SRCDIR}/display/dc/resource/dcn351 \
+	${SRCDIR}/display/dc/resource/dcn36 \
 	${SRCDIR}/display/dc/resource/dcn401 \
 	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dc/virtual \
@@ -884,6 +885,9 @@ SRCS+=	dcn35_clk_mgr.c \
 	dcn35_resource.c \
 	dcn35_smu.c \
 	irq_service_dcn35.c
+
+# display/dc/dc36
+SRCS+=	dcn36_resource.c
 
 # display/dc/dc351
 SRCS+=	dcn351_clk_mgr.c \
@@ -1672,8 +1676,9 @@ CWARNFLAGS.dcn321_fpu.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.dcn321_resource.c=		-Wno-initializer-overrides -Wno-unused-const-variable
 CWARNFLAGS.dcn35_clk_mgr.c=		-Wno-incompatible-pointer-types
 CWARNFLAGS.dcn35_resource.c=		-Wno-initializer-overrides
-CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn351_fpu.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn36_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn401_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dmub_psr.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.dmub_abm.c=			-Wno-unused-but-set-variable
