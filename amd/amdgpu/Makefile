@@ -896,8 +896,7 @@ SRCS+=	dcn351_clk_mgr.c \
 	irq_service_dcn351.c
 
 # display/dc/dc36
-SRCS+=	dcn36_resource.c \
-	dmub_dcn36.c
+SRCS+=	dcn36_resource.c
 
 # display/dc/dcn401
 SRCS+=	dcn401_clk_mgr.c \
@@ -1167,6 +1166,7 @@ SRCS+=	dmub_dcn20.c \
 	dmub_dcn315.c \
 	dmub_dcn316.c \
 	dmub_dcn351.c \
+	dmub_dcn36.c \
 	dmub_dcn401.c \
 	dmub_reg.c \
 	dmub_srv.c \
