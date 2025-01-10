@@ -886,7 +886,7 @@ SRCS+=	dcn35_clk_mgr.c \
 	dcn35_smu.c \
 	irq_service_dcn35.c
 
-# display/dc/dcn351
+# display/dc/dc351
 SRCS+=	dcn351_clk_mgr.c \
 	dcn351_fpu.c \
 	dcn351_init.c \
@@ -895,7 +895,8 @@ SRCS+=	dcn351_clk_mgr.c \
 	irq_service_dcn351.c
 
 # display/dc/dc36
-SRCS+=	dcn36_resource.c
+SRCS+=	dcn36_resource.c \
+	dmub_dcn36.c
 
 # display/dc/dcn401
 SRCS+=	dcn401_clk_mgr.c \
