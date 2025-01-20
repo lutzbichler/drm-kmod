@@ -253,6 +253,7 @@ SRCS+=	icl_dsi.c \
 	intel_psr.c \
 	intel_qp_tables.c \
 	intel_quirks.c \
+	intel_snps_hdmi_pll.c \
 	intel_snps_phy.c \
 	intel_tc.c \
 	intel_vblank.c \
