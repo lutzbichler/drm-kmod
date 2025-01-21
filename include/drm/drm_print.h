@@ -35,6 +35,7 @@
 #endif
 
 #include <drm/drm.h>
+#include <drm/drm_device.h>
 
 struct debugfs_regset32;
 struct drm_device;
