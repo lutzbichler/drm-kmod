@@ -271,7 +271,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn35 \
 	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/resource/dcn401 \
-	${SRCDIR}/display/dc/spl \
+	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
