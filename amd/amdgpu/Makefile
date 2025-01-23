@@ -270,7 +270,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn35 \
 	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/resource/dcn401 \
-	${SRCDIR}/display/dc/spl \
+	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
@@ -1111,13 +1111,12 @@ SRCS+=	link_ddc.c \
 	link_resource.c \
 	link_validation.c
 
-# display/dc/spl
+# display/dc/sspl
 SRCS+=	dc_spl.c \
 	dc_spl_filters.c \
 	dc_spl_isharp_filters.c \
 	dc_spl_scl_easf_filters.c \
 	dc_spl_scl_filters.c \
-	dc_spl_translate.c \
 	spl_custom_float.c \
 	spl_fixpt31_32.c
 
@@ -1144,7 +1143,8 @@ SRCS+=	color_gamma.c \
 # display/dc
 SRCS+=	dc_helper.c \
 	dc_dmub_srv.c \
-	dc_edid_parser.c
+	dc_edid_parser.c \
+	dc_spl_translate.c
 
 # display/dmub/src
 SRCS+=	dmub_dcn20.c \
@@ -1327,7 +1327,6 @@ CFLAGS+= -I${SRCDIR}/display/dc/opp
 CFLAGS+= -I${SRCDIR}/display/dc/optc
 CFLAGS+= -I${SRCDIR}/display/dc/pg
 CFLAGS+= -I${SRCDIR}/display/dc/resource
-CFLAGS+= -I${SRCDIR}/display/dc/spl
 CFLAGS+= -I${SRCDIR}/display/dmub/inc
 CFLAGS+= -I${SRCDIR}/display/include
 CFLAGS+= -I${SRCDIR}/display/modules/hdcp
