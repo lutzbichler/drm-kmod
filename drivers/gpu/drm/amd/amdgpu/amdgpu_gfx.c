@@ -1665,22 +1665,8 @@ static ssize_t amdgpu_gfx_set_enforce_isolation(struct device *dev,
 	}
 
 	mutex_lock(&adev->enforce_isolation_mutex);
-
-	for (i = 0; i < num_partitions; i++) {
-		if (adev->enforce_isolation[i] && !partition_values[i]) {
-			/* Going from enabled to disabled */
-			amdgpu_vmid_free_reserved(adev, AMDGPU_GFXHUB(i));
-			if (adev->enable_mes && adev->gfx.enable_cleaner_shader)
-				amdgpu_mes_set_enforce_isolation(adev, i, false);
-		} else if (!adev->enforce_isolation[i] && partition_values[i]) {
-			/* Going from disabled to enabled */
-			amdgpu_vmid_alloc_reserved(adev, AMDGPU_GFXHUB(i));
-			if (adev->enable_mes && adev->gfx.enable_cleaner_shader)
-				amdgpu_mes_set_enforce_isolation(adev, i, true);
-		}
+	for (i = 0; i < num_partitions; i++)
 		adev->enforce_isolation[i] = partition_values[i];
-	}
-
 	mutex_unlock(&adev->enforce_isolation_mutex);
 
 	return count;
