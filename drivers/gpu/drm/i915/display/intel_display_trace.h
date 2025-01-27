@@ -21,6 +21,12 @@
 #define _TRACE_PIPE_C	2
 #define _TRACE_PIPE_D	3
 
+#ifdef	I915
+#define	TRACE_SYSTEM	i915
+#else
+#define	TRACE_SYSTEM	xe
+#endif
+
 /*
  * FIXME: Several TP_printk() calls below display frame and scanline numbers for
  * all possible pipes (regardless of whether they are available) and that is
