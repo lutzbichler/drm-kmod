@@ -104,6 +104,7 @@ SRCS=	xe_bb.c \
 	xe_sched_job.c \
 	xe_sriov.c \
 	xe_step.c \
+	xe_survivability_mode.c \
 	xe_sync.c \
 	xe_tile.c \
 	xe_tile_sysfs.c \
