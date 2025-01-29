@@ -94,6 +94,7 @@ SRCS=	xe_bb.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
 	xe_pt.c \
+	xe_pxp.c \
 	xe_query.c \
 	xe_range_fence.c \
 	xe_reg_sr.c \
