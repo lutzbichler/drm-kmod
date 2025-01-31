@@ -85,10 +85,6 @@ struct init_funcs {
 	void (*exit)(void);
 };
 
-static void xe_dummy_exit(void)
-{
-}
-
 static const struct init_funcs init_funcs[] = {
 	{
 		.init = xe_check_nomodeset,
@@ -111,7 +107,6 @@ static const struct init_funcs init_funcs[] = {
 	},
 	{
 		.init = xe_pm_module_init,
-		.exit = xe_dummy_exit,
 	},
 };
 
