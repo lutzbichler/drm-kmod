@@ -537,6 +537,7 @@ SRCS+=	amdgpu_aca.c \
 	nbio_v2_3.c \
 	nbio_v4_3.c \
 	nbio_v6_1.c \
+	nbio_v6_3_2.c \
 	nbio_v7_0.c \
 	nbio_v7_2.c \
 	nbio_v7_4.c \
