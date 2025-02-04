@@ -3524,7 +3524,6 @@ void intel_dp_set_power(struct intel_dp *intel_dp, u8 mode)
 		ret = drm_dp_dpcd_writeb(&intel_dp->aux, DP_SET_POWER, mode);
 	} else {
 		struct intel_digital_port *dig_port = dp_to_dig_port(intel_dp);
-		struct intel_lspcon *lspcon = dp_to_lspcon(intel_dp);
 
 		lspcon_resume(dig_port);
 
@@ -3543,7 +3542,7 @@ void intel_dp_set_power(struct intel_dp *intel_dp, u8 mode)
 		}
 
 		if (ret == 1 && intel_lspcon_active(dig_port))
-			lspcon_wait_pcon_mode(lspcon);
+			lspcon_wait_pcon_mode(dig_port);
 	}
 
 	if (ret != 1)
