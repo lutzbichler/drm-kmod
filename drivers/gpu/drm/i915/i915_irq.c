@@ -230,9 +230,7 @@ out:
 static irqreturn_t valleyview_irq_handler(int irq, void *arg)
 {
 	struct drm_i915_private *dev_priv = arg;
-#ifdef __linux__
 	struct intel_display *display = &dev_priv->display;
-#endif
 	irqreturn_t ret = IRQ_NONE;
 
 	if (!intel_irqs_enabled(dev_priv))
@@ -329,9 +327,7 @@ static irqreturn_t valleyview_irq_handler(int irq, void *arg)
 static irqreturn_t cherryview_irq_handler(int irq, void *arg)
 {
 	struct drm_i915_private *dev_priv = arg;
-#ifdef __linux__
 	struct intel_display *display = &dev_priv->display;
-#endif
 	irqreturn_t ret = IRQ_NONE;
 
 	if (!intel_irqs_enabled(dev_priv))
