@@ -197,5 +197,12 @@ trace_amdgpu_isolation(void *prev, void *next)
 	CTR2(KTR_DRM, "amdgpu_isolation: prev=%p, next=%p", prev, next);
 }
 
+static inline void
+trace_amdgpu_cleaner_shader(struct amdgpu_ring *ring, struct dma_fence *fence)
+{
+	CTR2(KTR_DRM, "amdgpu_cleaner_shader: ring=%s, seqno=%lu",
+		(ring)->name, (fence)->seqno);
+}
+
 #endif
 
