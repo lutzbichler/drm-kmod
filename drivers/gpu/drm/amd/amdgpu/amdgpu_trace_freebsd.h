@@ -191,5 +191,11 @@ trace_amdgpu_vm_update_ptes(struct amdgpu_vm_update_params *p, uint64_t start,
 #define	trace_amdgpu_device_rreg(dev, reg, ret)
 #define	trace_amdgpu_device_wreg(dev, reg, value)
 
+static inline void
+trace_amdgpu_isolation(void *prev, void *next)
+{
+	CTR2(KTR_DRM, "amdgpu_isolation: prev=%p, next=%p", prev, next);
+}
+
 #endif
 
