@@ -53,6 +53,7 @@ SRCS=	drm_atomic.c \
 	drm_modeset_helper.c \
 	drm_os_freebsd.c \
 	drm_panel.c \
+	drm_panel_brightness_quirks.c \
 	drm_pci.c \
 	drm_plane.c \
 	drm_plane_helper.c \
