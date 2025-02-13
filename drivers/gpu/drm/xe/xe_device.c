@@ -758,7 +758,6 @@ int xe_device_probe(struct xe_device *xe)
 	struct xe_tile *tile;
 	struct xe_gt *gt;
 	int err;
-	u8 last_gt;
 	u8 id;
 
 	xe->probing = true;
@@ -869,18 +868,16 @@ int xe_device_probe(struct xe_device *xe)
 		return err;
 
 	for_each_gt(gt, xe, id) {
-		last_gt = id;
-
 		err = xe_gt_init(gt);
 		if (err)
-			goto err_fini_gt;
+			return err;
 	}
 
 	xe_heci_gsc_init(xe);
 
 	err = xe_oa_init(xe);
 	if (err)
-		goto err_fini_gt;
+		return err;
 
 	err = xe_display_init(xe);
 	if (err)
@@ -918,14 +915,6 @@ err_fini_display:
 
 err_fini_oa:
 	xe_oa_fini(xe);
-
-err_fini_gt:
-	for_each_gt(gt, xe, id) {
-		if (id < last_gt)
-			xe_gt_remove(gt);
-		else
-			break;
-	}
 
 	return err;
 }
@@ -995,9 +984,6 @@ static void xe_device_remove_display(struct xe_device *xe)
 
 void xe_device_remove(struct xe_device *xe)
 {
-	struct xe_gt *gt;
-	u8 id;
-
 	xe_oa_unregister(xe);
 
 	xe_device_remove_display(xe);
@@ -1005,9 +991,6 @@ void xe_device_remove(struct xe_device *xe)
 	xe_oa_fini(xe);
 
 	xe_heci_gsc_fini(xe);
-
-	for_each_gt(gt, xe, id)
-		xe_gt_remove(gt);
 
 	xe_device_call_remove_actions(xe);
 }
