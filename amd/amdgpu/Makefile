@@ -445,6 +445,7 @@ SRCS+=	aldebaran.c \
 	gfx_v11_0.c \
 	gfx_v11_0_3.c \
 	gfx_v12_0.c \
+	gfx_v12_1.c \
 	gfxhub_v1_0.c \
 	gfxhub_v1_1.c \
 	gfxhub_v1_2.c \
