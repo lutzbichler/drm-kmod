@@ -20,7 +20,7 @@
 #define PVC_GSC_HECI2_BASE			0x285000
 #define DG2_GSC_HECI2_BASE			0x374000
 
-#ifdef __FreeBSD_not_yet
+#ifdef __linux__
 static void heci_gsc_irq_mask(struct irq_data *d)
 {
 	/* generic irq handling */
@@ -91,14 +91,11 @@ static void heci_gsc_release_dev(struct device *dev)
 }
 #endif
 
-void xe_heci_gsc_fini(struct xe_device *xe)
+static void xe_heci_gsc_fini(struct xe_device *xe)
 {
-#ifdef __FreeBSD_not_yet
-	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
-
-	if (!xe->info.has_heci_gscfi && !xe->info.has_heci_cscfi)
-		return;
-
+#ifdef __linux__
+	struct xe_heci_gsc *heci_gsc = arg;
+	
 	if (heci_gsc->adev) {
 		struct auxiliary_device *aux_dev = &heci_gsc->adev->aux_dev;
 
@@ -109,11 +106,12 @@ void xe_heci_gsc_fini(struct xe_device *xe)
 
 	if (heci_gsc->irq >= 0)
 		irq_free_desc(heci_gsc->irq);
+
 	heci_gsc->irq = -1;
 #endif
 }
 
-#ifdef __FreeBSD_not_yet
+#ifdef __linux__
 static int heci_gsc_irq_setup(struct xe_device *xe)
 {
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
@@ -178,15 +176,15 @@ static int heci_gsc_add_device(struct xe_device *xe, const struct heci_gsc_def *
 }
 #endif
 
-void xe_heci_gsc_init(struct xe_device *xe)
+int xe_heci_gsc_init(struct xe_device *xe)
 {
-#ifdef __FreeBSD_not_yet
+#ifdef __linux__
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
 	const struct heci_gsc_def *def;
 	int ret;
 
 	if (!xe->info.has_heci_gscfi && !xe->info.has_heci_cscfi)
-		return;
+		return 0;
 
 	heci_gsc->irq = -1;
 
@@ -198,29 +196,26 @@ void xe_heci_gsc_init(struct xe_device *xe)
 		def = &heci_gsc_def_dg2;
 	} else if (xe->info.platform == XE_DG1) {
 		def = &heci_gsc_def_dg1;
-	} else {
-		drm_warn_once(&xe->drm, "Unknown platform\n");
-		return;
 	}
 
-	if (!def->name) {
+	if (!def || !def->name) {
 		drm_warn_once(&xe->drm, "HECI is not implemented!\n");
-		return;
+		return 0;
 	}
+
+	ret = devm_add_action_or_reset(xe->drm.dev, xe_heci_gsc_fini, heci_gsc);
+	if (ret)
+		return ret;
 
 	if (!def->use_polling && !xe_survivability_mode_is_enabled(xe)) {
 		ret = heci_gsc_irq_setup(xe);
 		if (ret)
-			goto fail;
+			return ret;
 	}
 
-	ret = heci_gsc_add_device(xe, def);
-	if (ret)
-		goto fail;
-
-	return;
-fail:
-	xe_heci_gsc_fini(xe);
+	return heci_gsc_add_device(xe, def);
+#elif defined(__FreeBSD__)
+	return 0;
 #endif
 }
 
