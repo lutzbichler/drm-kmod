@@ -494,7 +494,7 @@ int xe_gsc_proxy_init(struct xe_gsc *gsc)
 	}
 #endif
 
-	return xe_device_add_action_or_reset(xe, xe_gsc_proxy_remove, gsc);
+	return devm_add_action_or_reset(xe->drm.dev, xe_gsc_proxy_remove, gsc);
 }
 
 /**
