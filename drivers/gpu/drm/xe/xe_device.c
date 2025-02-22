@@ -859,7 +859,9 @@ int xe_device_probe(struct xe_device *xe)
 			return err;
 	}
 
-	xe_heci_gsc_init(xe);
+	err = xe_heci_gsc_init(xe);
+	if (err)
+		return err;
 
 	err = xe_oa_init(xe);
 	if (err)
@@ -911,8 +913,6 @@ void xe_device_remove(struct xe_device *xe)
 	xe_display_unregister(xe);
 
 	drm_dev_unplug(&xe->drm);
-
-	xe_heci_gsc_fini(xe);
 }
 
 void xe_device_shutdown(struct xe_device *xe)
