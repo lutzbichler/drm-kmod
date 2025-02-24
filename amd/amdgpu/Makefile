@@ -459,6 +459,7 @@ SRCS+=	amdgpu_aca.c \
 	gmc_v10_0.c \
 	gmc_v11_0.c \
 	gmc_v12_0.c \
+	gmc_v12_1.c \
 	hdp_v4_0.c \
 	hdp_v5_0.c \
 	hdp_v5_2.c \
