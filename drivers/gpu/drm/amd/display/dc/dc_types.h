@@ -180,6 +180,7 @@ struct dc_panel_patch {
 	unsigned int disable_colorimetry;
 	bool oled_optimize_display_on;
 	unsigned int force_mst_blocked_discovery;
+	unsigned int wait_after_dpcd_poweroff_ms;
 };
 
 struct dc_edid_caps {
