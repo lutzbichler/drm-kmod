@@ -548,6 +548,7 @@ SRCS+=	aldebaran.c \
 	soc15.c \
 	soc21.c \
 	soc24.c \
+	soc_v1_0.c \
 	smuio_v9_0.c \
 	smuio_v11_0.c \
 	smuio_v11_0_6.c \
