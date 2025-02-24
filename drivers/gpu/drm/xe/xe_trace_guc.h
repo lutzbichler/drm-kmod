@@ -30,5 +30,11 @@ trace_xe_guc_ct_h2g_flow_control(struct xe_device *xe, u32 head, u32 tail,
 {
 }
 
+static inline void
+trace_xe_guc_engine_activity(struct xe_device *xe, struct engine_activity *ea,
+        const char *name, u16 instance)
+{
+}
+
 #endif /* _XE_TRACE_GUC_FREEBSD_H_ */
 
