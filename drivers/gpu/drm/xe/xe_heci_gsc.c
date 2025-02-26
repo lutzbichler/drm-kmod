@@ -180,7 +180,7 @@ int xe_heci_gsc_init(struct xe_device *xe)
 {
 #ifdef __linux__
 	struct xe_heci_gsc *heci_gsc = &xe->heci_gsc;
-	const struct heci_gsc_def *def;
+	const struct heci_gsc_def *def = NULL;
 	int ret;
 
 	if (!xe->info.has_heci_gscfi && !xe->info.has_heci_cscfi)
