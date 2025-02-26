@@ -38,6 +38,7 @@ SRCS=	xe_bb.c \
 	xe_device_sysfs.c \
 	xe_dma_buf.c \
 	xe_drm_client.c \
+	xe_eu_stall.c \
 	xe_exec.c \
 	xe_exec_queue.c \
 	xe_execlist.c \
