@@ -239,5 +239,11 @@ trace_xe_pm_runtime_get_ioctl(struct xe_device *xe, void *caller)
 {
 }
 
+static inline void
+trace_xe_eu_stall_data_read(u8 slice, u8 subslice, u32 read_ptr, u32 write_ptr,
+    size_t read_size, size_t total_size)
+{
+}
+
 #endif /* _XE_TRACE_FREEBSD_H_ */
 
