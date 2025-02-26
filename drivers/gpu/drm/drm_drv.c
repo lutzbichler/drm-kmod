@@ -40,6 +40,7 @@
 #include <linux/xarray.h>
 
 #include <drm/drm_accel.h>
+#include <drm/drm_bridge.h>
 #include <drm/drm_cache.h>
 #include <drm/drm_client_event.h>
 #include <drm/drm_color_mgmt.h>
@@ -1232,6 +1233,7 @@ static int __init drm_core_init(void)
 
 #ifdef CONFIG_DEBUG_FS
 	drm_debugfs_root = debugfs_create_dir("dri", NULL);
+	drm_bridge_debugfs_params(drm_debugfs_root);
 #endif
 
 #ifdef __linux__
