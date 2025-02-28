@@ -1380,7 +1380,7 @@ bool intel_dp_has_dsc(const struct intel_connector *connector)
 	if (!HAS_DSC(display))
 		return false;
 
-	if (connector->mst_port && !HAS_DSC_MST(display))
+	if (connector->mst.dp && !HAS_DSC_MST(display))
 		return false;
 
 	if (connector->base.connector_type == DRM_MODE_CONNECTOR_eDP &&
@@ -3084,7 +3084,7 @@ intel_dp_queue_modeset_retry_for_link(struct intel_atomic_state *state,
 		if (!conn_state->base.crtc)
 			continue;
 
-		if (connector->mst_port == intel_dp)
+		if (connector->mst.dp == intel_dp)
 			intel_connector_queue_modeset_retry_work(connector);
 	}
 }
@@ -3306,8 +3306,8 @@ intel_dp_sink_set_dsc_passthrough(const struct intel_connector *connector,
 				  bool enable)
 {
 	struct intel_display *display = to_intel_display(connector);
-	struct drm_dp_aux *aux = connector->port ?
-				 connector->port->passthrough_aux : NULL;
+	struct drm_dp_aux *aux = connector->mst.port ?
+				 connector->mst.port->passthrough_aux : NULL;
 
 	if (!aux)
 		return;
@@ -3334,7 +3334,7 @@ static int intel_dp_dsc_aux_ref_count(struct intel_atomic_state *state,
 	 * On SST the decompression AUX device won't be shared, each connector
 	 * uses for this its own AUX targeting the sink device.
 	 */
-	if (!connector->mst_port)
+	if (!connector->mst.dp)
 		return connector->dp.dsc_decompression_enabled ? 1 : 0;
 
 	for_each_oldnew_connector_in_state(&state->base, _connector_iter,
@@ -3342,7 +3342,7 @@ static int intel_dp_dsc_aux_ref_count(struct intel_atomic_state *state,
 		const struct intel_connector *
 			connector_iter = to_intel_connector(_connector_iter);
 
-		if (connector_iter->mst_port != connector->mst_port)
+		if (connector_iter->mst.dp != connector->mst.dp)
 			continue;
 
 		if (!connector_iter->dp.dsc_decompression_enabled)
