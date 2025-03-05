@@ -8,7 +8,8 @@ SRCDIR=	${.CURDIR:H}/drivers/gpu/drm/ttm
 .include "../linuxkpi_version.mk"
 
 KMOD=	ttm
-SRCS=	ttm_bo.c \
+SRCS=	ttm_backup.c \
+	ttm_bo.c \
 	ttm_bo_util.c \
 	ttm_bo_vm.c \
 	ttm_execbuf_util.c \
