@@ -106,6 +106,7 @@ SRCS=	xe_bb.c \
 	xe_rtp.c \
 	xe_sa.c \
 	xe_sched_job.c \
+	xe_shrinker.c \
 	xe_sriov.c \
 	xe_step.c \
 	xe_survivability_mode.c \
