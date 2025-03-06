@@ -10,6 +10,10 @@
 #include <linux/kconfig.h>
 #endif
 
+#include <drm/drm_pagemap.h>
+
+#define XE_INTERCONNECT_VRAM DRM_INTERCONNECT_DRIVER
+
 struct xe_vm;
 
 #if IS_ENABLED(CONFIG_DRM_GPUSVM)
