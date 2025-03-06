@@ -153,6 +153,10 @@ SRCS+=	xe_pt_walk.c
 SRCS+=  xe_hwmon.c
 .endif
 
+.if !empty(KCONFIG:MGPUSVM)
+SRCS+=	xe_svm.c
+.endif
+
 .if !empty(KCONFIG:MPCI_IOV)
 SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_config.c \
