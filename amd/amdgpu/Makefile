@@ -1003,9 +1003,6 @@ SRCS+=  dml2_top_interfaces.c \
 	dml2_top_legacy.c \
 	dml2_top_soc15.c
 
-# display/dc/dml2/dml2/inc
-SRCS+=	dml2_debug.c
-
 # display/dc/dml/dcn10
 SRCS+=	dcn10_fpu.c
 
