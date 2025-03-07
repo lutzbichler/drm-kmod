@@ -297,6 +297,25 @@ int drm_dev_wedged_event(struct drm_device *dev, unsigned long method)
 }
 EXPORT_SYMBOL(drm_dev_wedged_event);
 
+/**
+ * drm_dev_set_dma_dev - set the DMA device for a DRM device
+ * @dev: DRM device
+ * @dma_dev: DMA device or NULL
+ *
+ * Sets the DMA device of the given DRM device. Only required if
+ * the DMA device is different from the DRM device's parent. After
+ * calling this function, the DRM device holds a reference on
+ * @dma_dev. Pass NULL to clear the DMA device.
+ */
+void drm_dev_set_dma_dev(struct drm_device *dev, struct device *dma_dev)
+{
+	dma_dev = get_device(dma_dev);
+
+	put_device(dev->dma_dev);
+	dev->dma_dev = dma_dev;
+}
+EXPORT_SYMBOL(drm_dev_set_dma_dev);
+
 /*
  * Looks up the given minor-ID and returns the respective DRM-minor object. The
  * refence-count of the underlying device is increased so you must release this
@@ -666,6 +685,8 @@ static void drm_dev_init_release(struct drm_device *dev, void *res)
 	drm_fs_inode_free(dev->anon_inode);
 #endif
 
+	put_device(dev->dma_dev);
+	dev->dma_dev = NULL;
 	put_device(dev->dev);
 	/* Prevent use-after-free in drm_managed_release when debugging is
 	 * enabled. Slightly awkward, but can't really be helped. */
