@@ -25,6 +25,7 @@
  *
  */
 
+#include <linux/gpio/machine.h>
 #include "amdgpu.h"
 #include "isp_v4_1_1.h"
 
@@ -39,6 +40,22 @@ static const unsigned int isp_4_1_1_int_srcid[MAX_ISP411_INT_SRC] = {
 	ISP_4_1__SRCID__ISP_RINGBUFFER_WPT15,
 	ISP_4_1__SRCID__ISP_RINGBUFFER_WPT16
 };
+
+static struct gpiod_lookup_table isp_gpio_table = {
+	.dev_id = "amd_isp_capture",
+	.table = {
+		GPIO_LOOKUP("AMDI0030:00", 85, "enable_isp", GPIO_ACTIVE_HIGH),
+		{ }
+	},
+};
+
+static struct gpiod_lookup_table isp_sensor_gpio_table = {
+	.dev_id = "i2c-ov05c10",
+	.table = {
+		GPIO_LOOKUP("amdisp-pinctrl", 0, "enable", GPIO_ACTIVE_HIGH),
+		{ }
+	},
+};
 #endif
 
 static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
@@ -46,6 +63,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	struct amdgpu_device *adev = isp->adev;
 #ifdef __linux__
 	int idx, int_idx, num_res, r;
+	u8 isp_dev_hid[ACPI_ID_LEN];
 	u64 isp_base;
 #elif defined(__FreeBSD__)
 	int r;
@@ -55,6 +73,19 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 		return -EINVAL;
 
 #ifdef __linux__
+	r = amdgpu_acpi_get_isp4_dev_hid(&isp_dev_hid);
+	if (r) {
+		drm_dbg(&adev->ddev, "Invalid isp platform detected (%d)", r);
+		/* allow GPU init to progress */
+		return 0;
+	}
+
+	/* add GPIO resources required for OMNI5C10 sensor */
+	if (!strcmp("OMNI5C10", isp_dev_hid)) {
+		gpiod_add_lookup_table(&isp_gpio_table);
+		gpiod_add_lookup_table(&isp_sensor_gpio_table);
+	}
+
 	isp_base = adev->rmmio_base;
 
 	isp->isp_cell = kcalloc(3, sizeof(struct mfd_cell), GFP_KERNEL);
