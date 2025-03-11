@@ -406,6 +406,13 @@ static const struct intel_sa_info xe2_hpd_ecc_sa_info = {
 	/* Other values not used by simplified algorithm */
 };
 
+static const struct intel_sa_info xe3lpd_sa_info = {
+	.deburst = 32,
+	.deprogbwlimit = 65, /* GB/s */
+	.displayrtids = 256,
+	.derating = 10,
+};
+
 static int icl_get_bw_info(struct drm_i915_private *dev_priv, const struct intel_sa_info *sa)
 {
 	struct intel_qgv_info qi = {};
@@ -754,7 +761,9 @@ void intel_bw_init_hw(struct intel_display *display)
 	if (!HAS_DISPLAY(display))
 		return;
 
-	if (DISPLAY_VERx100(i915) >= 1401 && IS_DGFX(i915) &&
+	if (DISPLAY_VER(display) >= 30)
+		tgl_get_bw_info(i915, &xe3lpd_sa_info);
+	else if (DISPLAY_VERx100(i915) >= 1401 && IS_DGFX(i915) &&
 		 dram_info->type == INTEL_DRAM_GDDR_ECC)
 		xe2_hpd_get_bw_info(i915, &xe2_hpd_ecc_sa_info);
 	else if (DISPLAY_VERx100(i915) >= 1401 && IS_DGFX(i915))
