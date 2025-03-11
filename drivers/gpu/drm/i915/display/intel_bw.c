@@ -148,29 +148,30 @@ static bool is_sagv_enabled(struct drm_i915_private *i915, u16 points_mask)
 			      ICL_PCODE_REQ_QGV_PT_MASK);
 }
 
-int icl_pcode_restrict_qgv_points(struct drm_i915_private *dev_priv,
+int icl_pcode_restrict_qgv_points(struct intel_display *display,
 				  u32 points_mask)
 {
+	struct drm_i915_private *i915 = to_i915(display->drm);
 	int ret;
 
-	if (DISPLAY_VER(dev_priv) >= 14)
+	if (DISPLAY_VER(display) >= 14)
 		return 0;
 
 	/* bspec says to keep retrying for at least 1 ms */
-	ret = skl_pcode_request(&dev_priv->uncore, ICL_PCODE_SAGV_DE_MEM_SS_CONFIG,
+	ret = skl_pcode_request(&i915->uncore, ICL_PCODE_SAGV_DE_MEM_SS_CONFIG,
 				points_mask,
 				ICL_PCODE_REP_QGV_MASK | ADLS_PCODE_REP_PSF_MASK,
 				ICL_PCODE_REP_QGV_SAFE | ADLS_PCODE_REP_PSF_SAFE,
 				1);
 
 	if (ret < 0) {
-		drm_err(&dev_priv->drm,
+		drm_err(&i915->drm,
 			"Failed to disable qgv points (0x%x) points: 0x%x\n",
 			ret, points_mask);
 		return ret;
 	}
 
-	dev_priv->display.sagv.status = is_sagv_enabled(dev_priv, points_mask) ?
+	i915->display.sagv.status = is_sagv_enabled(i915, points_mask) ?
 		I915_SAGV_ENABLED : I915_SAGV_DISABLED;
 
 	return 0;
@@ -745,32 +746,33 @@ static unsigned int icl_qgv_bw(struct drm_i915_private *i915,
 	return i915->display.bw.max[idx].deratedbw[qgv_point];
 }
 
-void intel_bw_init_hw(struct drm_i915_private *dev_priv)
+void intel_bw_init_hw(struct intel_display *display)
 {
-	const struct dram_info *dram_info = &dev_priv->dram_info;
+	struct drm_i915_private *i915 = to_i915(display->drm);
+	const struct dram_info *dram_info = &i915->dram_info;
 
-	if (!HAS_DISPLAY(dev_priv))
+	if (!HAS_DISPLAY(display))
 		return;
 
-	if (DISPLAY_VERx100(dev_priv) >= 1401 && IS_DGFX(dev_priv) &&
+	if (DISPLAY_VERx100(i915) >= 1401 && IS_DGFX(i915) &&
 		 dram_info->type == INTEL_DRAM_GDDR_ECC)
-		xe2_hpd_get_bw_info(dev_priv, &xe2_hpd_ecc_sa_info);
-	else if (DISPLAY_VERx100(dev_priv) >= 1401 && IS_DGFX(dev_priv))
-		xe2_hpd_get_bw_info(dev_priv, &xe2_hpd_sa_info);
-	else if (DISPLAY_VER(dev_priv) >= 14)
-		tgl_get_bw_info(dev_priv, &mtl_sa_info);
-	else if (IS_DG2(dev_priv))
-		dg2_get_bw_info(dev_priv);
-	else if (IS_ALDERLAKE_P(dev_priv))
-		tgl_get_bw_info(dev_priv, &adlp_sa_info);
-	else if (IS_ALDERLAKE_S(dev_priv))
-		tgl_get_bw_info(dev_priv, &adls_sa_info);
-	else if (IS_ROCKETLAKE(dev_priv))
-		tgl_get_bw_info(dev_priv, &rkl_sa_info);
-	else if (DISPLAY_VER(dev_priv) == 12)
-		tgl_get_bw_info(dev_priv, &tgl_sa_info);
-	else if (DISPLAY_VER(dev_priv) == 11)
-		icl_get_bw_info(dev_priv, &icl_sa_info);
+		xe2_hpd_get_bw_info(i915, &xe2_hpd_ecc_sa_info);
+	else if (DISPLAY_VERx100(i915) >= 1401 && IS_DGFX(i915))
+		xe2_hpd_get_bw_info(i915, &xe2_hpd_sa_info);
+	else if (DISPLAY_VER(i915) >= 14)
+		tgl_get_bw_info(i915, &mtl_sa_info);
+	else if (IS_DG2(i915))
+		dg2_get_bw_info(i915);
+	else if (IS_ALDERLAKE_P(i915))
+		tgl_get_bw_info(i915, &adlp_sa_info);
+	else if (IS_ALDERLAKE_S(i915))
+		tgl_get_bw_info(i915, &adls_sa_info);
+	else if (IS_ROCKETLAKE(i915))
+		tgl_get_bw_info(i915, &rkl_sa_info);
+	else if (DISPLAY_VER(i915) == 12)
+		tgl_get_bw_info(i915, &tgl_sa_info);
+	else if (DISPLAY_VER(i915) == 11)
+		icl_get_bw_info(i915, &icl_sa_info);
 }
 
 static unsigned int intel_bw_crtc_num_active_planes(const struct intel_crtc_state *crtc_state)
@@ -938,9 +940,11 @@ static unsigned int icl_max_bw_psf_gv_point_mask(struct drm_i915_private *i915)
 	return max_bw_point_mask;
 }
 
-static void icl_force_disable_sagv(struct drm_i915_private *i915,
+static void icl_force_disable_sagv(struct intel_display *display,
 				   struct intel_bw_state *bw_state)
 {
+	struct drm_i915_private *i915 = to_i915(display->drm);
+
 	unsigned int qgv_points = icl_max_bw_qgv_point_mask(i915, 0);
 	unsigned int psf_points = icl_max_bw_psf_gv_point_mask(i915);
 
@@ -951,7 +955,7 @@ static void icl_force_disable_sagv(struct drm_i915_private *i915,
 	drm_dbg_kms(&i915->drm, "Forcing SAGV disable: mask 0x%x\n",
 		    bw_state->qgv_points_mask);
 
-	icl_pcode_restrict_qgv_points(i915, bw_state->qgv_points_mask);
+	icl_pcode_restrict_qgv_points(display, bw_state->qgv_points_mask);
 }
 
 static int mtl_find_qgv_points(struct drm_i915_private *i915,
@@ -1241,9 +1245,10 @@ intel_bw_dbuf_min_cdclk(struct drm_i915_private *i915,
 	return DIV_ROUND_UP(total_max_bw, 64);
 }
 
-int intel_bw_min_cdclk(struct drm_i915_private *i915,
+int intel_bw_min_cdclk(struct intel_display *display,
 		       const struct intel_bw_state *bw_state)
 {
+	struct drm_i915_private *i915 = to_i915(display->drm);
 	enum pipe pipe;
 	int min_cdclk;
 
@@ -1258,7 +1263,8 @@ int intel_bw_min_cdclk(struct drm_i915_private *i915,
 int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 			    bool *need_cdclk_calc)
 {
-	struct drm_i915_private *dev_priv = to_i915(state->base.dev);
+	struct intel_display *display = to_intel_display(state);
+	struct drm_i915_private *i915 = to_i915(state->base.dev);
 	struct intel_bw_state *new_bw_state = NULL;
 	const struct intel_bw_state *old_bw_state = NULL;
 	const struct intel_cdclk_state *cdclk_state;
@@ -1267,7 +1273,7 @@ int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 	struct intel_crtc *crtc;
 	int i;
 
-	if (DISPLAY_VER(dev_priv) < 9)
+	if (DISPLAY_VER(display) < 9)
 		return 0;
 
 	for_each_new_intel_crtc_in_state(state, crtc, crtc_state, i) {
@@ -1286,14 +1292,14 @@ int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 	if (!old_bw_state)
 		return 0;
 
-	if (intel_bw_state_changed(dev_priv, old_bw_state, new_bw_state)) {
+	if (intel_bw_state_changed(i915, old_bw_state, new_bw_state)) {
 		int ret = intel_atomic_lock_global_state(&new_bw_state->base);
 		if (ret)
 			return ret;
 	}
 
-	old_min_cdclk = intel_bw_min_cdclk(dev_priv, old_bw_state);
-	new_min_cdclk = intel_bw_min_cdclk(dev_priv, new_bw_state);
+	old_min_cdclk = intel_bw_min_cdclk(display, old_bw_state);
+	new_min_cdclk = intel_bw_min_cdclk(display, new_bw_state);
 
 	/*
 	 * No need to check against the cdclk state if
@@ -1321,7 +1327,7 @@ int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 	if (new_min_cdclk <= cdclk_state->bw_min_cdclk)
 		return 0;
 
-	drm_dbg_kms(&dev_priv->drm,
+	drm_dbg_kms(display->drm,
 		    "new bandwidth min cdclk (%d kHz) > old min cdclk (%d kHz)\n",
 		    new_min_cdclk, cdclk_state->bw_min_cdclk);
 	*need_cdclk_calc = true;
@@ -1495,9 +1501,9 @@ static const struct intel_global_state_funcs intel_bw_funcs = {
 	.atomic_destroy_state = intel_bw_destroy_state,
 };
 
-int intel_bw_init(struct drm_i915_private *i915)
+int intel_bw_init(struct intel_display *display)
 {
-	struct intel_display *display = &i915->display;
+	struct drm_i915_private *i915 = to_i915(display->drm);
 	struct intel_bw_state *state;
 
 	state = kzalloc(sizeof(*state), GFP_KERNEL);
@@ -1512,7 +1518,7 @@ int intel_bw_init(struct drm_i915_private *i915)
 	 * sagv is handled though pmdemand requests
 	 */
 	if (intel_has_sagv(i915) && IS_DISPLAY_VER(i915, 11, 13))
-		icl_force_disable_sagv(i915, state);
+		icl_force_disable_sagv(display, state);
 
 	return 0;
 }
