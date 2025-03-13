@@ -20,6 +20,7 @@ __FBSDID("$FreeBSD$");
 
 #include <machine/md_var.h>
 
+#include <dev/agp/agpreg.h>
 #include <dev/agp/agp_i810.h>
 
 void *intel_gtt_get_registers(void);
@@ -217,3 +218,14 @@ intel_gmch_gtt_flush(void)
 {
 	intel_gtt_chipset_flush();
 }
+
+dma_addr_t
+intel_gmch_gtt_read_entry(unsigned int pg,  bool *is_present, bool *is_local)
+{
+	dma_addr_t addr = intel_gtt_read_pte_paddr(pg);
+        *is_present = addr & I810_PTE_VALID;
+        *is_local = addr & I810_PTE_LOCAL;
+
+	return (addr & ~0xfff);	
+}
+
