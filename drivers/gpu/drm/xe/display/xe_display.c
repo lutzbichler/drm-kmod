@@ -177,7 +177,7 @@ static void xe_display_fini(void *arg)
 	struct xe_device *xe = arg;
 	struct intel_display *display = &xe->display;
 
-	intel_hpd_poll_fini(xe);
+	intel_hpd_poll_fini(display);
 	intel_hdcp_component_fini(display);
 	intel_audio_deinit(display);
 	intel_display_driver_remove(display);
@@ -309,7 +309,7 @@ static void xe_display_enable_d3cold(struct xe_device *xe)
 	intel_dmc_suspend(display);
 
 	if (has_display(xe))
-		intel_hpd_poll_enable(xe);
+		intel_hpd_poll_enable(display);
 }
 
 static void xe_display_disable_d3cold(struct xe_device *xe)
@@ -326,10 +326,10 @@ static void xe_display_disable_d3cold(struct xe_device *xe)
 
 	intel_display_driver_init_hw(display);
 
-	intel_hpd_init(xe);
+	intel_hpd_init(display);
 
 	if (has_display(xe))
-		intel_hpd_poll_disable(xe);
+		intel_hpd_poll_disable(display);
 
 	intel_opregion_resume(display);
 
@@ -359,7 +359,7 @@ void xe_display_pm_suspend(struct xe_device *xe)
 
 	xe_display_flush_cleanup_work(xe);
 
-	intel_hpd_cancel_work(xe);
+	intel_hpd_cancel_work(display);
 
 	if (has_display(xe)) {
 		intel_display_driver_suspend_access(display);
@@ -389,7 +389,7 @@ void xe_display_pm_shutdown(struct xe_device *xe)
 
 	xe_display_flush_cleanup_work(xe);
 	intel_dp_mst_suspend(display);
-	intel_hpd_cancel_work(xe);
+	intel_hpd_cancel_work(display);
 
 	if (has_display(xe))
 		intel_display_driver_suspend_access(display);
@@ -404,6 +404,8 @@ void xe_display_pm_shutdown(struct xe_device *xe)
 
 void xe_display_pm_runtime_suspend(struct xe_device *xe)
 {
+	struct intel_display *display = &xe->display;
+
 	if (!xe->info.probe_display)
 		return;
 
@@ -412,7 +414,7 @@ void xe_display_pm_runtime_suspend(struct xe_device *xe)
 		return;
 	}
 
-	intel_hpd_poll_enable(xe);
+	intel_hpd_poll_enable(display);
 }
 
 void xe_display_pm_suspend_late(struct xe_device *xe)
@@ -486,7 +488,7 @@ void xe_display_pm_resume(struct xe_device *xe)
 	if (has_display(xe))
 		intel_display_driver_resume_access(display);
 
-	intel_hpd_init(xe);
+	intel_hpd_init(display);
 
 	if (has_display(xe)) {
 		intel_display_driver_resume(display);
@@ -495,7 +497,7 @@ void xe_display_pm_resume(struct xe_device *xe)
 	}
 
 	if (has_display(xe))
-		intel_hpd_poll_disable(xe);
+		intel_hpd_poll_disable(display);
 
 	intel_opregion_resume(display);
 
@@ -506,6 +508,8 @@ void xe_display_pm_resume(struct xe_device *xe)
 
 void xe_display_pm_runtime_resume(struct xe_device *xe)
 {
+	struct intel_display *display = &xe->display;
+
 	if (!xe->info.probe_display)
 		return;
 
@@ -514,8 +518,8 @@ void xe_display_pm_runtime_resume(struct xe_device *xe)
 		return;
 	}
 
-	intel_hpd_init(xe);
-	intel_hpd_poll_disable(xe);
+	intel_hpd_init(display);
+	intel_hpd_poll_disable(display);
 	skl_watermark_ipc_update(xe);
 }
 
