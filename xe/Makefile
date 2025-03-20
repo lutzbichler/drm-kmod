@@ -300,6 +300,7 @@ CFLAGS+= -I${SRCDIR}
 CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/display/ext
 CFLAGS+= -I${SRCDIR}/compat-i915-headers
+CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
 CFLAGS+= -Ddrm_i915_private=xe_device
 
@@ -342,6 +343,7 @@ CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
 
 CWARNFLAGS.intel_bios.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides -Wno-incompatible-pointer-types-discards-qualifiers
+CWARNFLAGS.intel_display_rpm.c=		-Wno-incompatible-pointer-types
 CWARNFLAGS.intel_dpll_mgr.c=		-Wno-compare-distinct-pointer-types
 CWARNFLAGS.intel_fbdev.c=		-Wno-initializer-overrides
 CWARNFLAGS.intel_hdmi.c=		-Wno-unused-variable
