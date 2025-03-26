@@ -818,15 +818,13 @@ static unsigned int intel_bw_crtc_data_rate(const struct intel_crtc_state *crtc_
 }
 
 /* "Maximum Pipe Read Bandwidth" */
-static int intel_bw_crtc_min_cdclk(const struct intel_crtc_state *crtc_state)
+static int intel_bw_crtc_min_cdclk(struct intel_display *display,
+				   unsigned int data_rate)
 {
-	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
-	struct drm_i915_private *i915 = to_i915(crtc->base.dev);
-
-	if (DISPLAY_VER(i915) < 12)
+	if (DISPLAY_VER(display) < 12)
 		return 0;
 
-	return DIV_ROUND_UP_ULL(mul_u32_u32(intel_bw_crtc_data_rate(crtc_state), 10), 512);
+	return DIV_ROUND_UP_ULL(mul_u32_u32(data_rate, 10), 512);
 }
 
 static unsigned int intel_bw_num_active_planes(struct drm_i915_private *dev_priv,
@@ -1144,26 +1142,27 @@ static int intel_bw_check_qgv_points(struct drm_i915_private *i915,
 					   old_bw_state, new_bw_state);
 }
 
-static bool intel_bw_state_changed(struct drm_i915_private *i915,
+static bool intel_bw_state_changed(struct intel_display *display,
 				   const struct intel_bw_state *old_bw_state,
 				   const struct intel_bw_state *new_bw_state)
 {
 	enum pipe pipe;
 
-	for_each_pipe(i915, pipe) {
+	for_each_pipe(display, pipe) {
 		const struct intel_dbuf_bw *old_crtc_bw =
 			&old_bw_state->dbuf_bw[pipe];
 		const struct intel_dbuf_bw *new_crtc_bw =
 			&new_bw_state->dbuf_bw[pipe];
 		enum dbuf_slice slice;
 
-		for_each_dbuf_slice(i915, slice) {
+		for_each_dbuf_slice(display, slice) {
 			if (old_crtc_bw->max_bw[slice] != new_crtc_bw->max_bw[slice] ||
 			    old_crtc_bw->active_planes[slice] != new_crtc_bw->active_planes[slice])
 				return true;
 		}
 
-		if (old_bw_state->min_cdclk[pipe] != new_bw_state->min_cdclk[pipe])
+		if (intel_bw_crtc_min_cdclk(display, old_bw_state->data_rate[pipe]) !=
+		    intel_bw_crtc_min_cdclk(display, new_bw_state->data_rate[pipe]))
 			return true;
 	}
 
@@ -1225,13 +1224,13 @@ static void skl_crtc_calc_dbuf_bw(struct intel_bw_state *bw_state,
 
 /* "Maximum Data Buffer Bandwidth" */
 static int
-intel_bw_dbuf_min_cdclk(struct drm_i915_private *i915,
+intel_bw_dbuf_min_cdclk(struct intel_display *display,
 			const struct intel_bw_state *bw_state)
 {
 	unsigned int total_max_bw = 0;
 	enum dbuf_slice slice;
 
-	for_each_dbuf_slice(i915, slice) {
+	for_each_dbuf_slice(display, slice) {
 		int num_active_planes = 0;
 		unsigned int max_bw = 0;
 		enum pipe pipe;
@@ -1240,7 +1239,7 @@ intel_bw_dbuf_min_cdclk(struct drm_i915_private *i915,
 		 * The arbiter can only really guarantee an
 		 * equal share of the total bw to each plane.
 		 */
-		for_each_pipe(i915, pipe) {
+		for_each_pipe(display, pipe) {
 			const struct intel_dbuf_bw *crtc_bw = &bw_state->dbuf_bw[pipe];
 
 			max_bw = max(crtc_bw->max_bw[slice], max_bw);
@@ -1257,14 +1256,15 @@ intel_bw_dbuf_min_cdclk(struct drm_i915_private *i915,
 int intel_bw_min_cdclk(struct intel_display *display,
 		       const struct intel_bw_state *bw_state)
 {
-	struct drm_i915_private *i915 = to_i915(display->drm);
 	enum pipe pipe;
 	int min_cdclk;
 
-	min_cdclk = intel_bw_dbuf_min_cdclk(i915, bw_state);
+	min_cdclk = intel_bw_dbuf_min_cdclk(display, bw_state);
 
-	for_each_pipe(i915, pipe)
-		min_cdclk = max(min_cdclk, bw_state->min_cdclk[pipe]);
+	for_each_pipe(display, pipe)
+		min_cdclk = max(min_cdclk,
+				intel_bw_crtc_min_cdclk(display,
+							bw_state->data_rate[pipe]));
 
 	return min_cdclk;
 }
@@ -1273,7 +1273,6 @@ int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 			    bool *need_cdclk_calc)
 {
 	struct intel_display *display = to_intel_display(state);
-	struct drm_i915_private *i915 = to_i915(state->base.dev);
 	struct intel_bw_state *new_bw_state = NULL;
 	const struct intel_bw_state *old_bw_state = NULL;
 	const struct intel_cdclk_state *cdclk_state;
@@ -1293,15 +1292,12 @@ int intel_bw_calc_min_cdclk(struct intel_atomic_state *state,
 		old_bw_state = intel_atomic_get_old_bw_state(state);
 
 		skl_crtc_calc_dbuf_bw(new_bw_state, crtc_state);
-
-		new_bw_state->min_cdclk[crtc->pipe] =
-			intel_bw_crtc_min_cdclk(crtc_state);
 	}
 
 	if (!old_bw_state)
 		return 0;
 
-	if (intel_bw_state_changed(i915, old_bw_state, new_bw_state)) {
+	if (intel_bw_state_changed(display, old_bw_state, new_bw_state)) {
 		int ret = intel_atomic_lock_global_state(&new_bw_state->base);
 		if (ret)
 			return ret;
