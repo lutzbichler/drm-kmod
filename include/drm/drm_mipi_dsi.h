@@ -156,6 +156,8 @@ void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context *,
     u16);
 void mipi_dsi_dcs_set_tear_off_multi(struct mipi_dsi_multi_context *ctx);
 
+u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format);
+
 static inline int
 mipi_dsi_pixel_format_to_bpp(enum mipi_dsi_pixel_format fmt)
 {
