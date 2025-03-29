@@ -21,10 +21,6 @@
  * IN THE SOFTWARE.
  */
 
-#ifdef __FreeBSD__
-#include <linux/debugfs.h>
-#endif
-
 #include <linux/debugfs.h>
 
 #include <drm/display/drm_dp_helper.h>

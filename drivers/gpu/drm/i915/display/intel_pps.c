@@ -3,10 +3,6 @@
  * Copyright © 2020 Intel Corporation
  */
 
-#ifdef __FreeBSD__
-#include <linux/debugfs.h>
-#endif
-
 #include <linux/debugfs.h>
 
 #include "g4x_dp.h"
