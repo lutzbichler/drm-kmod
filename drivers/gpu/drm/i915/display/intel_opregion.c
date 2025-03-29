@@ -746,9 +746,7 @@ static void intel_didl_outputs(struct intel_display *display)
 	max_outputs = ARRAY_SIZE(opregion->acpi->didl) +
 		ARRAY_SIZE(opregion->acpi->did2);
 
-#ifdef __linux__
 	intel_acpi_device_id_update(display);
-#endif
 
 	drm_connector_list_iter_begin(display->drm, &conn_iter);
 	for_each_intel_connector_iter(connector, &conn_iter) {
