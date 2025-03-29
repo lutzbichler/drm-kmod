@@ -2746,9 +2746,7 @@ static void parse_ddi_ports(struct intel_display *display)
 
 static int child_device_expected_size(u16 version)
 {
-#ifdef __linux__
 	BUILD_BUG_ON(sizeof(struct child_device_config) < 40);
-#endif
 
 	if (version > 256)
 		return -ENOENT;
