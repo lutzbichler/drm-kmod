@@ -49,9 +49,6 @@
 #include "i915_drv.h"
 #include "i915_trace.h"
 
-#ifdef __FreeBSD__
-#include <asm/smp.h>
-#endif
 struct execute_cb {
 	struct irq_work work;
 	struct i915_sw_fence *fence;
