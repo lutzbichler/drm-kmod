@@ -2,14 +2,11 @@
 __FBSDID("$FreeBSD$");
 
 #include <linux/device.h>
-#include <linux/acpi.h>
 #include <drm/i915_drm.h>
 #include <linux/mm.h>
 #include <linux/io-mapping.h>
 
 #include <asm/pgtable.h>
-
-#include <acpi/video.h>
 
 #include "soc/intel_gmch.h"
 #include "intel_acpi.h"
@@ -219,10 +216,4 @@ void
 intel_gmch_gtt_flush(void)
 {
 	intel_gtt_chipset_flush();
-}
-
-void
-intel_acpi_video_register(struct intel_display *display)
-{
-	acpi_video_register();
 }

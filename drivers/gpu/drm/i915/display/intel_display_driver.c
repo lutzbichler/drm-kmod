@@ -605,9 +605,7 @@ void intel_display_driver_remove_noirq(struct intel_display *display)
 	 */
 	intel_hpd_poll_fini(i915);
 
-#ifdef __linux__
 	intel_unregister_dsm_handler();
-#endif
 
 	/* flush any delayed tasks or pending work */
 	flush_workqueue(i915->unordered_wq);
