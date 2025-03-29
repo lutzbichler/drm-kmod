@@ -216,11 +216,11 @@ static int i915_ttm_tt_shmem_populate(struct ttm_device *bdev,
 	}
 
 	st = &i915_tt->cached_rsgt.table;
-#ifdef __FreeBSD__
-	err = shmem_sg_alloc_table(i915, st, size, mr, filp->f_shmem,
-				   max_segment);
-#else
+#ifdef __linux__
 	err = shmem_sg_alloc_table(i915, st, size, mr, filp->f_mapping,
+				   max_segment);
+#elif defined(__FreeBSD__)
+	err = shmem_sg_alloc_table(i915, st, size, mr, filp->f_shmem,
 				   max_segment);
 #endif
 	if (err)
@@ -241,10 +241,10 @@ static int i915_ttm_tt_shmem_populate(struct ttm_device *bdev,
 	return 0;
 
 err_free_st:
-#ifdef __FreeBSD__
-	shmem_sg_free_table(st, filp->f_shmem, false, false);
-#else
+#ifdef __linux__
 	shmem_sg_free_table(st, filp->f_mapping, false, false);
+#elif defined(__FreeBSD__)
+	shmem_sg_free_table(st, filp->f_shmem, false, false);
 #endif
 
 	return err;
@@ -256,11 +256,11 @@ static void i915_ttm_tt_shmem_unpopulate(struct ttm_tt *ttm)
 	bool backup = ttm->page_flags & TTM_TT_FLAG_SWAPPED;
 	struct sg_table *st = &i915_tt->cached_rsgt.table;
 
-#ifdef __FreeBSD__
-	shmem_sg_free_table(st, i915_tt->filp->f_shmem,
-			    backup, backup);
-#else
+#ifdef __linux__
 	shmem_sg_free_table(st, file_inode(i915_tt->filp)->i_mapping,
+			    backup, backup);
+#elif defined(__FreeBSD__)
+	shmem_sg_free_table(st, i915_tt->filp->f_shmem,
 			    backup, backup);
 #endif
 }
@@ -457,11 +457,11 @@ int i915_ttm_purge(struct drm_i915_gem_object *obj)
 		 * pages(like by the shrinker) we should try to be more
 		 * aggressive and release the pages immediately.
 		 */
-#ifdef __FreeBSD__
-		shmem_truncate_range(i915_tt->filp->f_shmem,
-				     0, (loff_t)-1);
-#else
+#ifdef __linux__
 		shmem_truncate_range(file_inode(i915_tt->filp),
+				     0, (loff_t)-1);
+#elif defined(__FreeBSD__)
+		shmem_truncate_range(i915_tt->filp->f_shmem,
 				     0, (loff_t)-1);
 #endif
 		fput(fetch_and_zero(&i915_tt->filp));
@@ -518,10 +518,10 @@ static int i915_ttm_shrink(struct drm_i915_gem_object *obj, unsigned int flags)
 	}
 
 	if (flags & I915_GEM_OBJECT_SHRINK_WRITEBACK)
-#ifdef __FreeBSD__
-		__shmem_writeback(obj->base.size, i915_tt->filp->f_shmem);
-#else
+#ifdef __linux__
 		__shmem_writeback(obj->base.size, i915_tt->filp->f_mapping);
+#elif defined(__FreeBSD__)
+		__shmem_writeback(obj->base.size, i915_tt->filp->f_shmem);
 #endif
 
 	return 0;
