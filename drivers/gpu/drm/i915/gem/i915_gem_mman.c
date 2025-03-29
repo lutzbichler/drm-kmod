@@ -77,15 +77,15 @@ i915_gem_mmap_ioctl(struct drm_device *dev, void *data,
 	struct drm_i915_private *i915 = to_i915(dev);
 	struct drm_i915_gem_mmap *args = data;
 	struct drm_i915_gem_object *obj;
-#ifdef __FreeBSD__
+#ifdef __linux__
+	unsigned long addr;
+#elif defined(__FreeBSD__)
 	vm_offset_t addr;
 	vm_object_t vmobj;
 	struct proc *p;
 	vm_map_t map;
 	vm_size_t size;
 	int error, rv;
-#else
-	unsigned long addr;
 #endif
 
 	/*
