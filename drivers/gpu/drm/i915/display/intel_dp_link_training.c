@@ -23,6 +23,8 @@
 
 #include <linux/debugfs.h>
 
+//#include <drm/display/drm_dp_helper.h>
+
 #include "i915_utils.h"
 #include "intel_display_core.h"
 #include "intel_display_types.h"
