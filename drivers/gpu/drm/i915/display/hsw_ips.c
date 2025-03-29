@@ -3,7 +3,6 @@
  * Copyright © 2022 Intel Corporation
  */
 
-
 #include <linux/debugfs.h>
 
 #include "hsw_ips.h"
