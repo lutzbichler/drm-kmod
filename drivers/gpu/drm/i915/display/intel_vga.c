@@ -6,10 +6,6 @@
 #include <linux/delay.h>
 #include <linux/vgaarb.h>
 
-#if defined(__FreeBSD__)
-#include <asm-generic/io.h>
-#endif
-
 #include <video/vga.h>
 #include "soc/intel_gmch.h"
 
