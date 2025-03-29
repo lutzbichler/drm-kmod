@@ -46,40 +46,24 @@ static void user_forcewake(struct intel_gt *gt, bool suspend)
 
 static void runtime_begin(struct intel_gt *gt)
 {
-#ifdef __linux__
 	local_irq_disable();
-#elif defined(__FreeBSD__)
-	preempt_disable();
-#endif
 	write_seqcount_begin(&gt->stats.lock);
 	gt->stats.start = ktime_get();
 	gt->stats.active = true;
 	write_seqcount_end(&gt->stats.lock);
-#ifdef __linux__
 	local_irq_enable();
-#elif defined(__FreeBSD__)
-	preempt_enable();
-#endif
 }
 
 static void runtime_end(struct intel_gt *gt)
 {
-#ifdef __linux__
 	local_irq_disable();
-#elif defined(__FreeBSD__)
-	preempt_disable();
-#endif
 	write_seqcount_begin(&gt->stats.lock);
 	gt->stats.active = false;
 	gt->stats.total =
 		ktime_add(gt->stats.total,
 			  ktime_sub(ktime_get(), gt->stats.start));
 	write_seqcount_end(&gt->stats.lock);
-#ifdef __linux__
 	local_irq_enable();
-#elif defined(__FreeBSD__)
-	preempt_enable();
-#endif
 }
 
 static int __gt_unpark(struct intel_wakeref *wf)
