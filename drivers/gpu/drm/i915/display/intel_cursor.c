@@ -901,21 +901,13 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 		 */
 		intel_psr_wait_for_idle_locked(crtc_state);
 
-#ifdef __linux__
 		local_irq_disable();
-#elif defined(__FreeBSD__)
-		preempt_disable();
-#endif
 
 		intel_vblank_evade(&evade);
 
 		drm_crtc_vblank_put(&crtc->base);
 	} else {
-#ifdef __linux__
 		local_irq_disable();
-#elif defined(__FreeBSD__)
-		preempt_disable();
-#endif
 	}
 
 	if (new_plane_state->uapi.visible) {
@@ -925,11 +917,7 @@ intel_legacy_cursor_update(struct drm_plane *_plane,
 		intel_plane_disable_arm(NULL, plane, crtc_state);
 	}
 
-#ifdef __linux__
 	local_irq_enable();
-#elif defined(__FreeBSD__)
-	preempt_enable();
-#endif
 
 	intel_psr_unlock(crtc_state);
 
