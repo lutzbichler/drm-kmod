@@ -281,6 +281,7 @@ struct dc_caps {
 	bool dmcub_support;
 	bool zstate_support;
 	bool ips_support;
+	bool ips_v2_support;
 	uint32_t num_of_internal_disp;
 	uint32_t max_dwb_htap;
 	uint32_t max_dwb_vtap;
