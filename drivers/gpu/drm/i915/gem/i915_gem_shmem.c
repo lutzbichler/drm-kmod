@@ -23,45 +23,50 @@ static inline unsigned long totalram_pages(void) { return physmem; }
 #endif
 
 /*
- * Move pages to appropriate lru and release the pagevec, decrementing the
- * ref count of those pages.
+ * Move folios to appropriate lru and release the batch, decrementing the
+ * ref count of those folios.
  */
-static void check_release_pagevec(struct pagevec *pvec)
+static void check_release_folio_batch(struct folio_batch *fbatch)
 {
-	check_move_unevictable_pages(pvec);
-	__pagevec_release(pvec);
+	check_move_unevictable_folios(fbatch);
+	__folio_batch_release(fbatch);
 	cond_resched();
 }
 
-#ifdef __FreeBSD__
-void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
-			 bool dirty, bool backup)
-#else
+#ifdef __linux__
 void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
+			 bool dirty, bool backup)
+#elif defined(__FreeBSD__)
+void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
 			 bool dirty, bool backup)
 #endif
 {
 	struct sgt_iter sgt_iter;
-	struct pagevec pvec;
+	struct folio_batch fbatch;
+	struct folio *last = NULL;
 	struct page *page;
 
 #ifdef __linux__
 	mapping_clear_unevictable(mapping);
 #endif
 
-	pagevec_init(&pvec);
+	folio_batch_init(&fbatch);
 	for_each_sgt_page(page, sgt_iter, st) {
+		struct folio *folio = page_folio(page);
+
+		if (folio == last)
+			continue;
+		last = folio;
 		if (dirty)
-			set_page_dirty(page);
-
+			folio_mark_dirty(folio);
 		if (backup)
-			mark_page_accessed(page);
+			folio_mark_accessed(folio);
 
-		if (!pagevec_add(&pvec, page))
-			check_release_pagevec(&pvec);
+		if (!folio_batch_add(&fbatch, folio))
+			check_release_folio_batch(&fbatch);
 	}
-	if (pagevec_count(&pvec))
-		check_release_pagevec(&pvec);
+	if (fbatch.nr)
+		check_release_folio_batch(&fbatch);
 
 	sg_free_table(st);
 }
@@ -78,8 +83,7 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 	unsigned int page_count; /* restricted by sg_alloc_table */
 	unsigned long i;
 	struct scatterlist *sg;
-	struct page *page;
-	unsigned long last_pfn = 0;	/* suppress gcc warning */
+	unsigned long next_pfn = 0;	/* suppress gcc warning */
 	gfp_t noreclaim;
 	int ret;
 
@@ -103,17 +107,19 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 	 *
 	 * Fail silently without starting the shrinker
 	 */
-#ifdef __FreeBSD__
-	noreclaim = 0;
-#else
+#ifdef __linux__
 	mapping_set_unevictable(mapping);
 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
+#elif defined(__FreeBSD__)
+	noreclaim = 0;
 #endif
 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
 
 	sg = st->sgl;
 	st->nents = 0;
 	for (i = 0; i < page_count; i++) {
+		struct folio *folio;
+		unsigned long nr_pages;
 		const unsigned int shrink[] = {
 			I915_SHRINK_BOUND | I915_SHRINK_UNBOUND,
 			0,
@@ -122,12 +128,12 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 
 		do {
 			cond_resched();
-			page = shmem_read_mapping_page_gfp(mapping, i, gfp);
-			if (!IS_ERR(page))
+			folio = shmem_read_folio_gfp(mapping, i, gfp);
+			if (!IS_ERR(folio))
 				break;
 
 			if (!*s) {
-				ret = PTR_ERR(page);
+				ret = PTR_ERR(folio);
 				goto err_sg;
 			}
 
@@ -166,21 +172,25 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 			}
 		} while (1);
 
+		nr_pages = min_t(unsigned long,
+				folio_nr_pages(folio), page_count - i);
 		if (!i ||
 		    sg->length >= max_segment ||
-		    page_to_pfn(page) != last_pfn + 1) {
+		    folio_pfn(folio) != next_pfn) {
 			if (i)
 				sg = sg_next(sg);
 
 			st->nents++;
-			sg_set_page(sg, page, PAGE_SIZE, 0);
+			sg_set_folio(sg, folio, nr_pages * PAGE_SIZE, 0);
 		} else {
-			sg->length += PAGE_SIZE;
+			/* XXX: could overflow? */
+			sg->length += nr_pages * PAGE_SIZE;
 		}
-		last_pfn = page_to_pfn(page);
+		next_pfn = folio_pfn(folio) + nr_pages;
+		i += nr_pages - 1;
 
 		/* Check that the i965g/gm workaround works. */
-		GEM_BUG_ON(gfp & __GFP_DMA32 && last_pfn >= 0x00100000UL);
+		GEM_BUG_ON(gfp & __GFP_DMA32 && next_pfn >= 0x00100000UL);
 	}
 	if (sg) /* loop terminated early; short sg table */
 		sg_mark_end(sg);
@@ -217,10 +227,10 @@ static int shmem_get_pages(struct drm_i915_gem_object *obj)
 {
 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
 	struct intel_memory_region *mem = obj->mm.region;
-#ifdef __FreeBSD__
-	vm_object_t mapping = obj->base.filp->f_shmem;
-#else
+#ifdef __linux__
 	struct address_space *mapping = obj->base.filp->f_mapping;
+#elif defined(__FreeBSD__)
+	vm_object_t mapping = obj->base.filp->f_shmem;
 #endif
 	unsigned int max_segment = i915_sg_segment_size(i915->drm.dev);
 	struct sg_table *st;
@@ -308,10 +318,10 @@ shmem_truncate(struct drm_i915_gem_object *obj)
 	 * To do this we must instruct the shmfs to drop all of its
 	 * backing pages, *now*.
 	 */
-#ifdef __FreeBSD__
-	shmem_truncate_range(obj->base.filp->f_shmem, 0, (loff_t)-1);
-#else
+#ifdef __linux__
 	shmem_truncate_range(file_inode(obj->base.filp), 0, (loff_t)-1);
+#elif defined(__FreeBSD__)
+	shmem_truncate_range(obj->base.filp->f_shmem, 0, (loff_t)-1);
 #endif
 	obj->mm.madv = __I915_MADV_PURGED;
 	obj->mm.pages = ERR_PTR(-EFAULT);
@@ -319,11 +329,7 @@ shmem_truncate(struct drm_i915_gem_object *obj)
 	return 0;
 }
 
-#ifdef __FreeBSD__
-void __shmem_writeback(size_t size, vm_object_t mapping)
-{
-}
-#else
+#ifdef __linux__
 void __shmem_writeback(size_t size, struct address_space *mapping)
 {
 	struct writeback_control wbc = {
@@ -365,15 +371,19 @@ put:
 		put_page(page);
 	}
 }
+#elif defined(__FreeBSD__)
+void __shmem_writeback(size_t size, vm_object_t mapping)
+{
+}
 #endif
 
 static void
 shmem_writeback(struct drm_i915_gem_object *obj)
 {
-#ifdef __FreeBSD__
-	__shmem_writeback(obj->base.size, obj->base.filp->f_shmem);
-#else
+#ifdef __linux__
 	__shmem_writeback(obj->base.size, obj->base.filp->f_mapping);
+#elif defined(__FreeBSD__)
+	__shmem_writeback(obj->base.size, obj->base.filp->f_shmem);
 #endif
 }
 
@@ -431,11 +441,11 @@ void i915_gem_object_put_pages_shmem(struct drm_i915_gem_object *obj, struct sg_
 	if (i915_gem_object_needs_bit17_swizzle(obj))
 		i915_gem_object_save_bit_17_swizzle(obj, pages);
 
-#ifdef __FreeBSD__
-	shmem_sg_free_table(pages, obj->base.filp->f_shmem,
-			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
-#else
+#ifdef __linux__
 	shmem_sg_free_table(pages, file_inode(obj->base.filp)->i_mapping,
+			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
+#elif defined(__FreeBSD__)
+	shmem_sg_free_table(pages, obj->base.filp->f_shmem,
 			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
 #endif
 	kfree(pages);
@@ -455,11 +465,11 @@ static int
 shmem_pwrite(struct drm_i915_gem_object *obj,
 	     const struct drm_i915_gem_pwrite *arg)
 {
-#ifdef __FreeBSD__
-	vm_object_t mapping = obj->base.filp->f_shmem;
-#else
+#ifdef __linux__
 	struct address_space *mapping = obj->base.filp->f_mapping;
 	const struct address_space_operations *aops = mapping->a_ops;
+#elif defined(__FreeBSD__)
+	vm_object_t mapping = obj->base.filp->f_shmem;
 #endif
 	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
 	u64 remain, offset;
@@ -511,11 +521,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 		if (len > remain)
 			len = remain;
 
-#ifdef __FreeBSD__
-		(void)data;
-		(void)err;
-		page = shmem_read_mapping_page(mapping, OFF_TO_IDX(offset));
-#else
+#ifdef __linux__
 		/* Prefault the user page to reduce potential recursion */
 		err = __get_user(c, user_data);
 		if (err)
@@ -529,6 +535,10 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 					&page, &data);
 		if (err < 0)
 			return err;
+#elif defined(__FreeBSD__)
+		(void)data;
+		(void)err;
+		page = shmem_read_mapping_page(mapping, OFF_TO_IDX(offset));
 #endif
 
 		vaddr = kmap_atomic(page);
@@ -542,7 +552,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 				      len - unwritten, page, data);
 		if (err < 0)
 			return err;
-#else
+#elif defined(__FreeBSD__)
 		put_page(page);
 #endif
 
