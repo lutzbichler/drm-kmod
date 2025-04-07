@@ -150,6 +150,10 @@ SRCS+=	i915_irq.c \
 # GPL-2.0
 SRCS+=	xe_pt_walk.c
 
+.if !empty(KCONFIG:MCONFIGFS_FS)
+SRCS+=	xe_configfs.c
+.endif
+
 .if !empty(KCONFIG:MHWMON)
 SRCS+=  xe_hwmon.c
 .endif
