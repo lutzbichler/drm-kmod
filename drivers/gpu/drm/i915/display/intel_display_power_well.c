@@ -1271,7 +1271,7 @@ static void vlv_display_power_well_deinit(struct intel_display *display)
 	/* Prevent us from re-enabling polling on accident in late suspend */
 #ifdef __linux__
 	// BSDFIXME: No dev->power on BSD. Do we need run intel_hpd_poll_enbl?
-	if (!display->drm.dev->power.is_suspended)
+	if (!display->drm->dev->power.is_suspended)
 		intel_hpd_poll_enable(dev_priv);
 #endif
 }

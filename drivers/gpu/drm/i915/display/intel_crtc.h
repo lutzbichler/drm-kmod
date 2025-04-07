@@ -6,11 +6,10 @@
 #ifndef _INTEL_CRTC_H_
 #define _INTEL_CRTC_H_
 
-#include <linux/types.h>
-
 #ifdef __FreeBSD__
 #include <linux/kconfig.h>
 #endif
+#include <linux/types.h>
 
 enum i9xx_plane_id;
 enum pipe;
