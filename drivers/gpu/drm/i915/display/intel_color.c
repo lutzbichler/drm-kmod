@@ -1971,11 +1971,6 @@ void intel_color_prepare_commit(struct intel_atomic_state *state,
 	struct intel_crtc_state *crtc_state =
 		intel_atomic_get_new_crtc_state(state, crtc);
 
-#ifdef __FreeBSD__
-	/* FIXME DSB has issues loading LUTs, disable it for now */
-	return;
-#endif
-
 	if (!crtc_state->hw.active ||
 	    intel_crtc_needs_modeset(crtc_state))
 		return;

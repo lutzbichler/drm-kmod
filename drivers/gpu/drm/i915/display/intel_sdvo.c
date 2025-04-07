@@ -2548,14 +2548,12 @@ static void intel_sdvo_encoder_destroy(struct drm_encoder *_encoder)
 {
 	struct intel_encoder *encoder = to_intel_encoder(_encoder);
 	struct intel_sdvo *sdvo = to_sdvo(encoder);
-#ifdef I2CNOTYET
 	int i;
 
 	for (i = 0; i < ARRAY_SIZE(sdvo->ddc); i++) {
 		if (sdvo->ddc[i].ddc_bus)
 			i2c_del_adapter(&sdvo->ddc[i].ddc);
 	}
-#endif
 
 	drm_encoder_cleanup(&encoder->base);
 	kfree(sdvo);

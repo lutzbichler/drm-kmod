@@ -2504,9 +2504,7 @@ intel_hdmi_set_edid(struct drm_connector *connector)
 {
 	struct intel_display *display = to_intel_display(connector->dev);
 	struct drm_i915_private *dev_priv = to_i915(connector->dev);
-#ifdef __linux__
 	struct intel_hdmi *intel_hdmi = intel_attached_hdmi(to_intel_connector(connector));
-#endif
 	struct i2c_adapter *ddc = connector->ddc;
 	intel_wakeref_t wakeref;
 	const struct drm_edid *drm_edid;
