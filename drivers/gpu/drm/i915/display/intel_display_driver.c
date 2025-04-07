@@ -397,7 +397,6 @@ void intel_display_driver_resume_access(struct intel_display *display)
  */
 bool intel_display_driver_check_access(struct intel_display *display)
 {
-	struct drm_i915_private *i915 = to_i915(display->drm);
 	char current_task[TASK_COMM_LEN + 16];
 	char allowed_task[TASK_COMM_LEN + 16] = "none";
 
@@ -410,7 +409,7 @@ bool intel_display_driver_check_access(struct intel_display *display)
 
 	if (display->access.allowed_task)
 		snprintf(allowed_task, sizeof(allowed_task), "%s[%d]",
-			 i915->display.access.allowed_task->comm,
+			 display->access.allowed_task->comm,
 			 task_pid_vnr(display->access.allowed_task));
 
 	drm_dbg_kms(display->drm,
