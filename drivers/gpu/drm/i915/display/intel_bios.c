@@ -28,8 +28,6 @@
 #include <linux/debugfs.h>
 #include <linux/firmware.h>
 
-#include <linux/firmware.h>
-
 #include <drm/display/drm_dp_helper.h>
 #include <drm/display/drm_dsc_helper.h>
 #include <drm/drm_edid.h>
@@ -190,7 +188,7 @@ static const struct {
 	{ .section_id = BDB_LFP_DATA,
 	  .min_size = 0, /* special case */ },
 	{ .section_id = BDB_LFP_BACKLIGHT,
-	  .min_size = sizeof(struct bdb_lfp_backlight_data), },
+	  .min_size = sizeof(struct bdb_lfp_backlight), },
 	{ .section_id = BDB_LFP_POWER,
 	  .min_size = sizeof(struct bdb_lfp_power), },
 	{ .section_id = BDB_MIPI_CONFIG,
@@ -1016,7 +1014,7 @@ static void
 parse_lfp_backlight(struct intel_display *display,
 		    struct intel_panel *panel)
 {
-	const struct bdb_lfp_backlight_data *backlight_data;
+	const struct bdb_lfp_backlight *backlight_data;
 	const struct lfp_backlight_data_entry *entry;
 	int panel_type = panel->vbt.panel_type;
 	u16 level;
@@ -3057,7 +3055,6 @@ static struct vbt_header *firmware_get_vbt(struct intel_display *display,
 	return vbt;
 }
 
-
 static struct vbt_header *oprom_get_vbt(struct intel_display *display,
 					struct intel_rom *rom,
 					size_t *size, const char *type)
@@ -3111,7 +3108,6 @@ err_free_vbt:
 	kfree(vbt);
 err_free_rom:
 	intel_rom_free(rom);
-
 	return NULL;
 }
 

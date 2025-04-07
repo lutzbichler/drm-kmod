@@ -356,6 +356,9 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj,
 		kvfree(pfns);
 
 	return vaddr ?: ERR_PTR(-ENOMEM);
+#elif defined(__FreeBSD__)
+	// BSDFIXME: Need vmap_pfn() implementation.
+	return NULL;
 #endif
 }
 
