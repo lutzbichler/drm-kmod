@@ -146,6 +146,10 @@ SRCS+=	intel_bo.c \
 SRCS+=	i915_irq.c \
 	i915_utils.c
 
+.if !empty(KCONFIG:MCONFIGFS_FS)
+SRCS+=	xe_configfs.c
+.endif
+
 .if !empty(KCONFIG:MHWMON)
 SRCS+=  xe_hwmon.c
 .endif
