@@ -1117,6 +1117,7 @@ struct intel_crtc_state {
 	bool wm_level_disabled;
 	u32 dc3co_exitline;
 	u16 su_y_granularity;
+	u8 active_non_psr_pipes;
 
 	/*
 	 * Frequency the dpll for the port should run at. Differs from the
@@ -1655,6 +1656,8 @@ struct intel_psr {
 	u8 entry_setup_frames;
 
 	bool link_ok;
+
+	u8 active_non_psr_pipes;
 };
 
 struct intel_dp {
