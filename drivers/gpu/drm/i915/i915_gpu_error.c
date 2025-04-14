@@ -1827,8 +1827,6 @@ static void gt_record_display_regs(struct intel_gt_coredump *gt)
 		gt->ier = intel_uncore_read(uncore, VLV_IER);
 	else if (HAS_PCH_SPLIT(i915))
 		gt->ier = intel_uncore_read(uncore, DEIER);
-	else
-		gt->ier = intel_uncore_read(uncore, GEN2_IER);
 }
 
 /* Capture all other registers that GuC doesn't capture. */
@@ -1866,6 +1864,9 @@ static void gt_record_global_nonguc_regs(struct intel_gt_coredump *gt)
 		gt->ngtier = 4;
 	} else if (HAS_PCH_SPLIT(i915)) {
 		gt->gtier[0] = intel_uncore_read(uncore, GTIER);
+		gt->ngtier = 1;
+	} else {
+		gt->gtier[0] = intel_uncore_read(uncore, GEN2_IER);
 		gt->ngtier = 1;
 	}
 
