@@ -8,6 +8,10 @@
 
 #include <linux/types.h>
 
+#ifdef __FreeBSD__
+#include "intel_dmc_regs.h"
+#endif
+
 enum pipe;
 struct drm_printer;
 struct intel_display;
