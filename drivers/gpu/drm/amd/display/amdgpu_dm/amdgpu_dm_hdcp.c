@@ -177,6 +177,9 @@ void hdcp_update_display(struct hdcp_workqueue *hdcp_work,
 	unsigned int conn_index = aconnector->base.index;
 
 	guard(mutex)(&hdcp_w->mutex);
+	drm_connector_get(&aconnector->base);
+	if (hdcp_w->aconnector[conn_index])
+		drm_connector_put(&hdcp_w->aconnector[conn_index]->base);
 	hdcp_w->aconnector[conn_index] = aconnector;
 
 	memset(&link_adjust, 0, sizeof(link_adjust));
@@ -224,7 +227,6 @@ static void hdcp_remove_display(struct hdcp_workqueue *hdcp_work,
 	unsigned int conn_index = aconnector->base.index;
 
 	guard(mutex)(&hdcp_w->mutex);
-	hdcp_w->aconnector[conn_index] = aconnector;
 
 	/* the removal of display will invoke auth reset -> hdcp destroy and
 	 * we'd expect the Content Protection (CP) property changed back to
