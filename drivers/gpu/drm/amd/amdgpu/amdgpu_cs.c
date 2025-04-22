@@ -1064,6 +1064,7 @@ static int amdgpu_cs_patch_ibs(struct amdgpu_cs_parser *p,
 			       struct amdgpu_job *job)
 {
 	struct amdgpu_ring *ring = amdgpu_job_ring(job);
+	struct amdgpu_device *adev = ring->adev;
 	unsigned int i;
 	int r;
 
