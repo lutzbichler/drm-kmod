@@ -38,7 +38,7 @@
 
 static bool has_display(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	return HAS_DISPLAY(display);
 }
@@ -86,7 +86,7 @@ static void unset_display_features(struct xe_device *xe)
 static void display_destroy(struct drm_device *dev, void *dummy)
 {
 	struct xe_device *xe = to_xe_device(dev);
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	destroy_workqueue(display->hotplug.dp_wq);
 }
@@ -104,13 +104,14 @@ static void display_destroy(struct drm_device *dev, void *dummy)
  */
 int xe_display_create(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	/* TODO: Allocate display dynamically. */
+	struct intel_display *display = &xe->__display;
+
+	xe->display = &xe->__display;
 
 	spin_lock_init(&display->fb_tracking.lock);
 
 	display->hotplug.dp_wq = alloc_ordered_workqueue("xe-dp", 0);
-	if (!xe->display.hotplug.dp_wq)
-		return -ENOMEM;
 
 	return drmm_add_action_or_reset(&xe->drm, display_destroy, NULL);
 }
@@ -118,7 +119,7 @@ int xe_display_create(struct xe_device *xe)
 static void xe_display_fini_early(void *arg)
 {
 	struct xe_device *xe = arg;
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -131,7 +132,7 @@ static void xe_display_fini_early(void *arg)
 
 int xe_display_init_early(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 	int err;
 
 	if (!xe->info.probe_display)
@@ -175,7 +176,7 @@ err_opregion:
 static void xe_display_fini(void *arg)
 {
 	struct xe_device *xe = arg;
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	intel_hpd_poll_fini(display);
 	intel_hdcp_component_fini(display);
@@ -185,7 +186,7 @@ static void xe_display_fini(void *arg)
 
 int xe_display_init(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 	int err;
 
 	if (!xe->info.probe_display)
@@ -200,7 +201,7 @@ int xe_display_init(struct xe_device *xe)
 
 void xe_display_register(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -211,7 +212,7 @@ void xe_display_register(struct xe_device *xe)
 
 void xe_display_unregister(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -224,7 +225,7 @@ void xe_display_unregister(struct xe_device *xe)
 
 void xe_display_irq_handler(struct xe_device *xe, u32 master_ctl)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -235,7 +236,7 @@ void xe_display_irq_handler(struct xe_device *xe, u32 master_ctl)
 
 void xe_display_irq_enable(struct xe_device *xe, u32 gu_misc_iir)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -246,7 +247,7 @@ void xe_display_irq_enable(struct xe_device *xe, u32 gu_misc_iir)
 
 void xe_display_irq_reset(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -256,7 +257,7 @@ void xe_display_irq_reset(struct xe_device *xe)
 
 void xe_display_irq_postinstall(struct xe_device *xe, struct xe_gt *gt)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -297,7 +298,7 @@ static void xe_display_flush_cleanup_work(struct xe_device *xe)
 
 static void xe_display_enable_d3cold(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -320,7 +321,7 @@ static void xe_display_enable_d3cold(struct xe_device *xe)
 
 static void xe_display_disable_d3cold(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -344,7 +345,7 @@ static void xe_display_disable_d3cold(struct xe_device *xe)
 
 void xe_display_pm_suspend(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 	bool s2idle = suspend_to_idle();
 
 	if (!xe->info.probe_display)
@@ -379,7 +380,7 @@ void xe_display_pm_suspend(struct xe_device *xe)
 
 void xe_display_pm_shutdown(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -410,7 +411,7 @@ void xe_display_pm_shutdown(struct xe_device *xe)
 
 void xe_display_pm_runtime_suspend(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -425,7 +426,7 @@ void xe_display_pm_runtime_suspend(struct xe_device *xe)
 
 void xe_display_pm_suspend_late(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 	bool s2idle = suspend_to_idle();
 
 	if (!xe->info.probe_display)
@@ -436,7 +437,7 @@ void xe_display_pm_suspend_late(struct xe_device *xe)
 
 void xe_display_pm_runtime_suspend_late(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -454,7 +455,7 @@ void xe_display_pm_runtime_suspend_late(struct xe_device *xe)
 
 void xe_display_pm_shutdown_late(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -469,7 +470,7 @@ void xe_display_pm_shutdown_late(struct xe_device *xe)
 
 void xe_display_pm_resume_early(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -479,7 +480,7 @@ void xe_display_pm_resume_early(struct xe_device *xe)
 
 void xe_display_pm_resume(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
@@ -514,7 +515,7 @@ void xe_display_pm_resume(struct xe_device *xe)
 
 void xe_display_pm_runtime_resume(struct xe_device *xe)
 {
-	struct intel_display *display = &xe->display;
+	struct intel_display *display = xe->display;
 
 	if (!xe->info.probe_display)
 		return;
