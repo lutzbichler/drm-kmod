@@ -42,7 +42,9 @@
 
 static bool has_display(struct xe_device *xe)
 {
-	return HAS_DISPLAY(&xe->display);
+	struct intel_display *display = &xe->display;
+
+	return HAS_DISPLAY(display);
 }
 
 /**
@@ -88,8 +90,9 @@ static void unset_display_features(struct xe_device *xe)
 static void display_destroy(struct drm_device *dev, void *dummy)
 {
 	struct xe_device *xe = to_xe_device(dev);
+	struct intel_display *display = &xe->display;
 
-	destroy_workqueue(xe->display.hotplug.dp_wq);
+	destroy_workqueue(display->hotplug.dp_wq);
 }
 
 /**
@@ -105,9 +108,11 @@ static void display_destroy(struct drm_device *dev, void *dummy)
  */
 int xe_display_create(struct xe_device *xe)
 {
-	spin_lock_init(&xe->display.fb_tracking.lock);
+	struct intel_display *display = &xe->display;
 
-	xe->display.hotplug.dp_wq = alloc_ordered_workqueue("xe-dp", 0);
+	spin_lock_init(&display->fb_tracking.lock);
+
+	display->hotplug.dp_wq = alloc_ordered_workqueue("xe-dp", 0);
 	if (!xe->display.hotplug.dp_wq)
 		return -ENOMEM;
 
@@ -368,7 +373,7 @@ void xe_display_pm_suspend(struct xe_device *xe)
 
 	if (has_display(xe)) {
 		intel_display_driver_suspend_access(display);
-		intel_encoder_suspend_all(&xe->display);
+		intel_encoder_suspend_all(display);
 	}
 
 	intel_opregion_suspend(display, s2idle ? PCI_D1 : PCI_D3cold);
