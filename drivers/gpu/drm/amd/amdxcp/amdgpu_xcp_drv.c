@@ -46,6 +46,7 @@ static const struct drm_driver amdgpu_xcp_driver = {
 
 static int8_t pdev_num;
 static struct xcp_device *xcp_dev[MAX_XCP_PLATFORM_DEVICE];
+static DEFINE_MUTEX(xcp_mutex);
 
 int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 {
@@ -56,13 +57,23 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 #elif defined(__FreeBSD__)
 	char *dev_name;
 #endif
-	int ret;
+	int ret, i;
+
+	guard(mutex)(&xcp_mutex);
 
 	if (pdev_num >= MAX_XCP_PLATFORM_DEVICE)
 		return -ENODEV;
 
+	for (i = 0; i < MAX_XCP_PLATFORM_DEVICE; i++) {
+		if (!xcp_dev[i])
+			break;
+	}
+
+	if (i >= MAX_XCP_PLATFORM_DEVICE)
+		return -ENODEV;
+
 #ifdef __linux__
-	snprintf(dev_name, sizeof(dev_name), "amdgpu_xcp_%d", pdev_num);
+	snprintf(dev_name, sizeof(dev_name), "amdgpu_xcp_%d", i);
 	pdev = platform_device_register_simple(dev_name, -1, NULL, 0);
 	if (IS_ERR(pdev))
 		return PTR_ERR(pdev);
@@ -77,7 +88,7 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 	if (pdev != NULL)
 		return (-ENOMEM);
 	dev_name = kzalloc(sizeof(char) * 20 + 1, GFP_KERNEL);
-	snprintf(dev_name, sizeof(char) * 20, "amdgpu_xcp_%d", pdev_num);
+	snprintf(dev_name, sizeof(char) * 20, "amdgpu_xcp_%d", i);
 	pdev->name = dev_name;
 	pdev->id = pdev_num;
 #endif
@@ -88,8 +99,8 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 		goto out_devres;
 	}
 
-	xcp_dev[pdev_num] = pxcp_dev;
-	xcp_dev[pdev_num]->pdev = pdev;
+	xcp_dev[i] = pxcp_dev;
+	xcp_dev[i]->pdev = pdev;
 	*ddev = &pxcp_dev->drm;
 	pdev_num++;
 
@@ -108,21 +119,47 @@ out_unregister:
 }
 EXPORT_SYMBOL(amdgpu_xcp_drm_dev_alloc);
 
-void amdgpu_xcp_drv_release(void)
+static void free_xcp_dev(int8_t index)
 {
-	for (--pdev_num; pdev_num >= 0; --pdev_num) {
+	if ((index < MAX_XCP_PLATFORM_DEVICE) && (xcp_dev[index])) {
 #ifdef __linux__
-		struct platform_device *pdev = xcp_dev[pdev_num]->pdev;
+		struct platform_device *pdev = xcp_dev[index]->pdev;
 
 		devres_release_group(&pdev->dev, NULL);
 		platform_device_unregister(pdev);
 #elif defined(__FreeBSD__)
-		kfree(xcp_dev[pdev_num]->pdev->name);
-		kfree(xcp_dev[pdev_num]->pdev);
+		kfree(xcp_dev[index]->pdev->name);
+		kfree(xcp_dev[index]->pdev);
 #endif
-		xcp_dev[pdev_num] = NULL;
+		xcp_dev[index] = NULL;
+		pdev_num--;
 	}
-	pdev_num = 0;
+}
+
+void amdgpu_xcp_drm_dev_free(struct drm_device *ddev)
+{
+	int8_t i;
+
+	guard(mutex)(&xcp_mutex);
+
+	for (i = 0; i < MAX_XCP_PLATFORM_DEVICE; i++) {
+		if ((xcp_dev[i]) && (&xcp_dev[i]->drm == ddev)) {
+			free_xcp_dev(i);
+			break;
+		}
+	}
+}
+EXPORT_SYMBOL(amdgpu_xcp_drm_dev_free);
+
+void amdgpu_xcp_drv_release(void)
+{
+	int8_t i;
+
+	guard(mutex)(&xcp_mutex);
+
+	for (i = 0; pdev_num && i < MAX_XCP_PLATFORM_DEVICE; i++) {
+		free_xcp_dev(i);
+	}
 }
 EXPORT_SYMBOL(amdgpu_xcp_drv_release);
 
