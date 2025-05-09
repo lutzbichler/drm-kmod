@@ -2,7 +2,7 @@
 #define _XE_TRACE_LRC_H_
 
 static void
-trace_xe_lrc_update_timestamp(struct xe_lrc *lrc, u32 oid)
+trace_xe_lrc_update_timestamp(struct xe_lrc *lrc, u64 oid)
 {
 }
 
