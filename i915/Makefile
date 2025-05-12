@@ -188,7 +188,8 @@ SRCS+=	dvo_ch7017.c \
 	skl_universal_plane.c \
 	skl_watermark.c \
 	vlv_dsi.c \
-	vlv_dsi_pll.c
+	vlv_dsi_pll.c \
+	vlv_sideband.c
 
 # gt/*
 SRCS+=	gen2_engine_cs.c \
