@@ -476,6 +476,7 @@ SRCS+=	aldebaran.c \
 	imu_v11_0.c \
 	imu_v11_0_3.c \
 	imu_v12_0.c \
+	imu_v12_1.c \
 	isp_v4_1_0.c \
 	isp_v4_1_1.c \
 	jpeg_v1_0.c \
