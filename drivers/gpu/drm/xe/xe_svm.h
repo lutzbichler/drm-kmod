@@ -76,6 +76,9 @@ void xe_svm_range_debug(struct xe_svm_range *range, const char *operation);
 
 void xe_svm_flush(struct xe_vm *vm);
 
+int xe_svm_alloc_vram(struct xe_vm *vm, struct xe_tile *tile,
+		      struct xe_svm_range *range,
+		      const struct drm_gpusvm_ctx *ctx);
 /**
  * xe_svm_range_has_dma_mapping() - SVM range has DMA mapping
  * @range: SVM range
@@ -101,6 +104,7 @@ static inline bool xe_svm_range_has_dma_mapping(struct xe_svm_range *range)
 #include <linux/interval_tree.h>
 
 struct drm_pagemap_device_addr;
+struct drm_gpusvm_ctx;
 struct xe_bo;
 struct xe_gt;
 struct xe_vm;
@@ -173,6 +177,14 @@ void xe_svm_range_debug(struct xe_svm_range *range, const char *operation)
 
 static inline void xe_svm_flush(struct xe_vm *vm)
 {
+}
+
+static inline
+int xe_svm_alloc_vram(struct xe_vm *vm, struct xe_tile *tile,
+		      struct xe_svm_range *range,
+		      const struct drm_gpusvm_ctx *ctx)
+{
+	return -EOPNOTSUPP;
 }
 
 #define xe_svm_assert_in_notifier(...) do {} while (0)
