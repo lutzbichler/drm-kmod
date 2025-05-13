@@ -2933,6 +2933,7 @@ enum dmub_cmd_fams_type {
 	DMUB_CMD__FAMS2_CONFIG = 4,
 	DMUB_CMD__FAMS2_DRR_UPDATE = 5,
 	DMUB_CMD__FAMS2_FLIP = 6,
+	DMUB_CMD__FAMS2_IB_CONFIG = 7,
 };
 
 /**
