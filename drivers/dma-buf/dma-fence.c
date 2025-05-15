@@ -463,12 +463,27 @@ dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline)
 		fence->ops->set_deadline(fence, deadline);
 }
 
+static const char *
+dma_fence_driver_name(struct dma_fence *fence)
+{
+
+	return (fence->ops->get_driver_name(fence));
+}
+
+static const char *
+dma_fence_timeline_name(struct dma_fence *fence)
+{
+
+	return (fence->ops->get_timeline_name(fence));
+}
+
 void
 dma_fence_describe(struct dma_fence *fence, struct seq_file *seq)
 {
 	seq_printf(seq, "%s %s seq %llu %ssignalled\n",
-		   fence->ops->get_driver_name(fence),
-		   fence->ops->get_timeline_name(fence), fence->seqno,
+		   dma_fence_driver_name(fence),
+		   dma_fence_timeline_name(fence),
+		   fence->seqno,
 		   dma_fence_is_signaled(fence) ? "" : "un");
 }
 
