@@ -463,14 +463,14 @@ dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline)
 		fence->ops->set_deadline(fence, deadline);
 }
 
-static const char *
+const char *
 dma_fence_driver_name(struct dma_fence *fence)
 {
 
 	return (fence->ops->get_driver_name(fence));
 }
 
-static const char *
+const char *
 dma_fence_timeline_name(struct dma_fence *fence)
 {
 
