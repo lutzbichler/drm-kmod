@@ -473,11 +473,11 @@ dma_fence_describe(struct dma_fence *fence, struct seq_file *seq)
 }
 
 /*
- * Initialize a custom fence.
+ * Generic helper function to initialize a custom fence.
  */
-void
-dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
-    spinlock_t *lock, u64 context, u64 seqno)
+static void
+dma_fence_init_base(struct dma_fence *fence, const struct dma_fence_ops *ops,
+    spinlock_t *lock, u64 context, u64 seqno, unsigned long flags)
 {
 
 	kref_init(&fence->refcount);
@@ -486,8 +486,31 @@ dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
 	fence->lock = lock;
 	fence->context = context;
 	fence->seqno = seqno;
-	fence->flags = 0;
+	fence->flags = flags;
 	fence->error = 0;
+}
+
+/*
+ * Initialize a custom fence with 32-bit seqno
+ */
+void
+dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
+    spinlock_t *lock, u64 context, u64 seqno)
+{
+
+	dma_fence_init_base(fence, ops, lock, context, seqno, 0UL);
+}
+
+/*
+ * Initialize a custom fence with 64-bit seqno
+ */
+void
+dma_fence_init64(struct dma_fence *fence, const struct dma_fence_ops *ops,
+    spinlock_t *lock, u64 context, u64 seqno)
+{
+
+	dma_fence_init_base(fence, ops, lock, context, seqno,
+		BIT(DMA_FENCE_FLAG_SEQNO64_BIT));
 }
 
 /*
