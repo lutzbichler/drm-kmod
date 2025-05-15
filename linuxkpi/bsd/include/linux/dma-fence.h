@@ -78,6 +78,7 @@ struct dma_fence_ops {
 };
 
 enum dma_fence_flag_bits {
+	DMA_FENCE_FLAG_SEQNO64_BIT,
 	DMA_FENCE_FLAG_SIGNALED_BIT,
 	DMA_FENCE_FLAG_TIMESTAMP_BIT,
 	DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
@@ -90,6 +91,8 @@ extern const struct dma_fence_ops dma_fence_chain_ops;
 struct seq_file;
 
 void dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
+    spinlock_t *lock, u64 context, u64 seqno);
+void dma_fence_init64(struct dma_fence *fence, const struct dma_fence_ops *ops,
     spinlock_t *lock, u64 context, u64 seqno);
 void dma_fence_release(struct kref *kref);
 void dma_fence_free(struct dma_fence *fence);
