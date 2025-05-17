@@ -145,6 +145,10 @@ SRCS+=	drm_client_event.c
 SRCS+=	drm_client_setup.c
 .endif
 
+.if !empty(KCONFIG:MDRM_DISPLAY_HDMI_CEC_NOTIFIER_HELPER)
+SRCS+=	drm_hdmi_cec_notifier_helper.c
+.endif
+
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
 CFLAGS+= -I${.CURDIR:H}/linuxkpi/gplv2/include
