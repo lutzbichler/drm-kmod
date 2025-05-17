@@ -147,6 +147,10 @@ SRCS+= 	drm_client.c \
 SRCS+= 	drm_client_setup.c
 .endif
 
+.if !empty(KCONFIG:MDRM_DISPLAY_HDMI_CEC_NOTIFIER_HELPER)
+SRCS+=	drm_hdmi_cec_notifier_helper.c
+.endif
+
 SRCS+=	device_if.h \
 	vnode_if.h \
 	bus_if.h \
