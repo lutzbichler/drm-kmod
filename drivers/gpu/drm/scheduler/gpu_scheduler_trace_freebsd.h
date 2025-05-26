@@ -22,5 +22,13 @@ trace_drm_sched_process_job(void *s_fence) {
 	CTR1(KTR_DRM, "drm_process_sched_job %p", s_fence);
 }
 
+static inline void
+trace_drm_sched_job_add_dep(struct drm_sched_job *sched_job, struct dma_fence *fence)
+{
+	CTR2(KTR_DRM, "drm_sched_job_add_dep %p fence %p", job, fence);
+}
+
+#define trace_drm_sched_job_add_dep_enabled()	false
+
 #endif /* _GPU_SCHEDULER_TRACE_FREEBSD_H_ */
 
