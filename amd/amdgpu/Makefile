@@ -912,7 +912,6 @@ SRCS+=	dcn401_dccg.c \
 	dcn401_dpp_cm.c \
 	dcn401_dpp_dscl.c \
 	dcn401_dsc.c \
-	dcn401_fpu.c \
 	dcn401_hubbub.c \
 	dcn401_hubp.c \
 	dcn401_hwseq.c \
@@ -1402,7 +1401,6 @@ CFLAGS.dcn321_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn35_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn351_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn351_resource.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dcn401_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn410_resource.c= ${FPUFLAGS} -mstack_alignment=4
 
 CFLAGS.display_mode_core.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
