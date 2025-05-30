@@ -4037,7 +4037,6 @@ int is_psp_fw_valid(struct psp_bin_desc bin)
 	return bin.size_bytes;
 }
 
-#ifdef __linux__
 static ssize_t amdgpu_psp_vbflash_write(struct file *filp, struct kobject *kobj,
 					const struct bin_attribute *bin_attr,
 					char *buffer, loff_t pos, size_t count)
@@ -4194,11 +4193,10 @@ static umode_t amdgpu_bin_flash_attr_is_visible(struct kobject *kobj,
 
 const struct attribute_group amdgpu_flash_attr_group = {
 	.attrs = flash_attrs,
-	.bin_attrs_new = bin_flash_attrs,
+	.bin_attrs = bin_flash_attrs,
 	.is_bin_visible = amdgpu_bin_flash_attr_is_visible,
 	.is_visible = amdgpu_flash_attr_is_visible,
 };
-#endif
 
 #if defined(CONFIG_DEBUG_FS)
 static int psp_read_spirom_debugfs_open(struct inode *inode, struct file *filp)
