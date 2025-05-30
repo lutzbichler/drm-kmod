@@ -4028,18 +4028,15 @@ void psp_copy_fw(struct psp_context *psp, uint8_t *start_addr, uint32_t bin_size
  * Reading from this file will retrieve the USB-C PD firmware version. Writing to
  * this file will trigger the update process.
  */
-#ifdef __linux__
 static DEVICE_ATTR(usbc_pd_fw, 0644,
 		   psp_usbc_pd_fw_sysfs_read,
 		   psp_usbc_pd_fw_sysfs_write);
-#endif
 
 int is_psp_fw_valid(struct psp_bin_desc bin)
 {
 	return bin.size_bytes;
 }
 
-#ifdef __linux__
 static ssize_t amdgpu_psp_vbflash_write(struct file *filp, struct kobject *kobj,
 					const struct bin_attribute *bin_attr,
 					char *buffer, loff_t pos, size_t count)
@@ -4196,11 +4193,10 @@ static umode_t amdgpu_bin_flash_attr_is_visible(struct kobject *kobj,
 
 const struct attribute_group amdgpu_flash_attr_group = {
 	.attrs = flash_attrs,
-	.bin_attrs_new = bin_flash_attrs,
+	.bin_attrs = bin_flash_attrs,
 	.is_bin_visible = amdgpu_bin_flash_attr_is_visible,
 	.is_visible = amdgpu_flash_attr_is_visible,
 };
-#endif
 
 #if defined(CONFIG_DEBUG_FS)
 static int psp_read_spirom_debugfs_open(struct inode *inode, struct file *filp)
