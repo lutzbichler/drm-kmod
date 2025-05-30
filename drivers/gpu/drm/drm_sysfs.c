@@ -296,7 +296,7 @@ static struct bin_attribute edid_attr = {
 	.read = edid_show,
 };
 
-static struct bin_attribute *connector_bin_attrs[] = {
+static const struct bin_attribute *connector_bin_attrs[] = {
 	&edid_attr,
 	NULL
 };
