@@ -87,6 +87,8 @@ enum dma_fence_flag_bits {
 extern const struct dma_fence_ops dma_fence_array_ops;
 extern const struct dma_fence_ops dma_fence_chain_ops;
 
+struct seq_file;
+
 void dma_fence_init(struct dma_fence *fence, const struct dma_fence_ops *ops,
     spinlock_t *lock, u64 context, u64 seqno);
 void dma_fence_release(struct kref *kref);
