@@ -208,9 +208,15 @@ static ssize_t enabled_show(struct device *device,
 	return sysfs_emit(buf, enabled ? "enabled\n" : "disabled\n");
 }
 
+#if defined(LINUXKPI_VERSION) && LINUXKPI_VERSION < 61700
 static ssize_t edid_show(struct file *filp, struct kobject *kobj,
 			 struct bin_attribute *attr, char *buf, loff_t off,
 			 size_t count)
+#else
+static ssize_t edid_show(struct file *filp, struct kobject *kobj,
+                         const struct bin_attribute *attr, char *buf, loff_t off,
+                         size_t count)
+#endif
 {
 	struct device *connector_dev = kobj_to_dev(kobj);
 	struct drm_connector *connector = to_drm_connector(connector_dev);
