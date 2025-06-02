@@ -112,6 +112,7 @@ SRCS=	xe_bb.c \
 	xe_survivability_mode.c \
 	xe_sync.c \
 	xe_tile.c \
+	xe_tile_sriov_vf.c \
 	xe_tile_sysfs.c \
 	xe_ttm_stolen_mgr.c \
 	xe_ttm_sys_mgr.c \
