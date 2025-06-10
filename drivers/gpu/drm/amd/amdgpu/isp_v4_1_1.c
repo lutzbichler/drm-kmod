@@ -228,8 +228,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	isp->isp_cell = kcalloc(3, sizeof(struct mfd_cell), GFP_KERNEL);
 	if (!isp->isp_cell) {
 		r = -ENOMEM;
-		drm_err(&adev->ddev,
-			"%s: isp mfd cell alloc failed\n", __func__);
+		drm_err(&adev->ddev, "isp mfd cell alloc failed (%d)\n", r);
 		goto failure;
 	}
 
@@ -239,16 +238,14 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 			       GFP_KERNEL);
 	if (!isp->isp_res) {
 		r = -ENOMEM;
-		drm_err(&adev->ddev,
-			"%s: isp mfd res alloc failed\n", __func__);
+		drm_err(&adev->ddev, "isp mfd resource alloc failed (%d)\n", r);
 		goto failure;
 	}
 
 	isp->isp_pdata = kzalloc(sizeof(*isp->isp_pdata), GFP_KERNEL);
 	if (!isp->isp_pdata) {
 		r = -ENOMEM;
-		drm_err(&adev->ddev,
-			"%s: isp platform data alloc failed\n", __func__);
+		drm_err(&adev->ddev, "isp platform data alloc failed (%d)\n", r);
 		goto failure;
 	}
 
@@ -286,8 +283,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	isp->isp_i2c_res = kcalloc(1, sizeof(struct resource), GFP_KERNEL);
 	if (!isp->isp_i2c_res) {
 		r = -ENOMEM;
-		drm_err(&adev->ddev,
-			"%s: isp mfd res alloc failed\n", __func__);
+		drm_err(&adev->ddev, "isp mfd res alloc failed (%d)\n", r);
 		goto failure;
 	}
 
@@ -306,8 +302,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	isp->isp_gpio_res = kcalloc(1, sizeof(struct resource), GFP_KERNEL);
 	if (!isp->isp_gpio_res) {
 		r = -ENOMEM;
-		drm_err(&adev->ddev,
-			"%s: isp gpio res alloc failed\n", __func__);
+		drm_err(&adev->ddev, "isp gpio resource alloc failed (%d)\n", r);
 		goto failure;
 	}
 
@@ -327,8 +322,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 #ifdef __linux__
 	r = mfd_add_hotplug_devices(isp->parent, isp->isp_cell, 2);
 	if (r) {
-		drm_err(&adev->ddev,
-			"%s: add mfd hotplug device failed\n", __func__);
+		drm_err(&adev->ddev, "add mfd hotplug device failed (%d)\n", r);
 		goto failure;
 	}
 	r = device_for_each_child(isp->parent, &isp->ispgpd,
