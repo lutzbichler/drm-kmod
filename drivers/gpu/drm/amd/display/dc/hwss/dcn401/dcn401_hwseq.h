@@ -117,4 +117,5 @@ bool dcn401_program_rmcm_luts(
 	struct mpc *mpc,
 	bool lut_bank_a,
 	int mpcc_id);
+void dcn401_initialize_min_clocks(struct dc *dc);
 #endif /* __DC_HWSS_DCN401_H__ */
