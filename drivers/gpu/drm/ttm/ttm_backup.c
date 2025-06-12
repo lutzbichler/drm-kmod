@@ -4,9 +4,8 @@
  */
 
 #include <drm/ttm/ttm_backup.h>
-#ifdef __FreeBSD__
+
 #include <linux/export.h>
-#endif
 #include <linux/page-flags.h>
 #include <linux/swap.h>
 
