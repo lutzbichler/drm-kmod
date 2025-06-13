@@ -349,6 +349,7 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_ib.c \
 	amdgpu_ids.c \
 	amdgpu_ih.c \
+	amdgpu_ip.c \
 	amdgpu_irq.c \
 	amdgpu_isp.c \
 	amdgpu_job.c \
