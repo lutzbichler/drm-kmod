@@ -16,10 +16,6 @@
 
 #define GSC_BAR_LENGTH  0x00000FFC
 
-#define DG1_GSC_HECI2_BASE			0x259000
-#define PVC_GSC_HECI2_BASE			0x285000
-#define DG2_GSC_HECI2_BASE			0x374000
-
 #ifdef __linux__
 static void heci_gsc_irq_mask(struct irq_data *d)
 {
