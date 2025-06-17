@@ -52,7 +52,6 @@ SRCS=	\
 	i915_vma_resource.c \
 	intel_acpi.c \
 	intel_atomic.c \
-	intel_atomic_plane.c \
 	intel_audio.c \
 	intel_bw.c \
 	intel_bios.c \
@@ -170,6 +169,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_pch_display.c \
 	intel_pch_refclk.c \
 	intel_pfit.c \
+	intel_plane.c \
 	intel_plane_initial.c \
 	intel_pmdemand.c \
 	intel_pps.c \

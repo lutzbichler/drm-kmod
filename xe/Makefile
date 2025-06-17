@@ -201,7 +201,6 @@ SRCS+=	icl_dsi.c \
 	intel_acpi.c \
 	intel_alpm.c \
 	intel_atomic.c \
-	intel_atomic_plane.c \
 	intel_audio.c \
 	intel_backlight.c \
 	intel_bios.c \
@@ -268,6 +267,7 @@ SRCS+=	icl_dsi.c \
 	intel_modeset_setup.c \
 	intel_modeset_verify.c \
 	intel_opregion.c \
+	intel_plane.c \
 	intel_panel.c \
 	intel_pfit.c \
 	intel_pipe_crc.c \
