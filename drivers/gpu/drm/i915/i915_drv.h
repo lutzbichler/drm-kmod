@@ -73,8 +73,6 @@ struct vlv_s0ix_state;
 #include "i915_irq.h"
 #endif
 
-#define GEM_QUIRK_PIN_SWIZZLED_PAGES	BIT(0)
-
 /* Data Stolen Memory (DSM) aka "i915 stolen memory" */
 struct i915_dsm {
 	/*
