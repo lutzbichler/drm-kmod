@@ -20,6 +20,7 @@
 #include "xe_force_wake.h"
 #ifdef __FreeBSD__
 #include "xe_ggtt.h"
+#include "xe_huc.h"
 #endif
 #include "xe_gt.h"
 #include "xe_gt_printk.h"
@@ -1184,9 +1185,12 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 	 */
 	{
 		struct xe_tile *tile = gt_to_tile(guc_to_gt(guc));
+		struct xe_huc *huc = &guc_to_gt(guc)->uc.huc;
 
 		if (tile->mem.ggtt && guc->fw.bo)
 			xe_ggtt_unmap_bo(tile->mem.ggtt, guc->fw.bo);
+		if (tile->mem.ggtt && huc->fw.bo)
+			xe_ggtt_unmap_bo(tile->mem.ggtt, huc->fw.bo);
 	}
 #endif
 
