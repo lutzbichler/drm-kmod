@@ -751,6 +751,22 @@ void xe_ggtt_unmap_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
 	xe_ggtt_clear(ggtt, bo->ggtt_node[ggtt->tile->id]->base.start, bo->size);
 	xe_ggtt_invalidate(ggtt);
 }
+
+/**
+ * xe_ggtt_clear_bo - Clear a BO's GGTT PTEs without TLB invalidation
+ * @ggtt: the &xe_ggtt where the BO is mapped
+ * @bo: the &xe_bo to clear
+ *
+ * Like xe_ggtt_unmap_bo but without TLB invalidation. Use when batching
+ * multiple PTE clears before a single invalidation.
+ */
+void xe_ggtt_clear_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
+{
+	if (!bo->ggtt_node[ggtt->tile->id])
+		return;
+
+	xe_ggtt_clear(ggtt, bo->ggtt_node[ggtt->tile->id]->base.start, bo->size);
+}
 #endif
 
 static int __xe_ggtt_insert_bo_at(struct xe_ggtt *ggtt, struct xe_bo *bo,
