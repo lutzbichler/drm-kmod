@@ -342,6 +342,7 @@ CWARNFLAGS.xe_oa.c=			-Wno-uninitialized
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_pt.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
+CWARNFLAGS.xe_shrinker.c=		-Wno-unused-variable
 CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
 CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
