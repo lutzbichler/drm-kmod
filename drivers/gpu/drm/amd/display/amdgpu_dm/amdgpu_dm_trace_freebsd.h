@@ -677,4 +677,28 @@ trace_dcn_optc_lock_unlock_state(const struct optc *optc_state, int instance,
 	    "vready_offset=%d", vready_offset);
 }
 
+/* TRACE_EVENT(amdgpu_dm_brightness, */
+/* TP_PROTO(void *function, u32 user_brightness, u32 converted_brightness, bool aux, bool ac), */
+
+static inline void
+trace_amdgpu_dm_brightness(void *function, u32 user_brightness,
+	u32 converted_brightness, bool aux, bool ac)
+{
+	CTR5(KTR_DRM,
+		 "amdgpu_dm_brightness: %ps: brightness requested=%u converted=%u "
+		 "aux=%s power=%s",
+		 function, user_brightness, converted_brightness,
+		 (aux ? "true" : "false"), (ac ? "AC" : "DC"));
+}
+
+static inline bool
+trace_amdgpu_dm_brightness_enabled(void)
+{
+#ifdef KTR
+	return true;
+#else
+	return false;
+#endif
+}
+
 #endif /* _AMDGPU_DM_TRACE_FREEBSD_H_ */
