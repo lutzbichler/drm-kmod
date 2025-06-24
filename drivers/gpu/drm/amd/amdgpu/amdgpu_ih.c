@@ -220,7 +220,7 @@ restart_ih:
 	count  = AMDGPU_IH_MAX_NUM_IVS;
 #ifdef __linux__
 	/* BSD: Too verbose, disable */
-	DRM_DEBUG("%s: rptr %d, wptr %d\n", __func__, ih->rptr, wptr);
+	dev_dbg(adev->dev, "%s: rptr %d, wptr %d\n", __func__, ih->rptr, wptr);
 #endif
 
 	/* Order reading of wptr vs. reading of IH ring data */
