@@ -51,6 +51,7 @@
 #include <linux/dma-fence.h>
 #include <linux/pci.h>
 #ifdef __FreeBSD__
+#include <linux/acpi.h>
 #include <linux/suspend.h>
 #endif
 
@@ -1726,7 +1727,7 @@ static inline bool amdgpu_acpi_is_s3_active(struct amdgpu_device *adev) { return
 #endif
 
 #if defined(CONFIG_DRM_AMD_ISP)
-int amdgpu_acpi_get_isp4_dev_hid(u8 (*hid)[ACPI_ID_LEN]);
+int amdgpu_acpi_get_isp4_dev(struct acpi_device **dev);
 #endif
 
 void amdgpu_register_gpu_instance(struct amdgpu_device *adev);
