@@ -249,6 +249,7 @@ SRCS+=	icl_dsi.c \
 	intel_fbdev.c \
 	intel_fdi.c \
 	intel_fifo_underrun.c \
+	intel_flipq.c \
 	intel_frontbuffer.c \
 	intel_global_state.c \
 	intel_gmbus.c \
