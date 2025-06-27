@@ -438,6 +438,7 @@ SRCS+=	aldebaran.c \
 	cik_ih.c \
 	cik_sdma.c \
 	cik.c \
+	cyan_skillfish_reg_init.c \
 	cz_ih.c \
 	dce_v10_0.c \
 	dce_v11_0.c \
