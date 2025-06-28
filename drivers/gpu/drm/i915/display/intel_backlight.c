@@ -453,7 +453,7 @@ void intel_backlight_disable(const struct drm_connector_state *old_conn_state)
 	 */
 	if (display->drm->switch_power_state == DRM_SWITCH_POWER_CHANGING) {
 		drm_dbg_kms(display->drm, "[CONNECTOR:%d:%s] Skipping backlight disable on vga switch\n",
-						connector->base.base.id, connector->base.name);
+			    connector->base.base.id, connector->base.name);
 		return;
 	}
 
@@ -482,18 +482,18 @@ static void lpt_enable_backlight(const struct intel_crtc_state *crtc_state,
 	if (pch_ctl1 & BLM_PCH_PWM_ENABLE) {
 		drm_dbg_kms(display->drm,
 			    "[CONNECTOR:%d:%s] PCH backlight already enabled\n",
-				connector->base.base.id, connector->base.name);
+			    connector->base.base.id, connector->base.name);
 		pch_ctl1 &= ~BLM_PCH_PWM_ENABLE;
 		intel_de_write(display, BLC_PWM_PCH_CTL1, pch_ctl1);
 	}
 
 	if (HAS_PCH_LPT(i915))
 		intel_de_rmw(display, SOUTH_CHICKEN2, LPT_PWM_GRANULARITY,
-		panel->backlight.alternate_pwm_increment ?
+			     panel->backlight.alternate_pwm_increment ?
 			     LPT_PWM_GRANULARITY : 0);
 	else
 		intel_de_rmw(display, SOUTH_CHICKEN1, SPT_PWM_GRANULARITY,
-		panel->backlight.alternate_pwm_increment ?
+			     panel->backlight.alternate_pwm_increment ?
 			     SPT_PWM_GRANULARITY : 0);
 
 	pch_ctl2 = panel->backlight.pwm_level_max << 16;
