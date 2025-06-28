@@ -17,7 +17,7 @@
 #include <drm/drm_drv.h>
 #include <drm/drm_managed.h>
 #include <drm/drm_probe_helper.h>
-#include <drm/xe_drm.h>
+#include <uapi/drm/xe_drm.h>
 
 #include "soc/intel_dram.h"
 #include "intel_acpi.h"
@@ -194,7 +194,7 @@ int xe_display_init(struct xe_device *xe)
 	err = intel_display_driver_probe(display);
 	if (err)
 		return err;
-		
+
 	return devm_add_action_or_reset(xe->drm.dev, xe_display_fini, xe);
 }
 
