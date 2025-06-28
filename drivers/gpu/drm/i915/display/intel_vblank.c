@@ -297,23 +297,29 @@ static int __intel_get_crtc_scanline(struct intel_crtc *crtc)
  * all register accesses to the same cacheline to be serialized,
  * otherwise they may hang.
  */
-static void intel_vblank_section_enter(struct intel_display *display)
-	__acquires(display->uncore.lock)
-{
 #ifdef I915
+static void intel_vblank_section_enter(struct intel_display *display)
+	__acquires(i915->uncore.lock)
+{
 	struct drm_i915_private *i915 = to_i915(display->drm);
 	spin_lock(&i915->uncore.lock);
-#endif
 }
 
 static void intel_vblank_section_exit(struct intel_display *display)
 	__releases(i915->uncore.lock)
 {
-#ifdef I915
 	struct drm_i915_private *i915 = to_i915(display->drm);
 	spin_unlock(&i915->uncore.lock);
-#endif
 }
+#else
+static void intel_vblank_section_enter(struct intel_display *display)
+{
+}
+
+static void intel_vblank_section_exit(struct intel_display *display)
+{
+}
+#endif
 
 static bool i915_get_crtc_scanoutpos(struct drm_crtc *_crtc,
 				     bool in_vblank_irq,
