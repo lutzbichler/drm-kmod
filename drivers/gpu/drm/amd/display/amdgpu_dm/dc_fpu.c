@@ -55,7 +55,7 @@ inline void dc_assert_fp_enabled(void)
 {
 #ifdef __linux__
 	int depth;
- 
+
 	depth = __this_cpu_read(fpu_recursion_depth);
 
 	ASSERT(depth >= 1);
@@ -81,15 +81,15 @@ void dc_fpu_begin(const char *function_name, const int line)
 {
 #ifdef __linux__
 	int depth;
- 
+
 	WARN_ON_ONCE(!in_task());
 	preempt_disable();
 	depth = __this_cpu_inc_return(fpu_recursion_depth);
- 
 	if (depth == 1) {
- 		kernel_neon_begin();
- 	}
- 
+		BUG_ON(!kernel_fpu_available());
+		kernel_fpu_begin();
+	}
+
 	TRACE_DCN_FPU(true, function_name, line, depth);
 #elif defined(__FreeBSD__)
 	/* LKPI kernel_fpu_begin handles the above complications internally */
@@ -112,14 +112,13 @@ void dc_fpu_end(const char *function_name, const int line)
 {
 #ifdef __linux__
 	int depth;
- 
+
 	depth = __this_cpu_dec_return(fpu_recursion_depth);
 	if (depth == 0) {
 		kernel_fpu_end();
 	} else {
 		WARN_ON_ONCE(depth < 0);
- 	}
- 
+	}
 
 	TRACE_DCN_FPU(false, function_name, line, depth);
 	preempt_enable();
