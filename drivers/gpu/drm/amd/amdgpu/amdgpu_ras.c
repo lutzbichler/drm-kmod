@@ -2085,7 +2085,7 @@ void amdgpu_ras_debugfs_create_all(struct amdgpu_device *adev)
 /* ras fs */
 #ifdef __linux__
 static const BIN_ATTR(gpu_vram_bad_pages, S_IRUGO,
-		amdgpu_ras_sysfs_badpages_read, NULL, 0);
+		      amdgpu_ras_sysfs_badpages_read, NULL, 0);
 #endif
 static DEVICE_ATTR(features, S_IRUGO,
 		amdgpu_ras_sysfs_features_read, NULL);

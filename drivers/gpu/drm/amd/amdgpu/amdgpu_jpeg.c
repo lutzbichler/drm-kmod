@@ -451,8 +451,14 @@ int amdgpu_jpeg_sysfs_reset_mask_init(struct amdgpu_device *adev)
 
 void amdgpu_jpeg_sysfs_reset_mask_fini(struct amdgpu_device *adev)
 {
-	if (adev->jpeg.num_jpeg_inst)
-		device_remove_file(adev->dev, &dev_attr_jpeg_reset_mask);
+#ifdef __linux__
+	if (adev->dev->kobj.sd) {
+#endif
+		if (adev->jpeg.num_jpeg_inst)
+			device_remove_file(adev->dev, &dev_attr_jpeg_reset_mask);
+#ifdef __linux__
+	}
+#endif
 }
 
 int amdgpu_jpeg_reg_dump_init(struct amdgpu_device *adev,

@@ -46,6 +46,7 @@ static int isp_v4_1_0_hw_init(struct amdgpu_isp *isp)
 	struct amdgpu_device *adev = isp->adev;
 #ifdef __linux__
 	int idx, int_idx, num_res, r;
+	u64 isp_base;
 #elif defined(__FreeBSD__)
 	int r;
 #endif
