@@ -1352,7 +1352,7 @@ static void intel_audio_component_init(struct intel_display *display)
 
 		drm_dbg_kms(display->drm,
 			    "use AUD_FREQ_CNTRL of 0x%x (init value 0x%x)\n",
-				aud_freq, aud_freq_init);
+			    aud_freq, aud_freq_init);
 
 		display->audio.freq_cntrl = aud_freq;
 	}
@@ -1370,7 +1370,7 @@ static void intel_audio_component_register(struct intel_display *display)
 				  &intel_audio_component_bind_ops,
 				  I915_COMPONENT_AUDIO);
 	if (ret < 0) {
-		drm_err(DISPLAY_VER->drm,
+		drm_err(display->drm,
 			"failed to add audio component (%d)\n", ret);
 		/* continue with reduced functionality */
 		return;
@@ -1380,7 +1380,7 @@ static void intel_audio_component_register(struct intel_display *display)
 }
 
 /**
- * i915_audio_component_cleanup - deregister the audio component
+ * intel_audio_component_cleanup - deregister the audio component
  * @display: display device
  *
  * Deregisters the audio component, breaking any existing binding to the
@@ -1420,16 +1420,15 @@ void intel_audio_register(struct intel_display *display)
 
 /**
  * intel_audio_deinit() - deinitialize the audio driver
- * @i915: the i915 drm device private data
- *
+ * @display: display device
  */
 void intel_audio_deinit(struct intel_display *display)
 {
 #ifdef __linux__
 	// No lpe on BSD yet
-	if (display->audio.lpe.platdev != NULL)
+	if (display->audio.lpe.platdev)
 		intel_lpe_audio_teardown(display);
 	else
 #endif
-	intel_audio_component_cleanup(display);
+		intel_audio_component_cleanup(display);
 }

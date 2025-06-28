@@ -33,11 +33,11 @@ static void check_release_folio_batch(struct folio_batch *fbatch)
 	cond_resched();
 }
 
-#ifdef __FreeBSD__
-void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
-			 bool dirty, bool backup)
-#else
+#ifdef __linux__
 void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
+			 bool dirty, bool backup)
+#elif defined(__FreeBSD__)
+void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
 			 bool dirty, bool backup)
 #endif
 {
@@ -59,7 +59,6 @@ void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
 		last = folio;
 		if (dirty)
 			folio_mark_dirty(folio);
-
 		if (backup)
 			folio_mark_accessed(folio);
 
@@ -74,10 +73,10 @@ void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
 
 int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 			 size_t size, struct intel_memory_region *mr,
-#ifdef __FreeBSD__
-			 vm_object_t mapping,
-#else
+#ifdef __linux__
 			 struct address_space *mapping,
+#elif defined(__FreeBSD__)
+			 vm_object_t mapping,
 #endif
 			 unsigned int max_segment)
 {
@@ -108,11 +107,11 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 	 *
 	 * Fail silently without starting the shrinker
 	 */
-#ifdef __FreeBSD__
-	noreclaim = 0;
-#else
+#ifdef __linux__
 	mapping_set_unevictable(mapping);
 	noreclaim = mapping_gfp_constraint(mapping, ~__GFP_RECLAIM);
+#elif defined(__FreeBSD__)
+	noreclaim = 0;
 #endif
 	noreclaim |= __GFP_NORETRY | __GFP_NOWARN;
 
@@ -228,10 +227,10 @@ static int shmem_get_pages(struct drm_i915_gem_object *obj)
 {
 	struct drm_i915_private *i915 = to_i915(obj->base.dev);
 	struct intel_memory_region *mem = obj->mm.region;
-#ifdef __FreeBSD__
-	vm_object_t mapping = obj->base.filp->f_shmem;
-#else
+#ifdef __linux__
 	struct address_space *mapping = obj->base.filp->f_mapping;
+#elif defined(__FreeBSD__)
+	vm_object_t mapping = obj->base.filp->f_shmem;
 #endif
 	unsigned int max_segment = i915_sg_segment_size(i915->drm.dev);
 	struct sg_table *st;
@@ -315,10 +314,10 @@ shmem_truncate(struct drm_i915_gem_object *obj)
 	 * To do this we must instruct the shmfs to drop all of its
 	 * backing pages, *now*.
 	 */
-#ifdef __FreeBSD__
-	shmem_truncate_range(obj->base.filp->f_shmem, 0, (loff_t)-1);
-#else
+#ifdef __linux__
 	shmem_truncate_range(file_inode(obj->base.filp), 0, (loff_t)-1);
+#elif defined(__FreeBSD__)
+	shmem_truncate_range(obj->base.filp->f_shmem, 0, (loff_t)-1);
 #endif
 	obj->mm.madv = __I915_MADV_PURGED;
 	obj->mm.pages = ERR_PTR(-EFAULT);
@@ -326,11 +325,7 @@ shmem_truncate(struct drm_i915_gem_object *obj)
 	return 0;
 }
 
-#ifdef __FreeBSD__
-void __shmem_writeback(size_t size, vm_object_t mapping)
-{
-}
-#else
+#ifdef __linux__
 void __shmem_writeback(size_t size, struct address_space *mapping)
 {
 	struct writeback_control wbc = {
@@ -372,15 +367,19 @@ put:
 		put_page(page);
 	}
 }
+#elif defined(__FreeBSD__)
+void __shmem_writeback(size_t size, vm_object_t mapping)
+{
+}
 #endif
 
 static void
 shmem_writeback(struct drm_i915_gem_object *obj)
 {
-#ifdef __FreeBSD__
-	__shmem_writeback(obj->base.size, obj->base.filp->f_shmem);
-#else
+#ifdef __linux__
 	__shmem_writeback(obj->base.size, obj->base.filp->f_mapping);
+#elif defined(__FreeBSD__)
+	__shmem_writeback(obj->base.size, obj->base.filp->f_shmem);
 #endif
 }
 
@@ -438,11 +437,11 @@ void i915_gem_object_put_pages_shmem(struct drm_i915_gem_object *obj, struct sg_
 	if (i915_gem_object_needs_bit17_swizzle(obj))
 		i915_gem_object_save_bit_17_swizzle(obj, pages);
 
-#ifdef __FreeBSD__
-	shmem_sg_free_table(pages, obj->base.filp->f_shmem,
-			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
-#else
+#ifdef __linux__
 	shmem_sg_free_table(pages, file_inode(obj->base.filp)->i_mapping,
+			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
+#elif defined( __FreeBSD__)
+	shmem_sg_free_table(pages, obj->base.filp->f_shmem,
 			    obj->mm.dirty, obj->mm.madv == I915_MADV_WILLNEED);
 #endif
 	kfree(pages);
@@ -462,11 +461,11 @@ static int
 shmem_pwrite(struct drm_i915_gem_object *obj,
 	     const struct drm_i915_gem_pwrite *arg)
 {
-#ifdef __FreeBSD__
-	vm_object_t mapping = obj->base.filp->f_shmem;
-#else
+#ifdef __linux__
 	struct address_space *mapping = obj->base.filp->f_mapping;
 	const struct address_space_operations *aops = mapping->a_ops;
+#elif defined(__FreeBSD__)
+	vm_object_t mapping = obj->base.filp->f_shmem;
 #endif
 	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
 	u64 remain;
@@ -519,11 +518,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 		if (len > remain)
 			len = remain;
 
-#ifdef __FreeBSD__
-		(void)data;
-		(void)err;
-		folio = shmem_read_mapping_folio(mapping, pos);
-#else
+#ifdef __linux__
 		/* Prefault the user page to reduce potential recursion */
 		err = __get_user(c, user_data);
 		if (err)
@@ -537,6 +532,10 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 					&folio, &data);
 		if (err < 0)
 			return err;
+#elif defined(__FreeBSD__)
+		(void)data;
+		(void)err;
+		folio = shmem_read_mapping_folio(mapping, pos);
 #endif
 
 		vaddr = kmap_local_folio(folio, offset_in_folio(folio, pos));
