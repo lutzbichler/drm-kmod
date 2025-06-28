@@ -254,9 +254,10 @@ static void df_v3_6_sw_init(struct amdgpu_device *adev)
 
 static void df_v3_6_sw_fini(struct amdgpu_device *adev)
 {
-
-	device_remove_file(adev->dev, &dev_attr_df_cntr_avail);
-
+#ifdef __linux__
+	if (adev->dev->kobj.sd)
+#endif
+		device_remove_file(adev->dev, &dev_attr_df_cntr_avail);
 }
 
 static void df_v3_6_enable_broadcast_mode(struct amdgpu_device *adev,
