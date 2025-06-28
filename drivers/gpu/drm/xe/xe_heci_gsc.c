@@ -91,11 +91,11 @@ static void heci_gsc_release_dev(struct device *dev)
 }
 #endif
 
-static void xe_heci_gsc_fini(struct xe_device *xe)
+static void xe_heci_gsc_fini(void *arg)
 {
 #ifdef __linux__
 	struct xe_heci_gsc *heci_gsc = arg;
-	
+
 	if (heci_gsc->adev) {
 		struct auxiliary_device *aux_dev = &heci_gsc->adev->aux_dev;
 
@@ -199,7 +199,7 @@ int xe_heci_gsc_init(struct xe_device *xe)
 	}
 
 	if (!def || !def->name) {
-		drm_warn_once(&xe->drm, "HECI is not implemented!\n");
+		drm_warn(&xe->drm, "HECI is not implemented!\n");
 		return 0;
 	}
 

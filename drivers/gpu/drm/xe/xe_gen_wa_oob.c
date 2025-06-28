@@ -28,8 +28,6 @@
 	"\n" \
 	"#endif\n"
 
-static const char *program_invocation_short_name;
-
 static void print_usage(FILE *f, const char *progname)
 {
 	fprintf(f, "usage: %s <input-rule-file> <generated-c-source-file> <generated-c-header-file>\n",
@@ -149,8 +147,6 @@ int main(int argc, const char *argv[])
 		print_usage(stderr, argv[0]);
 		return 1;
 	}
-
-	program_invocation_short_name = argv[0];
 
 	for (int i = 0; i < _ARGS_COUNT; i++) {
 		args[i].f = fopen(args[i].fn, args[i].mode);
