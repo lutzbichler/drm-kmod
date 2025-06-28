@@ -81,7 +81,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	if (!isp->isp_pdata) {
 		r = -ENOMEM;
 		drm_err(&adev->ddev,
-				"%s: isp platform data alloc failed\n", __func__);
+			"%s: isp platform data alloc failed\n", __func__);
 		goto failure;
 	}
 
