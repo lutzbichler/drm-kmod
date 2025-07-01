@@ -54,7 +54,7 @@ int drm_gem_fb_init_with_funcs(struct drm_device *dev,
 		}
 	}
 
-	drm_helper_mode_fill_fb_struct(dev, fb, mode_cmd);
+	drm_helper_mode_fill_fb_struct(dev, fb, info, mode_cmd);
 	for (i = 0; i < info->num_planes; ++i) {
 		fb->obj[i] = objs[i];
 	}
