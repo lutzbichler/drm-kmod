@@ -190,6 +190,10 @@ SRCS+=	xe_debugfs.c \
 	xe_uc_debugfs.c
 .endif
 
+.if !empty(KCONFIG:MCONFIG_I2C)
+SRCS+=	xe_i2c.c
+.endif
+
 # i915
 SRCS+=	intel_freebsd.c
 
