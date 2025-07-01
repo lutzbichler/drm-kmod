@@ -41,7 +41,8 @@ int drm_gem_fb_init_with_funcs(struct drm_device *dev,
 	struct drm_gem_object **objs;
 	int ret, i;
 
-	info = drm_get_format_info(dev, mode_cmd);
+	info = drm_get_format_info(dev, mode_cmd->pixel_format,
+					 mode_cmd->modifier[0]);
 	objs = kcalloc(info->num_planes, sizeof(*objs), GFP_KERNEL);
 
 	for (i = 0; i < info->num_planes; ++i) {
