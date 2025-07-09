@@ -16,7 +16,8 @@ KMOD=	xe
 
 EXPORT_SYMS=	YES
 
-all:	xe_wa_oob.c
+all:	xe_wa_oob.c \
+	xe_device_wa_oob.c
 
 xe_gen_wa_oob:	${SRCDIR}/xe_gen_wa_oob.c
 	cc -o xe_gen_wa_oob ${SRCDIR}/xe_gen_wa_oob.c
@@ -26,6 +27,12 @@ xe_wa_oob.c:	xe_wa_oob.h
 xe_wa_oob.h:	xe_wa_oob.rules	xe_gen_wa_oob
 	mkdir -p ${SRCDIR}/generated
 	./xe_gen_wa_oob ${SRCDIR}/xe_wa_oob.rules ${SRCDIR}/generated/xe_wa_oob.c ${SRCDIR}/generated/xe_wa_oob.h
+
+xe_device_wa_oob.c:	xe_device_wa_oob.h
+
+xe_device_wa_oob.h:	xe_device_wa_oob.rules xe_gen_wa_oob
+	mkdir -p ${SRCDIR}/generated
+	./xe_gen_wa_oob ${SRCDIR}/xe_device_wa_oob.rules ${SRCDIR}/generated/xe_device_wa_oob.c ${SRCDIR}/generated/xe_device_wa_oob.h
 
 #	xe_hmm.c	// disabled
 
