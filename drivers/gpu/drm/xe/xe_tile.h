@@ -16,4 +16,9 @@ int xe_tile_init(struct xe_tile *tile);
 
 void xe_tile_migrate_wait(struct xe_tile *tile);
 
+static inline bool xe_tile_is_root(struct xe_tile *tile)
+{
+	return tile->id == 0;
+}
+
 #endif
