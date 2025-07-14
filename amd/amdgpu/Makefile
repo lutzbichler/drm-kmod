@@ -109,7 +109,6 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dcn32 \
 	${SRCDIR}/display/dc/dcn321 \
 	${SRCDIR}/display/dc/dcn35 \
-	${SRCDIR}/display/dc/dcn401 \
 	${SRCDIR}/display/dc/dio/dcn10 \
 	${SRCDIR}/display/dc/dio/dcn20 \
 	${SRCDIR}/display/dc/dio/dcn30 \
