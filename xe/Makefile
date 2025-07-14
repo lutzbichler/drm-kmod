@@ -94,6 +94,7 @@ SRCS=	xe_bb.c \
 	xe_memirq.c \
 	xe_migrate.c \
 	xe_mmio.c \
+	xe_mmio_gem.c \
 	xe_mocs.c \
 	xe_module.c \
 	xe_nvm.c \
