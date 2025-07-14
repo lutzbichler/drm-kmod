@@ -109,7 +109,6 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dcn32 \
 	${SRCDIR}/display/dc/dcn321 \
 	${SRCDIR}/display/dc/dcn35 \
-	${SRCDIR}/display/dc/dcn401 \
 	${SRCDIR}/display/dc/dio/dcn10 \
 	${SRCDIR}/display/dc/dio/dcn20 \
 	${SRCDIR}/display/dc/dio/dcn30 \
@@ -139,6 +138,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hubp/dcn31 \
 	${SRCDIR}/display/dc/hubp/dcn32 \
 	${SRCDIR}/display/dc/hubp/dcn35 \
+	${SRCDIR}/display/dc/hubp/dcn401 \
 	${SRCDIR}/display/dc/hubbub/dcn10 \
 	${SRCDIR}/display/dc/hubbub/dcn20 \
 	${SRCDIR}/display/dc/hubbub/dcn201 \
