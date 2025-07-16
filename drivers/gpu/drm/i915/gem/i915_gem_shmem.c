@@ -6,6 +6,7 @@
 #include <linux/pagevec.h>
 #include <linux/shmem_fs.h>
 #include <linux/swap.h>
+#include <linux/uio.h>
 
 #include <drm/drm_cache.h>
 
@@ -443,16 +444,19 @@ static int
 shmem_pwrite(struct drm_i915_gem_object *obj,
 	     const struct drm_i915_gem_pwrite *arg)
 {
+	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
 #ifdef __linux__
-	struct address_space *mapping = obj->base.filp->f_mapping;
-	const struct address_space_operations *aops = mapping->a_ops;
+	struct file *file = obj->base.filp;
+	struct kiocb kiocb;
+	struct iov_iter iter;
+	ssize_t written;
+	u64 size = arg->size;
 #elif defined(__FreeBSD__)
 	vm_object_t mapping = obj->base.filp->f_shmem;
-#endif
-	char __user *user_data = u64_to_user_ptr(arg->data_ptr);
 	u64 remain;
 	loff_t pos;
 	unsigned int pg;
+#endif
 
 	/* Caller already validated user args */
 	GEM_BUG_ON(!access_ok(user_data, arg->size));
@@ -475,6 +479,26 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 	if (obj->mm.madv != I915_MADV_WILLNEED)
 		return -EFAULT;
 
+#ifdef __linux__
+	if (size > MAX_RW_COUNT)
+		return -EFBIG;
+
+	if (!file->f_op->write_iter)
+		return -EINVAL;
+
+	init_sync_kiocb(&kiocb, file);
+	kiocb.ki_pos = arg->offset;
+	iov_iter_ubuf(&iter, ITER_SOURCE, (void __user *)user_data, size);
+
+	written = file->f_op->write_iter(&kiocb, &iter);
+	BUG_ON(written == -EIOCBQUEUED);
+
+	if (written != size)
+		return -EIO;
+
+	if (written < 0)
+		return written;
+#elif defined(__FreeBSD__)
 	/*
 	 * Before the pages are instantiated the object is treated as being
 	 * in the CPU domain. The pages will be clflushed as required before
@@ -490,35 +514,13 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 	do {
 		unsigned int len, unwritten;
 		struct folio *folio;
-		void *data, *vaddr;
-		int err;
-#ifdef __linux__
-		char __maybe_unused c;
-#endif
+		void *vaddr;
 
 		len = PAGE_SIZE - pg;
 		if (len > remain)
 			len = remain;
 
-#ifdef __linux__
-		/* Prefault the user page to reduce potential recursion */
-		err = __get_user(c, user_data);
-		if (err)
-			return err;
-
-		err = __get_user(c, user_data + len - 1);
-		if (err)
-			return err;
-
-		err = aops->write_begin(obj->base.filp, mapping, pos, len,
-					&folio, &data);
-		if (err < 0)
-			return err;
-#elif defined(__FreeBSD__)
-		(void)data;
-		(void)err;
 		folio = shmem_read_mapping_folio(mapping, pos);
-#endif
 
 		vaddr = kmap_local_folio(folio, offset_in_folio(folio, pos));
 		pagefault_disable();
@@ -526,14 +528,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 		pagefault_enable();
 		kunmap_local(vaddr);
 
-#ifdef __linux__
-		err = aops->write_end(obj->base.filp, mapping, pos, len,
-				      len - unwritten, folio, data);
-		if (err < 0)
-			return err;
-#elif defined(__FreeBSD__)
 		folio_put(folio);
-#endif
 
 		/* We don't handle -EFAULT, leave it to the caller to check */
 		if (unwritten)
@@ -544,6 +539,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 		pos += len;
 		pg = 0;
 	} while (remain);
+#endif
 
 	return 0;
 }
