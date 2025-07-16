@@ -707,11 +707,10 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 {
 	struct drm_i915_gem_object *obj;
 	struct file *file;
-#ifdef __linux__
-	const struct address_space_operations *aops;
-#endif
 	loff_t pos;
+#ifdef __linux__
 	int err;
+#endif
 
 	GEM_WARN_ON(IS_DGFX(i915));
 	obj = i915_gem_object_create_shmem(i915, round_up(size, PAGE_SIZE));
@@ -722,39 +721,30 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 
 	file = obj->base.filp;
 #ifdef __linux__
-	aops = file->f_mapping->a_ops;
-#endif
+	err = kernel_write(file, data, size, &pos);
+
+	if (err < 0)
+		goto fail;
+
+	if (err != size) {
+		err = -EIO;
+		goto fail;
+	}
+#elif defined(__FreeBSD__)
 	pos = 0;
 	do {
 		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
 		struct folio *folio;
-#ifdef __linux__
-		void *fsdata;
 
-		err = aops->write_begin(file, file->f_mapping, pos, len,
-					&folio, &fsdata);
-		if (err < 0)
-			goto fail;
-#elif defined(__FreeBSD__)
-		(void)err;
 		folio = shmem_read_mapping_folio(obj->base.filp->f_shmem, OFF_TO_IDX(pos));
-#endif
-
 		memcpy_to_folio(folio, offset_in_folio(folio, pos), data, len);
-
-#ifdef __linux__
-		err = aops->write_end(file, file->f_mapping, pos, len, len,
-				      folio, fsdata);
-		if (err < 0)
-			goto fail;
-#elif defined(__FreeBSD__)
 		folio_put(folio);
-#endif
 
 		size -= len;
 		data += len;
 		pos += len;
 	} while (size);
+#endif
 
 	return obj;
 
