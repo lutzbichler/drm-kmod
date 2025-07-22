@@ -6,6 +6,8 @@
 #include <linux/device.h>
 
 #include <sys/types.h>
+
+#include <linux/device.h>
 #include <linux/errno.h>
 #include <linux/types.h>
 
@@ -25,6 +27,7 @@ struct mipi_dsi_host {
 };
 
 struct mipi_dsi_device {
+	struct device dev;
 	struct mipi_dsi_host *host;
 	bool attached;
 	uint32_t channel;
@@ -50,6 +53,11 @@ struct mipi_dsi_packet {
 	const uint8_t *payload;
 };
 
+struct mipi_dsi_multi_context {
+	struct mipi_dsi_device *dsi;
+	int accum_err;
+};
+
 enum mipi_dsi_dcs_tear_mode {
 	MIPI_DSI_DCS_TEAR_MODE_UNUSED
 };
@@ -70,8 +78,12 @@ int mipi_dsi_attach(struct mipi_dsi_device *);
 int mipi_dsi_create_packet(struct mipi_dsi_packet *,
     const struct mipi_dsi_msg *);
 ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *, const void *, size_t);
+void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *,
+	const void *, size_t);
 ssize_t mipi_dsi_dcs_write_buffer(struct mipi_dsi_device *, const void *,
     size_t);
+void mipi_dsi_dcs_write_buffer_multi(struct mipi_dsi_multi_context *,
+	const void *, size_t);
 ssize_t mipi_dsi_dcs_read(struct mipi_dsi_device *, u8, void *, size_t);
 ssize_t mipi_dsi_dcs_write(struct mipi_dsi_device *, u8, const void *, size_t);
 int mipi_dsi_dcs_nop(struct mipi_dsi_device *);
