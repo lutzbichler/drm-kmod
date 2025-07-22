@@ -102,8 +102,6 @@ void mipi_dsi_picture_parameter_set_multi(struct mipi_dsi_multi_context *,
     const struct drm_dsc_picture_parameter_set *);
 
 ssize_t mipi_dsi_generic_write(struct mipi_dsi_device *, const void *, size_t);
-int mipi_dsi_generic_write_chatty(struct mipi_dsi_device *,
-    const void *, size_t);
 void mipi_dsi_generic_write_multi(struct mipi_dsi_multi_context *,
     const void *, size_t);
 ssize_t mipi_dsi_generic_read(struct mipi_dsi_device *,
