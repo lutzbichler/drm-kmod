@@ -115,6 +115,12 @@ int mipi_dsi_dcs_write_buffer_chatty(struct mipi_dsi_device *,
     const void *, size_t);
 void mipi_dsi_dcs_write_buffer_multi(struct mipi_dsi_multi_context *,
 				     const void *, size_t);
+void mipi_dsi_dual_generic_write_multi(struct mipi_dsi_multi_context *ctx,
+    struct mipi_dsi_device *dsi1, struct mipi_dsi_device *dsi2,
+    const void *payload, size_t size);
+void mipi_dsi_dual_dcs_write_buffer_multi(struct mipi_dsi_multi_context *ctx,
+    struct mipi_dsi_device *dsi1, struct mipi_dsi_device *dsi2,
+    const void *data, size_t len);
 ssize_t mipi_dsi_dcs_write(struct mipi_dsi_device *, u8,
     const void *, size_t);
 ssize_t mipi_dsi_dcs_read(struct mipi_dsi_device *, u8,
