@@ -67,6 +67,7 @@ SRCS=	xe_bb.c \
 	xe_gt_sysfs.c \
 	xe_gt_throttle.c \
 	xe_gt_tlb_invalidation.c \
+	xe_gt_tlb_inval_job.c \
 	xe_gt_topology.c \
 	xe_guc.c \
 	xe_guc_ads.c \
