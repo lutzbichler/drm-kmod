@@ -129,6 +129,7 @@ int mipi_dsi_dcs_get_power_mode(struct mipi_dsi_device *, u8 *);
 int mipi_dsi_dcs_get_pixel_format(struct mipi_dsi_device *, u8 *);
 int mipi_dsi_dcs_enter_sleep_mode(struct mipi_dsi_device *);
 int mipi_dsi_dcs_exit_sleep_mode(struct mipi_dsi_device *);
+void mipi_dsi_dcs_read_multi(struct mipi_dsi_multi_context *, u8, void *, size_t);
 int mipi_dsi_dcs_set_display_off(struct mipi_dsi_device *);
 int mipi_dsi_dcs_set_display_on(struct mipi_dsi_device *);
 int mipi_dsi_dcs_set_column_address(struct mipi_dsi_device *, u16, u16);
