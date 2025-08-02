@@ -746,6 +746,11 @@ static int vf_gt_restart(struct xe_gt *gt)
 	return 0;
 }
 
+static int gt_wait_reset_unblock(struct xe_gt *gt)
+{
+	return xe_guc_wait_reset_unblock(&gt->uc.guc);
+}
+
 static int do_gt_restart(struct xe_gt *gt)
 {
 	struct xe_hw_engine *hwe;
@@ -816,6 +821,10 @@ static int gt_reset(struct xe_gt *gt)
 		return -ENODEV;
 
 	xe_gt_info(gt, "reset started\n");
+
+	err = gt_wait_reset_unblock(gt);
+	if (!err)
+		xe_gt_warn(gt, "reset block failed to get lifted");
 
 	xe_pm_runtime_get(gt_to_xe(gt));
 
