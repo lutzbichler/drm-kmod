@@ -9,6 +9,8 @@
 #include <linux/hmm.h>
 #include <linux/types.h>
 
+#define NR_PAGES(order) (1U << (order))
+
 struct drm_pagemap;
 struct drm_pagemap_zdd;
 struct device;
@@ -176,7 +178,9 @@ struct drm_pagemap_devmem_ops {
 	 * @pagemap_addr: Pointer to array of DMA information (source)
 	 * @npages: Number of pages to copy
 	 *
-	 * Copy pages to device memory.
+	 * Copy pages to device memory. If the order of a @pagemap_addr entry
+	 * is greater than 0, the entry is populated but subsequent entries
+	 * within the range of that order are not populated.
 	 *
 	 * Return: 0 on success, a negative error code on failure.
 	 */
@@ -190,7 +194,9 @@ struct drm_pagemap_devmem_ops {
 	 * @pagemap_addr: Pointer to array of DMA information (destination)
 	 * @npages: Number of pages to copy
 	 *
-	 * Copy pages to system RAM.
+	 * Copy pages to system RAM. If the order of a @pagemap_addr entry
+	 * is greater than 0, the entry is populated but subsequent entries
+	 * within the range of that order are not populated.
 	 *
 	 * Return: 0 on success, a negative error code on failure.
 	 */
