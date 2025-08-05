@@ -1010,7 +1010,7 @@ int xe_svm_alloc_vram(struct xe_tile *tile, struct xe_svm_range *range,
 				       ctx->timeslice_ms);
 }
 
-static struct drm_pagemap_device_addr
+static struct drm_pagemap_addr
 xe_drm_pagemap_device_map(struct drm_pagemap *dpagemap,
 			  struct device *dev,
 			  struct page *page,
@@ -1029,7 +1029,7 @@ xe_drm_pagemap_device_map(struct drm_pagemap *dpagemap,
 		prot = 0;
 	}
 
-	return drm_pagemap_device_addr_encode(addr, prot, order, dir);
+	return drm_pagemap_addr_encode(addr, prot, order, dir);
 }
 
 static const struct drm_pagemap_ops xe_drm_pagemap_ops = {
