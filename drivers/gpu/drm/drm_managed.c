@@ -18,10 +18,10 @@ struct drmm_node {
 };
 
 void *
-drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
+drmm_kmalloc(struct drm_device *dev, size_t size, int flags)
 {
 	void *p;
-	struct drmm_node *node = malloc(sizeof(*node), DRM_MEM_MANAGED, flags | M_ZERO);
+	struct drmm_node *node = malloc(sizeof(*node), DRM_MEM_MANAGED, flags);
 	if (node == NULL)
 		return NULL;
 	p = kzalloc(size, flags);
@@ -36,6 +36,12 @@ drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
 	list_add(&node->list, &dev->managed.resources);
 	spin_unlock(&dev->managed.lock);
 	return p;
+}
+
+void *
+drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
+{
+	return (drmm_kmalloc(dev, size, M_ZERO | flags));
 }
 
 void *
@@ -139,6 +145,26 @@ drmm_add_action_or_reset(struct drm_device *dev, drmm_func_t f, void *cookie)
 }
 
 void
+drmm_release_action(struct drm_device *dev, drmm_func_t f, void *cookie)
+{
+	struct drmm_node *n, *t;
+
+	spin_lock(&dev->managed.lock);
+	list_for_each_entry_safe(n, t, &dev->managed.resources, list) {
+		if (!cookie || cookie == n->p) {
+			list_del(&n->list);
+			if (n->func)
+				n->func(dev, n->p);
+			else
+				free(n->p, DRM_MEM_MANAGED);
+			free(n, DRM_MEM_MANAGED);
+			break;
+		}
+	}
+	spin_unlock(&dev->managed.lock);	
+}
+
+void
 drm_managed_release(struct drm_device *dev)
 {
 	struct drmm_node *n, *t;
@@ -157,3 +183,11 @@ drmm_add_final_kfree(struct drm_device *dev, void *p)
 {
 	dev->managed.final_kfree = p;
 }
+
+void
+drmm_mutex_release(struct drm_device *dev, void *r)
+{
+
+	mutex_destroy((struct mutex *)r);	
+}
+
