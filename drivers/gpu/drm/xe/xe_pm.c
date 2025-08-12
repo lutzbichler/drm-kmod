@@ -248,6 +248,10 @@ static void xe_pm_runtime_init(struct xe_device *xe)
 {
 	struct device *dev = xe->drm.dev;
 
+	/* Our current VFs do not support RPM. so, disable it */
+	if (IS_SRIOV_VF(xe))
+		return;
+
 	/*
 	 * Disable the system suspend direct complete optimization.
 	 * We need to ensure that the regular device suspend/resume functions
@@ -392,6 +396,10 @@ err_unregister:
 static void xe_pm_runtime_fini(struct xe_device *xe)
 {
 	struct device *dev = xe->drm.dev;
+
+	/* Our current VFs do not support RPM. so, disable it */
+	if (IS_SRIOV_VF(xe))
+		return;
 
 	pm_runtime_get_sync(dev);
 	pm_runtime_forbid(dev);
