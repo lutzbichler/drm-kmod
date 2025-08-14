@@ -273,6 +273,8 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/resource/dcn36 \
 	${SRCDIR}/display/dc/resource/dcn401 \
+	${SRCDIR}/display/dc/soc_and_ip_translator \
+	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
@@ -1167,6 +1169,10 @@ SRCS+=	dc_helper.c \
 	dc_dmub_srv.c \
 	dc_edid_parser.c
 
+#display/dc/soc_and_ip_translator
+SRCS+=	soc_and_ip_translator.c \
+	dcn401_soc_and_ip_translator.c
+
 # display/dc/spl
 SRCS+=	dc_spl.c \
 	dc_spl_filters.c \
@@ -1443,6 +1449,8 @@ CFLAGS.dml2_top_soc15.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_utils.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.lib_float_math.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.soc_bounding_box.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.soc_and_ip_translator.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dcn401_soc_and_ip_translator.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_rq_dlg_calc_20v2.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_20v2.c= ${FPUFLAGS} -mstack-alignment=4
