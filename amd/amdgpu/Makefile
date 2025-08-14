@@ -272,6 +272,8 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/resource/dcn36 \
 	${SRCDIR}/display/dc/resource/dcn401 \
+	${SRCDIR}/display/dc/soc_and_ip_translator \
+	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
@@ -1153,6 +1155,10 @@ SRCS+=	color_gamma.c \
 	hdcp2_transition.c \
 	info_packet.c \
 	power_helpers.c
+
+# display/dc/soc_and_ip_translator
+SRCS+=	soc_and_ip_translator.c \
+	dcn401_soc_and_ip_translator.c
 
 # display/dc
 SRCS+=	dc_helper.c \
