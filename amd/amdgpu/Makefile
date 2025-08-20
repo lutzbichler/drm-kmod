@@ -441,7 +441,6 @@ SRCS+=	aldebaran.c \
 	cyan_skillfish_reg_init.c \
 	cz_ih.c \
 	dce_v10_0.c \
-	dce_v11_0.c \
 	dce_v6_0.c \
 	dce_v8_0.c \
 	dimgrey_cavefish_reg_init.c \
