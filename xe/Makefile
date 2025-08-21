@@ -133,6 +133,7 @@ SRCS=	xe_bb.c \
 	xe_uc.c \
 	xe_uc_fw.c \
 	xe_vm.c \
+	xe_vm_madvise.c \
 	xe_vram.c \
 	xe_vram_freq.c \
 	xe_vsec.c \
