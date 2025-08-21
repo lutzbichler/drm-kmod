@@ -105,6 +105,7 @@ SRCS=	xe_bb.c \
 	xe_pcode.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
+	xe_psmi.c \
 	xe_pt.c \
 	xe_pt_walk.c \
 	xe_pxp.c \
