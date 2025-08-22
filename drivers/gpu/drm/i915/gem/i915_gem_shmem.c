@@ -615,6 +615,15 @@ static int __create_shmem(struct drm_i915_private *i915,
 	if (IS_ERR(filp))
 		return PTR_ERR(filp);
 
+#ifdef __linux__
+	/*
+	 * Prevent -EFBIG by allowing large writes beyond MAX_NON_LFS on shmem
+	 * objects by setting O_LARGEFILE.
+	 */
+	if (force_o_largefile())
+		filp->f_flags |= O_LARGEFILE;
+#endif
+
 	obj->filp = filp;
 	return 0;
 }
