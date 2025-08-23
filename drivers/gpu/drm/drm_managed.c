@@ -191,3 +191,9 @@ drmm_mutex_release(struct drm_device *dev, void *r)
 	mutex_destroy((struct mutex *)r);	
 }
 
+void __drmm_workqueue_release(struct drm_device *dev, void *r)
+{
+
+        destroy_workqueue((struct workqueue_struct *)r);
+}
+
