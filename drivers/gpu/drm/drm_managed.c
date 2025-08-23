@@ -205,9 +205,18 @@ drmm_add_final_kfree(struct drm_device *dev, void *p)
 }
 
 void
-drmm_mutex_release(struct drm_device *dev, void *p)
+__drmm_mutex_release(struct drm_device *dev, void *p)
 {
 	struct mutex *m = p;
 
 	mutex_destroy(m);
 }
+
+void
+__drmm_workqueue_release(struct drm_device *dev, void *p)
+{
+	struct workqueue_struct *wq = p;
+
+	destroy_workqueue(wq);
+}
+
