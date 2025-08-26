@@ -88,6 +88,7 @@ SRCS=	xe_bb.c \
 	xe_hw_engine.c \
 	xe_hw_engine_group.c \
 	xe_hw_engine_class_sysfs.c \
+	xe_hw_error.c \
 	xe_hw_fence.c \
 	xe_irq.c \
 	xe_lrc.c \
