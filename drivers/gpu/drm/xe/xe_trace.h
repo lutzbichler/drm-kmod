@@ -7,42 +7,42 @@
 #include <sys/ktr.h>
 
 #include "xe_gpu_scheduler_types.h"
-#include "xe_gt_tlb_inval_types.h"
+#include "xe_tlb_inval_types.h"
 #include "xe_sched_job_types.h"
 #include "xe_vm_types.h"
 
 static inline void
-trace_xe_gt_tlb_inval_fence_timeout(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_timeout(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_signal(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_signal(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_send(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_send(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_recv(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_recv(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_create(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_create(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_work_func(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_work_func(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
 static inline void
-trace_xe_gt_tlb_inval_fence_cb(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
+trace_xe_tlb_inval_fence_cb(struct xe_device *xe, struct xe_tlb_inval_fence *fence)
 {
 }
 
