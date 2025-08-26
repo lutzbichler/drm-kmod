@@ -7,56 +7,35 @@
 #include <sys/ktr.h>
 
 #include "xe_gpu_scheduler_types.h"
-#include "xe_gt_tlb_invalidation_types.h"
+#include "xe_gt_tlb_inval_types.h"
 #include "xe_sched_job_types.h"
 #include "xe_vm_types.h"
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_timeout(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_inval_fence_timeout(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
 {
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_timeout xe %p fence %p seqno %d",
+	CTR3(KTR_DRM, "xe_gt_tlb_inval_fence_timeout xe %p fence %p seqno %d",
 	    xe, fence, fence->seqno);
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_signal(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_inval_fence_signal(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
 {
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_signal xe %p fence %p seqno %d",
+	CTR3(KTR_DRM, "xe_gt_tlb_inval_fence_signal xe %p fence %p seqno %d",
 	    xe, fence, fence->seqno);
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_send(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_inval_fence_send(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
 {
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_send xe %p fence %p seqno %d",
+	CTR3(KTR_DRM, "xe_gt_tlb_inval_fence_send xe %p fence %p seqno %d",
 	    xe, fence, fence->seqno);
 }
 
 static inline void
-trace_xe_gt_tlb_invalidation_fence_recv(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
+trace_xe_gt_tlb_inval_fence_recv(struct xe_device *xe, struct xe_gt_tlb_inval_fence *fence)
 {
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_recv xe %p fence %p seqno %d",
-	    xe, fence, fence->seqno);
-}
-
-static inline void
-trace_xe_gt_tlb_invalidation_fence_create(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
-{
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_create xe %p fence %p seqno %d",
-	    xe, fence, fence->seqno);
-}
-
-static inline void
-trace_xe_gt_tlb_invalidation_fence_work_func(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
-{
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_work_func xe %p fence %p seqno %d",
-	    xe, fence, fence->seqno);
-}
-
-static inline void
-trace_xe_gt_tlb_invalidation_fence_cb(struct xe_device *xe, struct xe_gt_tlb_invalidation_fence *fence)
-{
-	CTR3(KTR_DRM, "xe_gt_tlb_invalidation_fence_cb xe %p fence %p seqno %d",
+	CTR3(KTR_DRM, "xe_gt_tlb_inval_fence_recv xe %p fence %p seqno %d",
 	    xe, fence, fence->seqno);
 }
 
