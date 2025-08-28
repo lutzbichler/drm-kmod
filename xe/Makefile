@@ -34,8 +34,6 @@ xe_device_wa_oob.h:	xe_device_wa_oob.rules xe_gen_wa_oob
 	mkdir -p ${SRCDIR}/generated
 	./xe_gen_wa_oob ${SRCDIR}/xe_device_wa_oob.rules ${SRCDIR}/generated/xe_device_wa_oob.c ${SRCDIR}/generated/xe_device_wa_oob.h
 
-#	xe_hmm.c	// disabled
-
 # xe
 SRCS=	xe_bb.c \
 	xe_bo.c \
@@ -134,7 +132,6 @@ SRCS=	xe_bb.c \
 	xe_tuning.c \
 	xe_uc.c \
 	xe_uc_fw.c \
-	xe_userptr.c \
 	xe_vm.c \
 	xe_vm_madvise.c \
 	xe_vram.c \
@@ -171,7 +168,8 @@ SRCS+=  xe_hwmon.c
 .endif
 
 .if !empty(KCONFIG:MGPUSVM)
-SRCS+=	xe_svm.c
+SRCS+=	xe_svm.c \
+	xe_userptr.c
 .endif
 
 .if !empty(KCONFIG:MPCI_IOV)
