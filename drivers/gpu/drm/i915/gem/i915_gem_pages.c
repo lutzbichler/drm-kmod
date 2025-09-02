@@ -362,7 +362,7 @@ static void *i915_gem_object_map_pfn(struct drm_i915_gem_object *obj,
 #endif
 }
 
-struct i915_panic_data {
+struct intel_panic {
 	struct page **pages;
 	int page;
 	void *vaddr;
@@ -370,10 +370,10 @@ struct i915_panic_data {
 
 struct i915_framebuffer {
 	struct intel_framebuffer base;
-	struct i915_panic_data panic;
+	struct intel_panic panic;
 };
 
-static void i915_panic_kunmap(struct i915_panic_data *panic)
+static void i915_panic_kunmap(struct intel_panic *panic)
 {
 	if (panic->vaddr) {
 		drm_clflush_virt_range(panic->vaddr, PAGE_SIZE);
@@ -420,7 +420,7 @@ static void i915_gem_object_panic_page_set_pixel(struct drm_scanout_buffer *sb, 
 	unsigned int new_page;
 	unsigned int offset;
 	struct intel_framebuffer *fb = (struct intel_framebuffer *)sb->private;
-	struct i915_panic_data *panic = fb->panic;
+	struct intel_panic *panic = fb->panic;
 
 	if (fb->panic_tiling)
 		offset = fb->panic_tiling(sb->width, x, y);
@@ -463,7 +463,7 @@ int i915_gem_object_panic_setup(struct drm_scanout_buffer *sb)
 {
 	enum i915_map_type has_type;
 	struct intel_framebuffer *fb = (struct intel_framebuffer *)sb->private;
-	struct i915_panic_data *panic = fb->panic;
+	struct intel_panic *panic = fb->panic;
 	struct drm_i915_gem_object *obj = to_intel_bo(intel_fb_bo(&fb->base));
 	void *ptr;
 
@@ -491,7 +491,7 @@ int i915_gem_object_panic_setup(struct drm_scanout_buffer *sb)
 
 void i915_gem_object_panic_finish(struct intel_framebuffer *fb)
 {
-	struct i915_panic_data *panic = fb->panic;
+	struct intel_panic *panic = fb->panic;
 
 	i915_panic_kunmap(panic);
 	panic->page = -1;
