@@ -383,6 +383,7 @@ CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides -Wno-incompatible-
 CWARNFLAGS.intel_dp.c=          -Wno-unused-variable -Wno-sometimes-uninitialized -Wno-constant-logical-operand -Wno-incompatible-function-pointer-types
 CWARNFLAGS.intel_display_rpm.c=		-Wno-incompatible-pointer-types
 CWARNFLAGS.intel_dpll_mgr.c=		-Wno-compare-distinct-pointer-types
+CWARNFLAGS.intel_fbc.c=			-Wno-uninitialized
 CWARNFLAGS.intel_fbdev.c=		-Wno-initializer-overrides
 CWARNFLAGS.intel_hdmi.c=		-Wno-unused-variable
 CWARNFLAGS.skl_scaler.c=		-Wno-uninitialized
