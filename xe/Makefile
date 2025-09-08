@@ -366,6 +366,7 @@ CFLAGS+= -DXE
 CWARNFLAGS += -Wno-pointer-arith -Wno-cast-qual -Wno-format
 
 CWARNFLAGS.xe_dsb_buffer.c=		-Wno-uninitialized
+CWARNFLAGS.xe_fb_pin.c=			-Wno-uninitialized
 CWARNFLAGS.xe_ggtt.c=			-Wno-uninitialized
 CWARNFLAGS.xe_gt_sriov_pf_config.c=	-Wno-integer-overflow
 CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
