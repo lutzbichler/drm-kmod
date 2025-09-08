@@ -9,6 +9,11 @@
 #include <linux/types.h>
 #include <linux/rwsem.h>
 
+#ifdef __FreeBSD__
+#undef DEFINE_CLASS
+#define DEFINE_CLASS	LKPI_DEFINE_CLASS
+#endif
+
 struct drm_exec;
 struct drm_gem_object;
 struct drm_gpuvm_exec;
