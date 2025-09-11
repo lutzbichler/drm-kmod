@@ -363,6 +363,7 @@ CWARNFLAGS.xe_ggtt.c=			-Wno-uninitialized
 CWARNFLAGS.xe_gt_sriov_pf_config.c=	-Wno-integer-overflow
 CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.xe_guc.c=			-Wno-uninitialized
+CWARNFLAGS.xe_migrate.c=		-Wno-unused-variable
 CWARNFLAGS.xe_oa.c=			-Wno-uninitialized
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_pt.c=			-Wno-unused-but-set-variable
