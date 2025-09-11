@@ -88,6 +88,7 @@ SRCS=	\
 	intel_snps_phy.c \
 	intel_step.c \
 	intel_sprite.c \
+	i915_timer_util.c \
 	intel_uncore.c \
 	i915_utils.c \
 	intel_wakeref.c \
