@@ -45,6 +45,7 @@ SRCS=	\
 	i915_switcheroo.c \
 	i915_syncmap.c \
 	i915_sysfs.c \
+	i915_timer_util.c \
 	i915_user_extensions.c \
 	i915_vgpu.c \
 	i915_ttm_buddy_manager.c \
