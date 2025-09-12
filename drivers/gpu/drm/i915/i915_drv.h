@@ -246,9 +246,6 @@ struct drm_i915_private {
 
 	bool preserve_bios_swizzle;
 
-	unsigned int hpll_freq;
-	unsigned int czclk_freq;
-
 	/**
 	 * wq - Driver workqueue for GEM.
 	 *
