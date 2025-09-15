@@ -1426,9 +1426,9 @@ static ssize_t amdgpu_set_pp_power_profile_mode(struct device *dev,
 	return -EINVAL;
 }
 
-static int amdgpu_hwmon_get_sensor_generic(struct amdgpu_device *adev,
-					   enum amd_pp_sensors sensor,
-					   void *query)
+static int amdgpu_pm_get_sensor_generic(struct amdgpu_device *adev,
+					enum amd_pp_sensors sensor,
+					void *query)
 {
 	int r, size = sizeof(uint32_t);
 
@@ -1461,7 +1461,7 @@ static ssize_t amdgpu_get_gpu_busy_percent(struct device *dev,
 	unsigned int value;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_LOAD, &value);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_LOAD, &value);
 	if (r)
 		return r;
 
@@ -1485,7 +1485,7 @@ static ssize_t amdgpu_get_mem_busy_percent(struct device *dev,
 	unsigned int value;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MEM_LOAD, &value);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MEM_LOAD, &value);
 	if (r)
 		return r;
 
@@ -1509,7 +1509,7 @@ static ssize_t amdgpu_get_vcn_busy_percent(struct device *dev,
 	unsigned int value;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VCN_LOAD, &value);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VCN_LOAD, &value);
 	if (r)
 		return r;
 
@@ -1792,7 +1792,7 @@ static int amdgpu_show_powershift_percent(struct device *dev,
 	uint32_t ss_power;
 	int r = 0, i;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, sensor, (void *)&ss_power);
+	r = amdgpu_pm_get_sensor_generic(adev, sensor, (void *)&ss_power);
 	if (r == -EOPNOTSUPP) {
 		/* sensor not available on dGPU, try to read from APU */
 		adev = NULL;
@@ -1805,7 +1805,7 @@ static int amdgpu_show_powershift_percent(struct device *dev,
 		}
 		mutex_unlock(&mgpu_info.mutex);
 		if (adev)
-			r = amdgpu_hwmon_get_sensor_generic(adev, sensor, (void *)&ss_power);
+			r = amdgpu_pm_get_sensor_generic(adev, sensor, (void *)&ss_power);
 	}
 
 	if (r)
@@ -1915,11 +1915,11 @@ static int ss_bias_attr_update(struct amdgpu_device *adev, struct amdgpu_device_
 
 	if (!amdgpu_device_supports_smart_shift(adev))
 		*states = ATTR_STATE_UNSUPPORTED;
-	else if (amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_SS_APU_SHARE,
-		 (void *)&ss_power))
+	else if (amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_SS_APU_SHARE,
+					      (void *)&ss_power))
 		*states = ATTR_STATE_UNSUPPORTED;
-	else if (amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_SS_DGPU_SHARE,
-		 (void *)&ss_power))
+	else if (amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_SS_DGPU_SHARE,
+					      (void *)&ss_power))
 		*states = ATTR_STATE_UNSUPPORTED;
 
 	return 0;
@@ -2646,18 +2646,18 @@ static ssize_t amdgpu_hwmon_show_temp(struct device *dev,
 	switch (channel) {
 	case PP_TEMP_JUNCTION:
 		/* get current junction temperature */
-		r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_HOTSPOT_TEMP,
-					   (void *)&temp);
+		r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_HOTSPOT_TEMP,
+						 (void *)&temp);
 		break;
 	case PP_TEMP_EDGE:
 		/* get current edge temperature */
-		r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_EDGE_TEMP,
-					   (void *)&temp);
+		r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_EDGE_TEMP,
+						 (void *)&temp);
 		break;
 	case PP_TEMP_MEM:
 		/* get current memory temperature */
-		r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MEM_TEMP,
-					   (void *)&temp);
+		r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MEM_TEMP,
+						 (void *)&temp);
 		break;
 	default:
 		r = -EINVAL;
@@ -2919,8 +2919,8 @@ static ssize_t amdgpu_hwmon_get_fan1_min(struct device *dev,
 	u32 min_rpm = 0;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MIN_FAN_RPM,
-				   (void *)&min_rpm);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MIN_FAN_RPM,
+					 (void *)&min_rpm);
 
 	if (r)
 		return r;
@@ -2936,8 +2936,8 @@ static ssize_t amdgpu_hwmon_get_fan1_max(struct device *dev,
 	u32 max_rpm = 0;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MAX_FAN_RPM,
-				   (void *)&max_rpm);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_MAX_FAN_RPM,
+					 (void *)&max_rpm);
 
 	if (r)
 		return r;
@@ -3070,8 +3070,8 @@ static ssize_t amdgpu_hwmon_show_vddgfx(struct device *dev,
 	int r;
 
 	/* get the voltage */
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDGFX,
-				   (void *)&vddgfx);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDGFX,
+					 (void *)&vddgfx);
 	if (r)
 		return r;
 
@@ -3087,8 +3087,8 @@ static ssize_t amdgpu_hwmon_show_vddboard(struct device *dev,
 	int r;
 
 	/* get the voltage */
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDBOARD,
-					    (void *)&vddboard);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDBOARD,
+					 (void *)&vddboard);
 	if (r)
 		return r;
 
@@ -3121,8 +3121,8 @@ static ssize_t amdgpu_hwmon_show_vddnb(struct device *dev,
 		return -EINVAL;
 
 	/* get the voltage */
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDNB,
-				   (void *)&vddnb);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDNB,
+					 (void *)&vddnb);
 	if (r)
 		return r;
 
@@ -3144,7 +3144,7 @@ static int amdgpu_hwmon_get_power(struct device *dev,
 	u32 query = 0;
 	int r;
 
-	r = amdgpu_hwmon_get_sensor_generic(adev, sensor, (void *)&query);
+	r = amdgpu_pm_get_sensor_generic(adev, sensor, (void *)&query);
 	if (r)
 		return r;
 
@@ -3294,8 +3294,8 @@ static ssize_t amdgpu_hwmon_show_sclk(struct device *dev,
 	int r;
 
 	/* get the sclk */
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GFX_SCLK,
-				   (void *)&sclk);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GFX_SCLK,
+					 (void *)&sclk);
 	if (r)
 		return r;
 
@@ -3318,8 +3318,8 @@ static ssize_t amdgpu_hwmon_show_mclk(struct device *dev,
 	int r;
 
 	/* get the sclk */
-	r = amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GFX_MCLK,
-				   (void *)&mclk);
+	r = amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GFX_MCLK,
+					 (void *)&mclk);
 	if (r)
 		return r;
 
@@ -3617,10 +3617,12 @@ static umode_t hwmon_attributes_visible(struct kobject *kobj,
 
 	/* not all products support both average and instantaneous */
 	if (attr == &sensor_dev_attr_power1_average.dev_attr.attr &&
-	    amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_AVG_POWER, (void *)&tmp) == -EOPNOTSUPP)
+	    amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_AVG_POWER,
+					 (void *)&tmp) == -EOPNOTSUPP)
 		return 0;
 	if (attr == &sensor_dev_attr_power1_input.dev_attr.attr &&
-	    amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_INPUT_POWER, (void *)&tmp) == -EOPNOTSUPP)
+	    amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_GPU_INPUT_POWER,
+					 (void *)&tmp) == -EOPNOTSUPP)
 		return 0;
 
 	/* hide max/min values if we can't both query and manage the fan */
@@ -3659,8 +3661,8 @@ static umode_t hwmon_attributes_visible(struct kobject *kobj,
 	/* only few boards support vddboard */
 	if ((attr == &sensor_dev_attr_in2_input.dev_attr.attr ||
 	     attr == &sensor_dev_attr_in2_label.dev_attr.attr) &&
-	     amdgpu_hwmon_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDBOARD,
-					     (void *)&tmp) == -EOPNOTSUPP)
+	     amdgpu_pm_get_sensor_generic(adev, AMDGPU_PP_SENSOR_VDDBOARD,
+					  (void *)&tmp) == -EOPNOTSUPP)
 		return 0;
 
 	/* no mclk on APUs other than gc 9,4,3*/
