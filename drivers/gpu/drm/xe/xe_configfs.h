@@ -20,9 +20,13 @@ bool xe_configfs_get_survivability_mode(struct pci_dev *pdev);
 u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev);
 bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev);
 #ifdef __linux__
+u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
+				       const u32 **cs);
 u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
 					const u32 **cs);
 #elif defined(__FreeBSD__)
+u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class class,
+				       const u32 **cs);
 u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class class,
                                         const u32 **cs);
 #endif
@@ -34,9 +38,13 @@ static inline bool xe_configfs_get_survivability_mode(struct pci_dev *pdev) { re
 static inline u64 xe_configfs_get_engines_allowed(struct pci_dev *pdev) { return U64_MAX; }
 static inline bool xe_configfs_get_psmi_enabled(struct pci_dev *pdev) { return false; }
 #ifdef __linux__
+static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class,
+						     const u32 **cs) { return 0; }
 static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class,
 						      const u32 **cs) { return 0; }
 #elif defined(__FreeBSD__)
+static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev, enum xe_engine_class class,
+						     const u32 **cs) { return 0; }
 static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev, enum xe_engine_class class,
 						      const u32 **cs) { return 0; }
 #endif
