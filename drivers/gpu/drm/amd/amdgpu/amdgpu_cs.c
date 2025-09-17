@@ -29,6 +29,7 @@
 #include <linux/pagemap.h>
 #include <linux/sync_file.h>
 #include <linux/dma-buf.h>
+#include <linux/hmm.h>
 
 #include <drm/amdgpu_drm.h>
 #include <drm/drm_syncobj.h>
@@ -885,6 +886,18 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 		struct amdgpu_bo *bo = e->bo;
 		int i;
 
+#ifdef __linux__
+		r = amdgpu_ttm_tt_get_user_pages(bo, &e->range);
+		if (r)
+			goto out_free_user_pages;
+
+		for (i = 0; i < bo->tbo.ttm->num_pages; i++) {
+			if (bo->tbo.ttm->pages[i] != hmm_pfn_to_page(e->range->hmm_pfns[i])) {
+				userpage_invalidated = true;
+				break;
+			}
+		}
+#elif defined(__FreeBSD__)
 		e->user_pages = kvcalloc(bo->tbo.ttm->num_pages,
 					 sizeof(struct page *),
 					 GFP_KERNEL);
@@ -907,6 +920,7 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 				break;
 			}
 		}
+#endif
 		e->user_invalidated = userpage_invalidated;
 	}
 
@@ -946,7 +960,11 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 		}
 
 		if (amdgpu_ttm_tt_is_userptr(e->bo->tbo.ttm) &&
+#ifdef __linux__
+		    e->user_invalidated) {
+#elif defined(__FreeBSD__)
 		    e->user_invalidated && e->user_pages) {
+#endif
 			amdgpu_bo_placement_from_domain(e->bo,
 							AMDGPU_GEM_DOMAIN_CPU);
 			r = ttm_bo_validate(&e->bo->tbo, &e->bo->placement,
@@ -955,11 +973,17 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 				goto out_free_user_pages;
 
 			amdgpu_ttm_tt_set_user_pages(e->bo->tbo.ttm,
+#ifdef __linux__
+						     e->range);
+#elif defined(__FreeBSD__)
 						     e->user_pages);
+#endif
 		}
 
+#ifdef __FreeBSD__
 		kvfree(e->user_pages);
 		e->user_pages = NULL;
+#endif
 	}
 
 	amdgpu_cs_get_threshold_for_moves(p->adev, &p->bytes_moved_threshold,
@@ -1001,11 +1025,15 @@ out_free_user_pages:
 	amdgpu_bo_list_for_each_userptr_entry(e, p->bo_list) {
 		struct amdgpu_bo *bo = e->bo;
 
+#ifdef __FreeBSD__
 		if (!e->user_pages)
 			continue;
+#endif
 		amdgpu_ttm_tt_get_user_pages_done(bo->tbo.ttm, e->range);
+#ifdef __FreeBSD__
 		kvfree(e->user_pages);
 		e->user_pages = NULL;
+#endif
 		e->range = NULL;
 	}
 	mutex_unlock(&p->bo_list->bo_list_mutex);
