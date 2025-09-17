@@ -712,7 +712,11 @@ struct amdgpu_ttm_tt {
  * Calling function must call amdgpu_ttm_tt_userptr_range_done() once and only
  * once afterwards to stop HMM tracking
  */
+#ifdef __linux__
+int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
+#elif defined(__FreeBSD__)
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
+#endif
 				 struct hmm_range **range)
 {
 	struct ttm_tt *ttm = bo->tbo.ttm;
@@ -749,7 +753,11 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
 
 	readonly = amdgpu_ttm_tt_is_readonly(ttm);
 	r = amdgpu_hmm_range_get_pages(&bo->notifier, start, ttm->num_pages,
+#ifdef __linux__
+				       readonly, NULL, range);
+#elif defined(__FreeBSD__)
 				       readonly, NULL, pages, range);
+#endif
 out_unlock:
 	mmap_read_unlock(mm);
 	if (r)
@@ -801,12 +809,20 @@ bool amdgpu_ttm_tt_get_user_pages_done(struct ttm_tt *ttm,
  * that backs user memory and will ultimately be mapped into the device
  * address space.
  */
+#ifdef __linux__
+void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct hmm_range *range)
+#elif defined(__FreeBSD__)
 void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct page **pages)
+#endif
 {
 	unsigned long i;
 
 	for (i = 0; i < ttm->num_pages; ++i)
+#ifdef __linux__
+		ttm->pages[i] = range ? hmm_pfn_to_page(range->hmm_pfns[i]) : NULL;
+#elif defined(__FreeBSD__)
 		ttm->pages[i] = pages ? pages[i] : NULL;
+#endif
 }
 
 /*
