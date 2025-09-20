@@ -556,9 +556,7 @@ void intel_pipe_update_start(struct intel_atomic_state *state,
 	 */
 	intel_psr_wait_for_idle_locked(new_crtc_state);
 
-#ifdef __linux__
 	local_irq_disable();
-#endif
 
 	crtc->debug.min_vbl = evade.min;
 	crtc->debug.max_vbl = evade.max;
@@ -576,11 +574,7 @@ void intel_pipe_update_start(struct intel_atomic_state *state,
 	return;
 
 irq_disable:
-#ifdef __linux__
 	local_irq_disable();
-#elif defined(__FreeBSD__)
-	return;
-#endif
 }
 
 #if IS_ENABLED(CONFIG_DRM_I915_DEBUG_VBLANK_EVADE)
@@ -722,9 +716,7 @@ void intel_pipe_update_end(struct intel_atomic_state *state,
 	 */
 	intel_vrr_send_push(new_crtc_state);
 
-#ifdef __linux__
 	local_irq_enable();
-#endif
 
 	if (intel_vgpu_active(dev_priv))
 		goto out;
