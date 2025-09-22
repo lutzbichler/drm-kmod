@@ -870,4 +870,9 @@
 	MACRO__(0xB0A0, ## __VA_ARGS__), \
 	MACRO__(0xB0B0, ## __VA_ARGS__)
 
+/* WCL */
+#define INTEL_WCL_IDS(MACRO__, ...) \
+	MACRO__(0xFD80, ## __VA_ARGS__), \
+	MACRO__(0xFD81, ## __VA_ARGS__)
+
 #endif /* __PCIIDS_H__ */
