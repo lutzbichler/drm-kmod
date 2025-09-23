@@ -171,12 +171,6 @@ static int register_save_restore(struct xe_gt *gt, struct drm_printer *p)
 	return 0;
 }
 
-static int workarounds(struct xe_gt *gt, struct drm_printer *p)
-{
-	xe_wa_dump(gt, p);
-	return 0;
-}
-
 static int tunings(struct xe_gt *gt, struct drm_printer *p)
 {
 	xe_tuning_dump(gt, p);
@@ -240,7 +234,7 @@ static const struct drm_info_list vf_safe_debugfs_list[] = {
 	{ "topology", .show = xe_gt_debugfs_show_with_rpm, .data = xe_gt_topology_dump },
 	{ "register-save-restore",
 		.show = xe_gt_debugfs_show_with_rpm, .data = register_save_restore },
-	{ "workarounds", .show = xe_gt_debugfs_show_with_rpm, .data = workarounds },
+	{ "workarounds", .show = xe_gt_debugfs_show_with_rpm, .data = xe_wa_gt_dump },
 	{ "tunings", .show = xe_gt_debugfs_show_with_rpm, .data = tunings },
 	{ "default_lrc_rcs", .show = xe_gt_debugfs_show_with_rpm, .data = rcs_default_lrc },
 	{ "default_lrc_ccs", .show = xe_gt_debugfs_show_with_rpm, .data = ccs_default_lrc },
