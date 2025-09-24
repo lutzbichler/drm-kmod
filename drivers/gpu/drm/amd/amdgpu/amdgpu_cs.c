@@ -892,7 +892,11 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 		struct amdgpu_bo *bo = e->bo;
 
 #ifdef __linux__
-		r = amdgpu_ttm_tt_get_user_pages(bo, &e->range);
+		e->range = kzalloc(sizeof(*e->range), GFP_KERNEL);
+		if (unlikely(!e->range))
+			return -ENOMEM;
+
+		r = amdgpu_ttm_tt_get_user_pages(bo, e->range);
 		if (r)
 			goto out_free_user_pages;
 
@@ -912,7 +916,7 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 			goto out_free_user_pages;
 		}
 
-		r = amdgpu_ttm_tt_get_user_pages(bo, e->user_pages, &e->range);
+		r = amdgpu_ttm_tt_get_user_pages(bo, e->user_pages);
 		if (r) {
 			kvfree(e->user_pages);
 			e->user_pages = NULL;
@@ -1028,18 +1032,17 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 
 out_free_user_pages:
 	amdgpu_bo_list_for_each_userptr_entry(e, p->bo_list) {
+#ifdef __linux__
 		struct amdgpu_bo *bo = e->bo;
 
-#ifdef __FreeBSD__
+		amdgpu_ttm_tt_get_user_pages_done(bo->tbo.ttm, e->range);
+		e->range = NULL;
+#elif __FreeBSD__
 		if (!e->user_pages)
 			continue;
-#endif
-		amdgpu_ttm_tt_get_user_pages_done(bo->tbo.ttm, e->range);
-#ifdef __FreeBSD__
 		kvfree(e->user_pages);
 		e->user_pages = NULL;
 #endif
-		e->range = NULL;
 	}
 	mutex_unlock(&p->bo_list->bo_list_mutex);
 	return r;
