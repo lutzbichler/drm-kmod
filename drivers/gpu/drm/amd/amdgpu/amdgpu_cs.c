@@ -892,7 +892,11 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 		struct amdgpu_bo *bo = e->bo;
 
 #ifdef __linux__
-		r = amdgpu_ttm_tt_get_user_pages(bo, &e->range);
+		e->range = kzalloc(sizeof(*e->range), GFP_KERNEL);
+		if (unlikely(!e->range))
+			return -ENOMEM;
+
+		r = amdgpu_ttm_tt_get_user_pages(bo, e->range);
 		if (r)
 			goto out_free_user_pages;
 
@@ -912,7 +916,8 @@ static int amdgpu_cs_parser_bos(struct amdgpu_cs_parser *p,
 			goto out_free_user_pages;
 		}
 
-		r = amdgpu_ttm_tt_get_user_pages(bo, e->user_pages, &e->range);
+		e->range = NULL;
+		r = amdgpu_ttm_tt_get_user_pages(bo, e->user_pages, e->range);
 		if (r) {
 			kvfree(e->user_pages);
 			e->user_pages = NULL;
