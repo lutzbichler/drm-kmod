@@ -156,6 +156,7 @@ SRCS+=	intel_bo.c \
 	xe_hdcp_gsc.c \
 	xe_panic.c \
 	xe_plane_initial.c \
+	xe_stolen.c \
 	xe_tdf.c
 
 # xe/display/ext
