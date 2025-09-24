@@ -193,10 +193,10 @@ uint64_t amdgpu_ttm_domain_start(struct amdgpu_device *adev, uint32_t type);
 #if IS_ENABLED(CONFIG_DRM_AMDGPU_USERPTR)
 #ifdef __linux__
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-#elif defined(__FreeBSD__)
-int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
-#endif
 				 struct hmm_range **range);
+#elif defined(__FreeBSD__)
+int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
+#endif
 void amdgpu_ttm_tt_discard_user_pages(struct ttm_tt *ttm,
 				      struct hmm_range *range);
 bool amdgpu_ttm_tt_get_user_pages_done(struct ttm_tt *ttm,
@@ -204,11 +204,11 @@ bool amdgpu_ttm_tt_get_user_pages_done(struct ttm_tt *ttm,
 #else
 #ifdef __linux__
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
+					       struct hmm_range **range)
 #elif defined(__FreeBSD__)
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-					       struct page **pages,
+					       struct page **pages)
 #endif
-					       struct hmm_range **range)
 {
 	return -EPERM;
 }
