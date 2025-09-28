@@ -137,6 +137,7 @@ static int ras_umc_log_ecc(struct ras_core_context *ras_core,
 
 int ras_umc_clear_logged_ecc(struct ras_core_context *ras_core)
 {
+#ifdef __linux__
 	struct ras_umc *ras_umc = &ras_core->ras_umc;
 	uint64_t buf[8] = {0};
 	void  **slot;
@@ -149,6 +150,19 @@ int ras_umc_clear_logged_ecc(struct ras_core_context *ras_core)
 		kfree(data);
 	}
 	mutex_unlock(&ras_umc->tree_lock);
+#elif defined(__FreeBSD__)
+	struct ras_umc *ras_umc = &ras_core->ras_umc;
+	void  **slot;
+	void *data;
+	struct radix_tree_iter iter;
+
+	mutex_lock(&ras_umc->tree_lock);
+	radix_tree_for_each_slot(slot, &ras_umc->root, &iter, 0) {
+		data = ras_radix_tree_delete_iter(&ras_umc->root, &iter);
+		kfree(data);
+	}
+	mutex_unlock(&ras_umc->tree_lock);
+#endif
 
 	return 0;
 }

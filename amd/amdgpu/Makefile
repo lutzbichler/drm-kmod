@@ -300,6 +300,8 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/pm/swsmu/smu12 \
 	${SRCDIR}/pm/swsmu/smu13 \
 	${SRCDIR}/pm/swsmu/smu14 \
+	${SRCDIR}/ras/ras_mgr \
+	${SRCDIR}/ras/rascore \
 	${DRM}/scheduler
 
 # acp
@@ -1303,6 +1305,35 @@ SRCS+=	amd_powerplay.c \
 SRCS+=	amdgpu_pmu.c
 .endif
 
+# ras_mgr
+SRCS+= amdgpu_ras_cmd.c \
+	amdgpu_ras_eeprom_i2c.c \
+	amdgpu_ras_mgr.c \
+	amdgpu_ras_mp1_v13_0.c \
+	amdgpu_ras_nbio_v7_9.c \
+	amdgpu_ras_process.c \
+	amdgpu_ras_sys.c \
+
+# rascore
+SRCS+=	ras_aca.c \
+	ras_aca_v1_0.c \
+	ras_cmd.c \
+	ras_core.c \
+	ras_cper.c \
+	ras_eeprom.c \
+	ras_gfx.c \
+	ras_gfx_v9_0.c \
+	ras_log_ring.c \
+	ras_mp1.c \
+	ras_mp1_v13_0.c \
+	ras_nbio.c \
+	ras_nbio_v7_9.c \
+	ras_process.c \
+	ras_psp.c \
+	ras_psp_v13_0.c \
+	ras_umc.c \
+	ras_umc_v12_0.c
+
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
 .if !empty(KCONFIG:MDRM_AMD_DC_FP)
@@ -1372,6 +1403,8 @@ CFLAGS+= -I${SRCDIR}/pm/swsmu/smu11
 CFLAGS+= -I${SRCDIR}/pm/swsmu/smu12
 CFLAGS+= -I${SRCDIR}/pm/swsmu/smu13
 CFLAGS+= -I${SRCDIR}/pm/swsmu/smu14
+CFLAGS+= -I${SRCDIR}/ras/ras_mgr
+CFLAGS+= -I${SRCDIR}/ras/rascore
 CFLAGS+= -I${DRM}/scheduler
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
