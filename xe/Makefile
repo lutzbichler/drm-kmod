@@ -208,6 +208,7 @@ SRCS+=	xe_debugfs.c \
 	xe_guc_debugfs.c \
 	xe_huc_debugfs.c \
 	xe_pxp_debugfs.c \
+	xe_sriov_pf_debugfs.c \
 	xe_tile_debugfs.c \
 	xe_uc_debugfs.c
 .endif
