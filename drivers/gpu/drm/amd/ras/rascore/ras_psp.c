@@ -151,7 +151,11 @@ static void __acquire_psp_cmd_lock(struct ras_core_context *ras_core)
 	struct ras_psp_ctx *psp_ctx = &ras_core->ras_psp.psp_ctx;
 
 	if (psp_ctx->external_mutex)
+#ifdef __linux__
 		mutex_lock(psp_ctx->external_mutex);
+#elif defined(__FreeBSD__)
+		mutex_lock((struct mutex *)psp_ctx->external_mutex);
+#endif
 	else
 		mutex_lock(&psp_ctx->internal_mutex);
 }
@@ -161,7 +165,11 @@ static void __release_psp_cmd_lock(struct ras_core_context *ras_core)
 	struct ras_psp_ctx *psp_ctx = &ras_core->ras_psp.psp_ctx;
 
 	if (psp_ctx->external_mutex)
+#ifdef __linux__
 		mutex_unlock(psp_ctx->external_mutex);
+#elif defined(__FreeBSD__)
+		mutex_unlock((struct mutex *)psp_ctx->external_mutex);
+#endif
 	else
 		mutex_unlock(&psp_ctx->internal_mutex);
 }
