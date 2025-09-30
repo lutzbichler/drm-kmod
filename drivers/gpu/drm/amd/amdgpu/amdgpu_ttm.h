@@ -197,10 +197,6 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
 #endif
 				 struct hmm_range *range);
-void amdgpu_ttm_tt_discard_user_pages(struct ttm_tt *ttm,
-				      struct hmm_range *range);
-bool amdgpu_ttm_tt_get_user_pages_done(struct ttm_tt *ttm,
-				       struct hmm_range *range);
 #else
 #ifdef __linux__
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
@@ -211,15 +207,6 @@ static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 					       struct hmm_range *range)
 {
 	return -EPERM;
-}
-static inline void amdgpu_ttm_tt_discard_user_pages(struct ttm_tt *ttm,
-						    struct hmm_range *range)
-{
-}
-static inline bool amdgpu_ttm_tt_get_user_pages_done(struct ttm_tt *ttm,
-						     struct hmm_range *range)
-{
-	return false;
 }
 #endif
 
