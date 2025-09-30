@@ -10,6 +10,20 @@
 #include <linux/kconfig.h>
 #endif
 
+struct xe_device;
+
+/**
+ * xe_svm_devm_owner() - Return the owner of device private memory
+ * @xe: The xe device.
+ *
+ * Return: The owner of this device's device private memory to use in
+ * hmm_range_fault()-
+ */
+static inline void *xe_svm_devm_owner(struct xe_device *xe)
+{
+	return xe;
+}
+
 #if IS_ENABLED(CONFIG_DRM_XE_GPUSVM)
 
 #include <drm/drm_pagemap.h>
