@@ -25,6 +25,7 @@
  */
 
 #include <linux/dma-fence.h>
+#include <linux/module.h>
 #include <linux/seq_file.h>
 
 MALLOC_DECLARE(M_DMABUF);
@@ -44,14 +45,10 @@ static const struct dma_fence_ops dma_fence_stub_ops = {
 	.get_timeline_name = dma_fence_stub_get_name,
 };
 
-/*
- * return a signaled fence
- */
-struct dma_fence *
-dma_fence_get_stub(void)
-{
 
-	spin_lock(&dma_fence_stub_lock);
+static void
+dma_fence_init_stub(void)
+{
 	if (dma_fence_stub.ops == NULL) {
 		dma_fence_init(&dma_fence_stub,
 		    &dma_fence_stub_ops,
@@ -62,7 +59,16 @@ dma_fence_get_stub(void)
 		    &dma_fence_stub.flags);
 		dma_fence_signal_locked(&dma_fence_stub);
 	}
-	spin_unlock(&dma_fence_stub_lock);
+}
+subsys_initcall(dma_fence_init_stub);
+
+/*
+ * return a signaled fence
+ */
+struct dma_fence *
+dma_fence_get_stub(void)
+{
+
 	return (dma_fence_get(&dma_fence_stub));
 }
 
