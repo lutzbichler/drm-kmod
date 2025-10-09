@@ -126,12 +126,6 @@ struct intel_forcewake_range {
 	enum forcewake_domains domains;
 };
 
-/* Other register ranges (e.g., shadow tables, MCR tables, etc.) */
-struct i915_range {
-	u32 start;
-	u32 end;
-};
-
 struct intel_uncore {
 	void __iomem *regs;
 
@@ -165,7 +159,7 @@ struct intel_uncore {
 	 * Shadowed registers are special cases where we can safely write
 	 * to the register *without* grabbing forcewake.
 	 */
-	const struct i915_range *shadowed_reg_table;
+	const struct i915_mmio_range *shadowed_reg_table;
 	unsigned int shadowed_reg_table_entries;
 
 	struct notifier_block pmic_bus_access_nb;
