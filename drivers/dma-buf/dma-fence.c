@@ -144,9 +144,9 @@ dma_fence_signal_timestamp(struct dma_fence *fence, ktime_t timestamp)
 	if (fence == NULL)
 		return;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	dma_fence_signal_timestamp_locked(fence, timestamp);
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 }
 
 /*
@@ -171,9 +171,9 @@ dma_fence_check_and_signal(struct dma_fence *fence)
 {
 	bool rv;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	rv = dma_fence_check_and_signal_locked(fence);
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 
 	return (rv);
 }
@@ -196,9 +196,9 @@ dma_fence_signal(struct dma_fence *fence)
 	if (fence == NULL)
 		return;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	dma_fence_signal_timestamp_locked(fence, ktime_get());
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 }
 
 /*
@@ -269,7 +269,7 @@ dma_fence_enable_sw_signaling(struct dma_fence *fence)
 {
 	bool was_enabled;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	was_enabled = test_and_set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
 	    &fence->flags);
 	if (dma_fence_test_signaled_flag(fence))
@@ -280,7 +280,7 @@ dma_fence_enable_sw_signaling(struct dma_fence *fence)
 			dma_fence_signal_locked(fence);
 	}
 out:
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 }
 
 /*
@@ -301,7 +301,7 @@ dma_fence_add_callback(struct dma_fence *fence, struct dma_fence_cb *cb,
 		return (-ENOENT);
 	}
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	was_enabled = test_and_set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
 	    &fence->flags);
 
@@ -320,7 +320,7 @@ dma_fence_add_callback(struct dma_fence *fence, struct dma_fence_cb *cb,
 		list_add_tail(&cb->node, &fence->cb_list);
 	} else
 		INIT_LIST_HEAD(&cb->node);
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 
 	return (rv);
 }
@@ -333,9 +333,9 @@ dma_fence_get_status(struct dma_fence *fence)
 {
 	int rv;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	rv = dma_fence_get_status_locked(fence);
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 	return (rv);
 }
 
@@ -347,11 +347,11 @@ dma_fence_remove_callback(struct dma_fence *fence, struct dma_fence_cb *cb)
 {
 	int rv;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 	rv = !list_empty(&cb->node);
 	if (rv)
 		list_del_init(&cb->node);
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 	return (rv);
 }
 
@@ -379,7 +379,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 	struct default_wait_cb cb;
 	signed long rv = timeout ? timeout : 1;
 
-	spin_lock(fence->lock);
+	spin_lock(dma_fence_spinlock(fence));
 
 	if (dma_fence_test_signaled_flag(fence))
 		goto out;
@@ -398,11 +398,11 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 			__set_current_state(TASK_INTERRUPTIBLE);
 		else
 			__set_current_state(TASK_UNINTERRUPTIBLE);
-		spin_unlock(fence->lock);
+		spin_unlock(dma_fence_spinlock(fence));
 
 		rv = schedule_timeout(rv);
 
-		spin_lock(fence->lock);
+		spin_lock(dma_fence_spinlock(fence));
 		if (rv > 0 && intr && signal_pending(current))
 			rv = -ERESTARTSYS;
 	}
@@ -411,7 +411,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 		list_del(&cb.base.node);
 	__set_current_state(TASK_RUNNING);
 out:
-	spin_unlock(fence->lock);
+	spin_unlock(dma_fence_spinlock(fence));
 	return (rv);
 }
 
@@ -532,7 +532,12 @@ dma_fence_init_base(struct dma_fence *fence, const struct dma_fence_ops *ops,
 	kref_init(&fence->refcount);
 	INIT_LIST_HEAD(&fence->cb_list);
 	fence->ops = ops;
-	fence->lock = lock;
+	if (lock != NULL) {
+		fence->extern_lock = lock;
+	} else {
+		spin_lock_init(&fence->inline_lock);
+		fence->flags = flags | BIT(DMA_FENCE_FLAG_INLINE_LOCK_BIT);	
+	}
 	fence->context = context;
 	fence->seqno = seqno;
 	fence->flags = flags | BIT(DMA_FENCE_FLAG_INITIALIZED_BIT);
@@ -715,7 +720,7 @@ int
 dma_fence_get_status_locked(struct dma_fence *fence)
 {
 
-	assert_spin_locked(fence->lock);
+	assert_spin_locked(dma_fence_spinlock(fence));
 	if (dma_fence_is_signaled_locked(fence))
 		return (fence->error ?: 1);
 	else
