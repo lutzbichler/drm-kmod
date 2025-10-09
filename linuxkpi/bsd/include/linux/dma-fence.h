@@ -40,7 +40,10 @@
 struct dma_fence_ops;
 
 struct dma_fence {
-	spinlock_t *lock;
+	union {
+		spinlock_t *extern_lock;
+		spinlock_t inline_lock;
+	};
 	const struct dma_fence_ops *ops;
 	union {
 		struct list_head cb_list;
@@ -79,6 +82,7 @@ struct dma_fence_ops {
 
 enum dma_fence_flag_bits {
 	DMA_FENCE_FLAG_INITIALIZED_BIT,
+	DMA_FENCE_FLAG_INLINE_LOCK_BIT,
 	DMA_FENCE_FLAG_SEQNO64_BIT,
 	DMA_FENCE_FLAG_SIGNALED_BIT,
 	DMA_FENCE_FLAG_TIMESTAMP_BIT,
@@ -149,12 +153,19 @@ dma_fence_was_initialized(struct dma_fence *fence)
 {
 	return (fence && test_bit(DMA_FENCE_FLAG_INITIALIZED_BIT, &fence->flags));
 }
+static inline spinlock_t *
+dma_fence_spinlock(struct dma_fence *fence)
+{
+	return (test_bit(DMA_FENCE_FLAG_INLINE_LOCK_BIT, &fence->flags) ?
+				&fence->inline_lock : fence->extern_lock);
+}
 
-#define dma_fence_lock_irqsave(fence, flags)		spin_lock(fence->lock)
-#define dma_fence_unlock_irqrestore(fence, flags)	spin_unlock(fence->lock)
-	
-#define dma_fence_spinlock(fence)					fence->lock
-#define dma_fence_assert_held(fence)				assert_spin_locked(fence->lock)
+#define dma_fence_lock_irqsave(fence, flags) \
+	spin_lock(dma_fence_spinlock(fence))
+#define dma_fence_unlock_irqrestore(fence, flags) \
+	spin_unlock(dma_fence_spinlock(fence))
+#define dma_fence_assert_held(fence) \
+	assert_spin_locked(dma_fence_spinlock(fence))
 
 #define	dma_fence_begin_signalling() true
 #define	dma_fence_end_signalling(cookie) do { (void)cookie; } while (0)
