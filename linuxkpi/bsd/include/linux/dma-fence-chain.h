@@ -39,7 +39,6 @@ struct dma_fence_chain {
 		struct dma_fence_cb cb;
 		struct irq_work work;
 	};
-	spinlock_t lock;
 };
 
 #define dma_fence_chain_for_each(iter, head)	\
