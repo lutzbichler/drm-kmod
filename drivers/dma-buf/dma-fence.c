@@ -31,7 +31,6 @@
 MALLOC_DECLARE(M_DMABUF);
 
 static struct dma_fence dma_fence_stub;
-static DEFINE_SPINLOCK(dma_fence_stub_lock);
 
 static const char *
 dma_fence_stub_get_name(struct dma_fence *fence)
@@ -50,13 +49,8 @@ static void
 dma_fence_init_stub(void)
 {
 	if (dma_fence_stub.ops == NULL) {
-		dma_fence_init(&dma_fence_stub,
-		    &dma_fence_stub_ops,
-		    &dma_fence_stub_lock,
-		    0,
-		    0);
-		set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
-		    &dma_fence_stub.flags);
+		dma_fence_init(&dma_fence_stub, &dma_fence_stub_ops, NULL, 0, 0);
+		set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT, &dma_fence_stub.flags);
 		dma_fence_signal_locked(&dma_fence_stub);
 	}
 }
@@ -88,8 +82,7 @@ dma_fence_allocate_private_stub(ktime_t timestamp)
 	if (fence == NULL)
 		return (NULL);
 
-	dma_fence_init(fence,
-	    &dma_fence_stub_ops, &dma_fence_stub_lock, 0, 0);
+	dma_fence_init(fence, &dma_fence_stub_ops, NULL, 0, 0);
 	set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT, &fence->flags);
 	dma_fence_signal_timestamp(fence, timestamp);
 
@@ -532,15 +525,15 @@ dma_fence_init_base(struct dma_fence *fence, const struct dma_fence_ops *ops,
 	kref_init(&fence->refcount);
 	INIT_LIST_HEAD(&fence->cb_list);
 	fence->ops = ops;
+	fence->flags = flags | BIT(DMA_FENCE_FLAG_INITIALIZED_BIT);
 	if (lock != NULL) {
 		fence->extern_lock = lock;
 	} else {
 		spin_lock_init(&fence->inline_lock);
-		fence->flags = flags | BIT(DMA_FENCE_FLAG_INLINE_LOCK_BIT);	
+		fence->flags = fence->flags | BIT(DMA_FENCE_FLAG_INLINE_LOCK_BIT);
 	}
 	fence->context = context;
 	fence->seqno = seqno;
-	fence->flags = flags | BIT(DMA_FENCE_FLAG_INITIALIZED_BIT);
 	fence->error = 0;
 }
 
