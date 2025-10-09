@@ -37,7 +37,6 @@ struct dma_fence_array_cb {
 
 struct dma_fence_array {
 	struct dma_fence base;
-	spinlock_t lock;
 	unsigned int num_fences;
 	atomic_t num_pending;
 	struct dma_fence **fences;
