@@ -214,3 +214,4 @@ CWARNFLAGS.drm_ioc32.c+=			-Wno-address-of-packed-member
 CWARNFLAGS.drm_mm.c+=				-Wno-cast-qual -Wno-unused-function
 CWARNFLAGS.drm_panel_orientation_quirks.c+=	-Wno-cast-qual
 CWARNFLAGS.drm_syncobj.c+=			-Wno-unused-variable
+CWARNFLAGS.sched_fence.c+=			-Wno-unused-variable

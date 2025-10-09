@@ -150,6 +150,12 @@ dma_fence_was_initialized(struct dma_fence *fence)
 	return (fence && test_bit(DMA_FENCE_FLAG_INITIALIZED_BIT, &fence->flags));
 }
 
+#define dma_fence_lock_irqsave(fence, flags)		spin_lock(fence->lock)
+#define dma_fence_unlock_irqrestore(fence, flags)	spin_unlock(fence->lock)
+	
+#define dma_fence_spinlock(fence)					fence->lock
+#define dma_fence_assert_held(fence)				assert_spin_locked(fence->lock)
+
 #define	dma_fence_begin_signalling() true
 #define	dma_fence_end_signalling(cookie) do { (void)cookie; } while (0)
 
