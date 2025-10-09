@@ -32,6 +32,7 @@ SRCS=	\
 	i915_memcpy.c \
 	i915_mitigations.c \
 	i915_mm.c \
+	i915_mmio_range.c \
 	i915_module.c \
 	i915_params.c \
 	i915_pci.c \
