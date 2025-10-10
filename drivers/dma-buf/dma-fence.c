@@ -486,10 +486,10 @@ dma_fence_timeline_name(struct dma_fence *fence)
 void
 dma_fence_describe(struct dma_fence *fence, struct seq_file *seq)
 {
-	seq_printf(seq, "%s %s seq %llu %ssignalled\n",
-		   dma_fence_driver_name(fence),
-		   dma_fence_timeline_name(fence),
-		   fence->seqno,
+	seq_printf(seq, "%llu:%llu %s %s %ssignalled\n",
+		   dma_fence_is_signaled(fence) ? "" : dma_fence_driver_name(fence),
+		   dma_fence_is_signaled(fence) ? "" : dma_fence_timeline_name(fence),
+		   fence->context, fence->seqno,
 		   dma_fence_is_signaled(fence) ? "" : "un");
 }
 
