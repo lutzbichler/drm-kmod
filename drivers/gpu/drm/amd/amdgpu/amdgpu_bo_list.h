@@ -41,7 +41,7 @@ struct amdgpu_bo_list_entry {
 #ifdef __FreeBSD__
 	struct page			**user_pages;
 #endif
-	struct hmm_range		*range;
+	struct amdgpu_hmm_range		*range;
 	bool				user_invalidated;
 };
 
