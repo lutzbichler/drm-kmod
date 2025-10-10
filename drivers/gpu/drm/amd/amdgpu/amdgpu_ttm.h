@@ -28,6 +28,7 @@
 #include <drm/gpu_scheduler.h>
 #include <drm/ttm/ttm_placement.h>
 #include "amdgpu_vram_mgr.h"
+#include "amdgpu_hmm.h"
 
 #define AMDGPU_PL_GDS		(TTM_PL_PRIV + 0)
 #define AMDGPU_PL_GWS		(TTM_PL_PRIV + 1)
@@ -187,14 +188,14 @@ uint64_t amdgpu_ttm_domain_start(struct amdgpu_device *adev, uint32_t type);
 #if IS_ENABLED(CONFIG_DRM_AMDGPU_USERPTR)
 #ifdef __linux__
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-				 struct hmm_range **range);
+				 struct amdgpu_hmm_range *range);
 #elif defined(__FreeBSD__)
-int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages)
+int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages);
 #endif
 #else
 #ifdef __linux__
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-					       struct hmm_range **range)
+					       struct amdgpu_hmm_range *range)
 #elif defined(__FreeBSD__)
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 					       struct page **pages)
