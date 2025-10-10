@@ -28,6 +28,7 @@
 #include <drm/gpu_scheduler.h>
 #include <drm/ttm/ttm_placement.h>
 #include "amdgpu_vram_mgr.h"
+#include "amdgpu_hmm.h"
 
 #define AMDGPU_PL_GDS		(TTM_PL_PRIV + 0)
 #define AMDGPU_PL_GWS		(TTM_PL_PRIV + 1)
@@ -190,7 +191,7 @@ int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 #elif defined(__FreeBSD__)
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
 #endif
-				 struct hmm_range *range);
+				 struct amdgpu_hmm_range *range);
 #else
 #ifdef __linux__
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
@@ -198,14 +199,14 @@ static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
 					       struct page **pages,
 #endif
-					       struct hmm_range *range)
+					       struct amdgpu_hmm_range *range)
 {
 	return -EPERM;
 }
 #endif
 
 #ifdef __linux__
-void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct hmm_range *range);
+void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct amdgpu_hmm_range *range);
 #elif defined(__FreeBSD__)
 void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct page **pages);
 #endif

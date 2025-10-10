@@ -31,19 +31,26 @@
 #include <linux/interval_tree.h>
 #include <linux/mmu_notifier.h>
 
+struct amdgpu_hmm_range {
+#ifdef linux__
+	struct hmm_range hmm_range;
+#endif
+	struct amdgpu_bo *bo;
+};
+
 #ifdef __linux__
 int amdgpu_hmm_range_get_pages(struct mmu_interval_notifier *notifier,
 			       uint64_t start, uint64_t npages, bool readonly,
 			       void *owner,
-			       struct hmm_range *hmm_range);
+			       struct amdgpu_hmm_range *hmm_range);
 #endif
 
 #if defined(CONFIG_HMM_MIRROR)
 bool amdgpu_hmm_range_valid(struct hmm_range *hmm_range);
 struct hmm_range *amdgpu_hmm_range_alloc(void);
-void amdgpu_hmm_range_free(struct hmm_range *hmm_range);
-int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr);
-void amdgpu_hmm_unregister(struct amdgpu_bo *bo);
+bool amdgpu_hmm_range_valid(struct amdgpu_hmm_range *range);
+struct amdgpu_hmm_range *amdgpu_hmm_range_alloc(struct amdgpu_bo *bo);
+void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range);
 #else
 static inline int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr)
 {
@@ -54,17 +61,17 @@ static inline int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr)
 
 static inline void amdgpu_hmm_unregister(struct amdgpu_bo *bo) {}
 
-static inline bool amdgpu_hmm_range_valid(struct hmm_range *hmm_range)
+static inline bool amdgpu_hmm_range_valid(struct amdgpu_hmm_range *range)
 {
 	return false;
 }
 
-static inline struct hmm_range *amdgpu_hmm_range_alloc(void)
+static inline struct amdgpu_hmm_range *amdgpu_hmm_range_alloc(struct amdgpu_bo *bo)
 {
 	return NULL;
 }
 
-static inline void amdgpu_hmm_range_free(struct hmm_range *hmm_range) {}
+static inline void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range) {}
 #endif
 
 #endif
