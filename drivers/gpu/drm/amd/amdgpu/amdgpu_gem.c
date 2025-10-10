@@ -532,7 +532,7 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
 	struct amdgpu_fpriv *fpriv = filp->driver_priv;
 	struct drm_gem_object *gobj;
 #ifdef __linux__
-	struct hmm_range *range;
+	struct amdgpu_hmm_range *range;
 #endif
 	struct amdgpu_bo *bo;
 	uint32_t handle;
@@ -577,7 +577,7 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
 
 	if (args->flags & AMDGPU_GEM_USERPTR_VALIDATE) {
 #ifdef __linux__
-		range = amdgpu_hmm_range_alloc();
+		range = amdgpu_hmm_range_alloc(NULL);
 		if (unlikely(!range))
 			return -ENOMEM;
 		r = amdgpu_ttm_tt_get_user_pages(bo, range);
