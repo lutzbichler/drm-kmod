@@ -240,6 +240,7 @@ SRCS+=	icl_dsi.c \
 	intel_crtc_state_dump.c \
 	intel_cursor.c \
 	intel_cx0_phy.c \
+	intel_dbuf_bw.c \
 	intel_ddi.c \
 	intel_ddi_buf_trans.c \
 	intel_display.c \
