@@ -311,6 +311,7 @@ SRCS+=	icl_dsi.c \
 	intel_vga.c \
 	intel_vrr.c \
 	intel_wm.c \
+	skl_prefill.c \
 	skl_scaler.c \
 	skl_universal_plane.c \
 	skl_watermark.c

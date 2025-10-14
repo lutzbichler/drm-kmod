@@ -187,6 +187,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_vrr.c \
 	intel_vga.c \
 	intel_wm.c \
+	skl_prefill.c \
 	skl_scaler.c \
 	skl_universal_plane.c \
 	skl_watermark.c \
