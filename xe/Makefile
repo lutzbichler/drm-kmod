@@ -190,6 +190,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt_ml.c \
 	xe_pci_sriov.c \
 	xe_sriov_pf.c \
+	xe_sriov_pf_provision.c \
 	xe_sriov_pf_service.c \
 	xe_sriov_vf.c \
 	xe_sriov_vf_ccs.c \
