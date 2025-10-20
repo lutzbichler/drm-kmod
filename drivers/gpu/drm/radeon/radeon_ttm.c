@@ -689,11 +689,13 @@ int radeon_ttm_init(struct radeon_device *rdev)
 			       NULL,
 #endif
 			       rdev_to_drm(rdev)->vma_offset_manager,
-			       rdev->need_swiotlb,
+			       (rdev->need_swiotlb ?
+				TTM_ALLOCATION_POOL_USE_DMA_ALLOC : 0) |
 #ifdef __linux__
-			       dma_addressing_limited(&rdev->pdev->dev));
+			       (dma_addressing_limited(&rdev->pdev->dev) ?
+				TTM_ALLOCATION_POOL_USE_DMA32 : 0));
 #elif defined(__FreeBSD__)
-			       false);
+			    0);
 #endif
 	if (r) {
 		DRM_ERROR("failed initializing buffer object driver(%d).\n", r);
