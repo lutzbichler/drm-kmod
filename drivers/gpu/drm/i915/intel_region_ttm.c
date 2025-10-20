@@ -38,7 +38,7 @@ int intel_region_ttm_device_init(struct drm_i915_private *dev_priv)
 #elif defined(__FreeBSD__)
 			       drm->dev, NULL, /* Dummy on BSD */
 #endif
-			       drm->vma_offset_manager, false, false);
+			       drm->vma_offset_manager, 0);
 }
 
 /**
