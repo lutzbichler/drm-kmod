@@ -1907,11 +1907,13 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
 			       NULL, /* Dummy on BSD */
 #endif
 			       adev_to_drm(adev)->vma_offset_manager,
-			       adev->need_swiotlb,
+			       (adev->need_swiotlb ?
+				TTM_ALLOCATION_POOL_USE_DMA_ALLOC : 0) |
 #ifdef __linux__
-			       dma_addressing_limited(adev->dev));
+			       (dma_addressing_limited(adev->dev) ?
+				TTM_ALLOCATION_POOL_USE_DMA32 : 0));
 #elif defined(__FreeBSD__)
-			       false);
+			       0);
 #endif
 	if (r) {
 		dev_err(adev->dev,

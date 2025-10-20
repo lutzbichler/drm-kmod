@@ -27,6 +27,7 @@
 
 #include <linux/types.h>
 #include <linux/workqueue.h>
+#include <drm/ttm/ttm_allocation.h>
 #include <drm/ttm/ttm_resource.h>
 #include <drm/ttm/ttm_pool.h>
 
@@ -297,7 +298,7 @@ int ttm_device_init(struct ttm_device *bdev, const struct ttm_device_funcs *func
 		    void *dummy,
 #endif
 		    struct drm_vma_offset_manager *vma_manager,
-		    bool use_dma_alloc, bool use_dma32);
+		    unsigned int alloc_flags);
 void ttm_device_fini(struct ttm_device *bdev);
 void ttm_device_clear_dma_mappings(struct ttm_device *bdev);
 
