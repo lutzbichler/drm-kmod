@@ -1915,12 +1915,10 @@ int amdgpu_ttm_init(struct amdgpu_device *adev)
 			       NULL, /* Dummy on BSD */
 #endif
 			       adev_to_drm(adev)->vma_offset_manager,
-			       adev->need_swiotlb,
-#ifdef __linux__
-			       dma_addressing_limited(adev->dev));
-#elif defined(__FreeBSD__)
-			       false);
-#endif
+			       (adev->need_swiotlb ?
+				TTM_ALLOCATION_POOL_USE_DMA_ALLOC : 0) |
+			       (dma_addressing_limited(adev->dev) ?
+				TTM_ALLOCATION_POOL_USE_DMA32 : 0));
 	if (r) {
 		dev_err(adev->dev,
 			"failed initializing buffer object driver(%d).\n", r);
