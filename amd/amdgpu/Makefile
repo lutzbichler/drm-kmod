@@ -32,15 +32,15 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn351 \
 	${SRCDIR}/display/dc/dml/dcn401 \
 	${SRCDIR}/display/dc/dml/dsc \
-	${SRCDIR}/display/dc/dml2 \
-	${SRCDIR}/display/dc/dml2/dml21 \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_core \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_dpmm \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_mcg \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_pmo \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_standalone_libraries \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_top \
-	${SRCDIR}/display/dc/dml2/dml21/src/inc
+	${SRCDIR}/display/dc/dml2_0 \
+	${SRCDIR}/display/dc/dml2_0/dml21 \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_core \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_dpmm \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_mcg \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_pmo \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_standalone_libraries \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_top \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/inc
 .endif
 
 .PATH:	${SRCDIR}/acp \
@@ -1357,15 +1357,15 @@ CFLAGS+= -I${SRCDIR}/display/amdgpu_dm
 CFLAGS+= -I${SRCDIR}/display/dc
 CFLAGS+= -I${SRCDIR}/display/dc/clk_mgr
 CFLAGS+= -I${SRCDIR}/display/dc/dccg
-CFLAGS+= -I${SRCDIR}/display/dc/dml2
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_core
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_mcg
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_dpmm
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_pmo
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_standalone_libraries
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/inc
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/inc
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_core
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_mcg
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_dpmm
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_pmo
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_standalone_libraries
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/inc
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/inc
 CFLAGS+= -I${SRCDIR}/display/dc/dio
 CFLAGS+= -I${SRCDIR}/display/dc/dpp
 CFLAGS+= -I${SRCDIR}/display/dc/dsc
