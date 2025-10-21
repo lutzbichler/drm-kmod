@@ -299,11 +299,16 @@ void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range)
 {
 	if (!range)
 		return;
+
 #ifdef __linux__
-	kvfree(range->hmm_range.hmm_pfns);
+	if (range->hmm_range.hmm_pfns)
+		kvfree(range->hmm_range.hmm_pfns);
+
 #elif defined(__FreeBSD__)
-	kvfree(range->user_pages);
+	if (range->user_pages)
+		kvfree(range->user_pages);
 #endif
+
 	amdgpu_bo_unref(&range->bo);
 	kfree(range);
 }
