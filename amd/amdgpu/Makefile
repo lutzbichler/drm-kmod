@@ -32,15 +32,15 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dml/dcn351 \
 	${SRCDIR}/display/dc/dml/dcn401 \
 	${SRCDIR}/display/dc/dml/dsc \
-	${SRCDIR}/display/dc/dml2 \
-	${SRCDIR}/display/dc/dml2/dml21 \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_core \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_dpmm \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_mcg \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_pmo \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_standalone_libraries \
-	${SRCDIR}/display/dc/dml2/dml21/src/dml2_top \
-	${SRCDIR}/display/dc/dml2/dml21/src/inc
+	${SRCDIR}/display/dc/dml2_0 \
+	${SRCDIR}/display/dc/dml2_0/dml21 \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_core \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_dpmm \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_mcg \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_pmo \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_standalone_libraries \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_top \
+	${SRCDIR}/display/dc/dml2_0/dml21/src/inc
 .endif
 
 .PATH:	${SRCDIR}/acp \
@@ -987,33 +987,33 @@ SRCS+=	display_mode_lib.c \
 SRCS+=	rn_clk_mgr.c \
 	rn_clk_mgr_vbios_smu.c
 
-# display/dc/dml2/dml21
+# display/dc/dml2_0/dml21
 SRCS+=	dml21_translation_helper.c \
 	dml21_utils.c \
 	dml21_wrapper.c
 
-# display/dc/dml2/dml21/src/dml2_core
+# display/dc/dml2_0/dml21/src/dml2_core
 SRCS+=	dml2_core_dcn4.c \
 	dml2_core_dcn4_calcs.c \
 	dml2_core_factory.c
 
-# display/dc/dml2/dml21/src/dml2_dpmm
+# display/dc/dml2_0/dml21/src/dml2_dpmm
 SRCS+=	dml2_dpmm_dcn4.c \
 	dml2_dpmm_factory.c
 
-# display/dc/dml2/dml21/src/dml2_mcg
+# display/dc/dml2_0/dml21/src/dml2_mcg
 SRCS+=  dml2_mcg_dcn4.c \
     dml2_mcg_factory.c
 
-# display/dc/dml2/dml21/src/dml2_pmo
+# display/dc/dml2_0/dml21/src/dml2_pmo
 SRCS+=  dml2_pmo_dcn3.c \
 	dml2_pmo_dcn4_fams2.c \
     dml2_pmo_factory.c
 
-# display/dc/dml2/dml21/src/dml2_standalone_libraries
+# display/dc/dml2_0/dml21/src/dml2_standalone_libraries
 SRCS+=  lib_float_math.c
 
-# display/dc/dml2/dml21/src/dml2_top
+# display/dc/dml2_0/dml21/src/dml2_top
 SRCS+=  dml2_top_interfaces.c \
 	dml2_top_legacy.c \
 	dml2_top_soc15.c
@@ -1047,7 +1047,7 @@ SRCS+=	dcn32_fpu.c \
 # display/dc/dml/dcn321
 SRCS+=	dcn321_fpu.c
 
-# display/dc/dml2
+# display/dc/dml2_0
 SRCS+=	display_mode_core.c \
 	display_mode_util.c \
 	dml_display_rq_dlg_calc.c \
@@ -1337,15 +1337,15 @@ SRCS+=	ras_aca.c \
 CLEANFILES+= ${KMOD}.ko.full ${KMOD}.ko.debug
 
 .if !empty(KCONFIG:MDRM_AMD_DC_FP)
-CFLAGS+= -I${SRCDIR}/display/dc/dml2
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/inc
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_core
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_dpmm
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_mcg
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_pmo
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/dml2_standalone_libraries
-CFLAGS+= -I${SRCDIR}/display/dc/dml2/dml21/src/inc
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/inc
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_core
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_dpmm
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_mcg
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_pmo
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/dml2_standalone_libraries
+CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/inc
 .endif
 
 CFLAGS+= -I${.CURDIR:H:H}/linuxkpi/gplv2/include
