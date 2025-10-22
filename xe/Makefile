@@ -160,8 +160,7 @@ SRCS+=	intel_bo.c \
 	xe_tdf.c
 
 # xe/display/ext
-SRCS+=	i915_irq.c \
-	i915_utils.c
+SRCS+=	i915_irq.c
 
 .if !empty(KCONFIG:MCONFIGFS_FS)
 SRCS+=	xe_configfs.c
