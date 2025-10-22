@@ -132,6 +132,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_display_rpm.c \
 	intel_display_rps.c \
 	intel_display_snapshot.c \
+	intel_display_utils.c \
 	intel_display_wa.c \
 	intel_dkl_phy.c \
 	intel_dp.c \
