@@ -60,103 +60,110 @@ trace_xe_hw_fence_try_signal(struct xe_hw_fence *fence)
 static inline void
 trace_xe_exec_queue_create(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_create q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_create q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_register(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_register q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_register q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_deregister(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_deregister q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_deregister q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_deregister_done(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_deregister_done q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_deregister_done q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_reset(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_reset q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_reset q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_stop(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_stop q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_stop q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_close(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_close q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_close q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_kill(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_kill q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_kill q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_destroy(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_destroy q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_destroy q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_lr_cleanup(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_lr_cleanup q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_lr_cleanup q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_memory_cat_error(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_memory_cat_error q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_memory_cat_error q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_cleanup_entity(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_cleanup_entity q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_cleanup_entity q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_scheduling_enable(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_scheduling_enable q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_scheduling_enable q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_scheduling_disable(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_scheduling_disable q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_scheduling_disable q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_scheduling_done(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_scheduling_done q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_scheduling_done q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_submit(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_submit q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_submit q %s (%p)", q->name, q);
 }
 
 static inline void
 trace_xe_exec_queue_resubmit(struct xe_exec_queue *q)
 {
-	CTR1(KTR_DRM, "xe_exec_queue_resubmit q %p", q);
+	CTR2(KTR_DRM, "xe_exec_queue_resubmit q %s (%p)", q->name, q);
+}
+
+static inline void
+trace_xe_exec_queue_reach_max_job_count(struct xe_exec_queue *q, int max_cnt)
+{
+	CTR3(KTR_DRM, "xe_exec_queue_reach_max_job_count q %s (%p) max_cnt %d",
+		 q->name, q, max_cnt);
 }
 
 static inline void
@@ -272,6 +279,9 @@ static inline void
 trace_xe_eu_stall_data_read(u8 slice, u8 subslice, u32 read_ptr, u32 write_ptr,
     size_t read_size, size_t total_size)
 {
+	CTR6(KTR_DRM, "xe_eu_stall_data_read slice %d subslice %d read_ptr %p "
+		 "write_ptr %p read_size %lu total_size %lu",
+		 slice, subslice, read_ptr, write_ptr, read_size, total_size);
 }
 
 #endif /* _XE_TRACE_FREEBSD_H_ */
