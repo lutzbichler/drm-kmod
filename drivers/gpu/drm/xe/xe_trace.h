@@ -242,5 +242,10 @@ trace_xe_eu_stall_data_read(u8 slice, u8 subslice, u32 read_ptr, u32 write_ptr,
 {
 }
 
+static inline void
+trace_xe_exec_queue_reach_max_job_count(struct xe_exec_queue *q, int max_cnt)
+{
+}
+
 #endif /* _XE_TRACE_FREEBSD_H_ */
 
