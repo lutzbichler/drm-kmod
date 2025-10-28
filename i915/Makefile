@@ -56,7 +56,6 @@ SRCS=	\
 	intel_acpi.c \
 	intel_atomic.c \
 	intel_audio.c \
-	intel_bo.c \
 	intel_bw.c \
 	intel_bios.c \
 	intel_cdclk.c \
@@ -117,6 +116,8 @@ SRCS+=	dvo_ch7017.c \
 	icl_dsi.c \
 	intel_alpm.c \
 	intel_backlight.c \
+	intel_bo.c \
+	intel_casf.c \
 	intel_crt.c \
 	intel_crtc_state_dump.c \
 	intel_cmtg.c \
