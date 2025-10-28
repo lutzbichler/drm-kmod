@@ -79,11 +79,10 @@ static int amdgpu_dma_buf_attach(struct dma_buf *dmabuf,
 {
 #ifdef __linux__
 	struct amdgpu_device *attach_adev = dma_buf_attach_adev(attach);
-#endif
 	struct drm_gem_object *obj = dmabuf->priv;
 	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
-#ifdef __linux__
 	struct amdgpu_device *adev = amdgpu_ttm_adev(bo->tbo.bdev);
+	int r;
 
 	/*
 	 * Disable peer-to-peer access for DCC-enabled VRAM surfaces on GFX12+.
@@ -100,9 +99,19 @@ static int amdgpu_dma_buf_attach(struct dma_buf *dmabuf,
 	if (!amdgpu_dmabuf_is_xgmi_accessible(attach_adev, bo) &&
 	    pci_p2pdma_distance(adev->pdev, attach->dev, false) < 0)
 		attach->peer2peer = false;
+#elif defined(__FreeBSD__)
+	struct drm_gem_object *obj = dmabuf->priv;
+	struct amdgpu_bo *bo = gem_to_amdgpu_bo(obj);
+	int r;
 #endif
 
+	r = dma_resv_lock(bo->tbo.base.resv, NULL);
+	if (r)
+		return r;
+
 	amdgpu_vm_bo_update_shared(bo);
+
+	dma_resv_unlock(bo->tbo.base.resv);
 
 	return 0;
 }
