@@ -301,9 +301,8 @@ void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range)
 	if (!range)
 		return;
 
-		#ifdef __linux__
-	if (range->hmm_range.hmm_pfns)
-		kvfree(range->hmm_range.hmm_pfns);
+#ifdef __linux__
+	kvfree(range->hmm_range.hmm_pfns);
 #elif defined(__FreeBSD__)
 	kvfree(range->user_pages);
 	range->user_pages = NULL;
