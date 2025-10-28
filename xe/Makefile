@@ -232,6 +232,7 @@ SRCS+=	icl_dsi.c \
 	intel_backlight.c \
 	intel_bios.c \
 	intel_bw.c \
+	intel_casf.c \
 	intel_cdclk.c \
 	intel_cmtg.c \
 	intel_color.c \
