@@ -6,6 +6,11 @@
 #ifndef _XE_GGTT_TYPES_H_
 #define _XE_GGTT_TYPES_H_
 
+#ifdef __FreeBSD__
+#include <linux/mutex.h>
+#include <linux/workqueue.h>
+#endif
+
 #include <drm/drm_mm.h>
 
 #include "xe_pt_types.h"
