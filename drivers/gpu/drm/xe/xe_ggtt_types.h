@@ -8,6 +8,11 @@
 
 #include <drm/drm_mm.h>
 
+#ifdef __FreeBSD__
+#include <linux/mutex.h>
+#include <linux/workqueue.h>
+#endif
+
 #include "xe_pt_types.h"
 
 struct xe_bo;
