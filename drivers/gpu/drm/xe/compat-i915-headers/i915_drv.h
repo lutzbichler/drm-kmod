@@ -60,8 +60,6 @@ static inline struct drm_i915_private *to_i915(const struct drm_device *dev)
 #define HAS_FLAT_CCS(xe) (xe_device_has_flat_ccs(xe))
 #define HAS_128_BYTE_Y_TILING(xe) (xe || 1)
 
-#define irq_lock irq.lock
-
 #ifdef __FreeBSD__
 SYSCTL_DECL(_hw_xe);
 #endif
