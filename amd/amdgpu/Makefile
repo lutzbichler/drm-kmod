@@ -1063,6 +1063,7 @@ SRCS+=	display_mode_core.c \
 	dml2_policy.c \
 	dml2_translation_helper.c \
 	dml2_utils.c \
+	dml2_wrapper.c \
 	dml2_wrapper_fpu.c
 
 # display/dc/dsc
