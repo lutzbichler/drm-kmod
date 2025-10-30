@@ -4,9 +4,8 @@
  */
 
 #include "xe_pci.h"
-#ifdef __linux__
+
 #include <kunit/static_stub.h>
-#endif
 #include <linux/device/driver.h>
 #include <linux/module.h>
 #include <linux/pci.h>
@@ -446,9 +445,8 @@ static void read_gmdid(struct xe_device *xe, enum xe_gmdid_type type, u32 *ver, 
 	struct xe_reg gmdid_reg = GMD_ID;
 	u32 val;
 
-#ifdef __linux__
 	KUNIT_STATIC_STUB_REDIRECT(read_gmdid, xe, type, ver, revid);
-#endif
+
 	if (IS_SRIOV_VF(xe)) {
 		struct xe_gt *gt = xe_root_mmio_gt(xe);
 
