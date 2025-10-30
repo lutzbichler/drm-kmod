@@ -1301,6 +1301,7 @@ SRCS+= amdgpu_ras_cmd.c \
 	amdgpu_ras_nbio_v7_9.c \
 	amdgpu_ras_process.c \
 	amdgpu_ras_sys.c \
+	amdgpu_virt_ras_cmd.c
 
 # rascore
 SRCS+=	ras_aca.c \
