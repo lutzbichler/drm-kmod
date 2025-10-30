@@ -5,6 +5,7 @@
 
 #include <linux/mutex.h>
 #include <linux/types.h>
+#include <linux/workqueue.h>
 
 struct drm_device;
 
@@ -27,6 +28,22 @@ drmm_mutex_init(struct drm_device *dev, struct mutex *m)
 {
     mutex_init(m);
     return drmm_add_action_or_reset(dev, drmm_mutex_release, m);
+}
+
+static inline struct workqueue_struct *
+drmm_alloc_ordered_workqueue(struct drm_device *dev, const char *fmt, int flags)
+{
+    struct workqueue_struct *wq;
+    int ret;
+
+    wq = alloc_ordered_workqueue(fmt, flags);
+    if (wq) {
+        ret = drmm_add_action_or_reset(dev, __drmm_workqueue_release, wq);
+        if (ret)
+            wq = ERR_PTR(ret);
+    }
+
+    return (wq);
 }
 
 #endif
