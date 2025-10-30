@@ -34,7 +34,6 @@ u64 xe_guc_buf_flush(const struct xe_guc_buf buf);
 u64 xe_guc_buf_gpu_addr(const struct xe_guc_buf buf);
 u64 xe_guc_cache_gpu_addr_from_ptr(struct xe_guc_buf_cache *cache, const void *ptr, u32 size);
 
-
 #ifdef __FreeBSD__
 #undef DEFINE_CLASS
 #define DEFINE_CLASS	LKPI_DEFINE_CLASS
