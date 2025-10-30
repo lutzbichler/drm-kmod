@@ -29,6 +29,8 @@
 #include "amdgpu.h"
 #include "isp_v4_1_1.h"
 
+MODULE_FIRMWARE("amdgpu/isp_4_1_1.bin");
+
 #define ISP_PERFORMANCE_STATE_LOW 0
 #define ISP_PERFORMANCE_STATE_HIGH 1
 
@@ -62,9 +64,7 @@ static struct gpiod_lookup_table isp_sensor_gpio_table = {
 		{ }
 	},
 };
-#endif
 
-#ifdef __linux__
 static int isp_poweroff(struct generic_pm_domain *genpd)
 {
 	struct amdgpu_isp *isp = container_of(genpd, struct amdgpu_isp, ispgpd);
