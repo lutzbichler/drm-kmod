@@ -191,6 +191,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_sriov_pf.c \
 	xe_sriov_pf_provision.c \
 	xe_sriov_pf_service.c \
+	xe_sriov_pf_sysfs.c \
 	xe_sriov_vf.c \
 	xe_sriov_vf_ccs.c \
 	xe_sriov_pf_control.c
