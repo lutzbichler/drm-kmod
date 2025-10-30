@@ -1259,7 +1259,7 @@ static const struct drm_audio_component_ops intel_audio_component_ops = {
 };
 
 static int intel_audio_component_bind(struct device *drv_kdev,
-				     struct device *hda_kdev, void *data)
+				      struct device *hda_kdev, void *data)
 {
 	struct intel_display *display = to_intel_display(drv_kdev);
 	struct i915_audio_component *acomp = data;
@@ -1378,6 +1378,7 @@ static void intel_audio_component_register(struct intel_display *display)
 		/* continue with reduced functionality */
 		return;
 	}
+
 #endif
 	display->audio.component_registered = true;
 }

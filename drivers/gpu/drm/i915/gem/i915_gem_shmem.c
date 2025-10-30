@@ -712,7 +712,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 {
 	struct drm_i915_gem_object *obj;
 	struct file *file;
-	loff_t pos;
+	loff_t pos = 0;
 #ifdef __linux__
 	int err;
 #endif
@@ -736,7 +736,6 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 		goto fail;
 	}
 #elif defined(__FreeBSD__)
-	pos = 0;
 	do {
 		unsigned int len = min_t(typeof(size), size, PAGE_SIZE);
 		struct folio *folio;
