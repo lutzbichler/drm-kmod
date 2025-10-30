@@ -1044,7 +1044,7 @@ SRCS+=	display_mode_core.c \
 	dml2_top_interfaces.c \
 	dml2_top_legacy.c \
 	dml2_top_soc15.c \
-	dml2_wrapper.c \
+	dml2_wrapper_fpu.c \
 	dml21_translation_helper.c \
 	dml21_utils.c \
 	dml21_wrapper.c \
