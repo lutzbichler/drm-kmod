@@ -99,6 +99,7 @@ SRCS=	xe_bb.c \
 	xe_nvm.c \
 	xe_oa.c \
 	xe_observation.c \
+	xe_pagefault.c \
 	xe_pat.c \
 	xe_pci.c \
 	xe_pcode.c \
