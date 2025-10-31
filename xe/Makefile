@@ -60,7 +60,6 @@ SRCS=	xe_bb.c \
 	xe_gt_freq.c \
 	xe_gt_idle.c \
 	xe_gt_mcr.c \
-	xe_gt_pagefault.c \
 	xe_gt_stats.c \
 	xe_gt_sysfs.c \
 	xe_gt_throttle.c \
@@ -76,6 +75,7 @@ SRCS=	xe_bb.c \
 	xe_guc_id_mgr.c \
 	xe_guc_klv_helpers.c \
 	xe_guc_log.c \
+	xe_guc_pagefault.c \
 	xe_guc_pc.c \
 	xe_guc_relay.c \
 	xe_guc_submit.c \
