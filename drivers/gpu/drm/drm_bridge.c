@@ -1411,8 +1411,8 @@ struct drm_bridge *of_drm_find_bridge(struct device_node *np)
 	return NULL;
 }
 EXPORT_SYMBOL(of_drm_find_bridge);
+#endif
 
-#ifdef CONFIG_DRM_PANEL_BRIDGE
 /**
  * devm_drm_put_bridge - Release a bridge reference obtained via devm
  * @dev: device that got the bridge via devm
@@ -1429,8 +1429,6 @@ void devm_drm_put_bridge(struct device *dev, struct drm_bridge *bridge)
 	devm_release_action(dev, drm_bridge_put_void, bridge);
 }
 EXPORT_SYMBOL(devm_drm_put_bridge);
-#endif
-#endif
 
 static void drm_bridge_debugfs_show_bridge(struct drm_printer *p,
 					   struct drm_bridge *bridge,
