@@ -294,6 +294,7 @@ SRCS+=	icl_dsi.c \
 	intel_hti.c \
 	intel_link_bw.c \
 	intel_lspcon.c \
+	intel_lt_phy.c \
 	intel_modeset_lock.c \
 	intel_modeset_setup.c \
 	intel_modeset_verify.c \
