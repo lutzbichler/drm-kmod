@@ -475,28 +475,6 @@ EXPORT_SYMBOL(of_drm_get_panel_orientation);
 #endif
 
 #ifdef __linux__
-/**
- * drm_is_panel_follower() - Check if the device is a panel follower
- * @dev: The 'struct device' to check
- *
- * This checks to see if a device needs to be power sequenced together with
- * a panel using the panel follower API.
- *
- * The "panel" property of the follower points to the panel to be followed.
- *
- * Return: true if we should be power sequenced with a panel; false otherwise.
- */
-bool drm_is_panel_follower(struct device *dev)
-{
-	/*
-	 * The "panel" property is actually a phandle, but for simplicity we
-	 * don't bother trying to parse it here. We just need to know if the
-	 * property is there.
-	 */
-	return device_property_present(dev, "panel");
-}
-EXPORT_SYMBOL(drm_is_panel_follower);
-
 /* Find panel by fwnode. This should be identical to of_drm_find_panel(). */
 static struct drm_panel *find_panel_by_fwnode(const struct fwnode_handle *fwnode)
 {
@@ -534,6 +512,28 @@ static struct drm_panel *find_panel_by_dev(struct device *follower_dev)
 
 	return panel;
 }
+
+/**
+ * drm_is_panel_follower() - Check if the device is a panel follower
+ * @dev: The 'struct device' to check
+ *
+ * This checks to see if a device needs to be power sequenced together with
+ * a panel using the panel follower API.
+ *
+ * The "panel" property of the follower points to the panel to be followed.
+ *
+ * Return: true if we should be power sequenced with a panel; false otherwise.
+ */
+bool drm_is_panel_follower(struct device *dev)
+{
+	/*
+	 * The "panel" property is actually a phandle, but for simplicity we
+	 * don't bother trying to parse it here. We just need to know if the
+	 * property is there.
+	 */
+	return device_property_present(dev, "panel");
+}
+EXPORT_SYMBOL(drm_is_panel_follower);
 
 /**
  * drm_panel_add_follower() - Register something to follow panel state.
