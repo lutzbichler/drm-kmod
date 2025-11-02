@@ -527,6 +527,7 @@ SRCS+=	aldebaran.c \
 	psp_v13_0.c \
 	psp_v13_0_4.c \
 	psp_v14_0.c \
+	psp_v15_0_8.c \
 	sdma_v2_4.c \
 	sdma_v3_0.c \
 	sdma_v4_0.c \
