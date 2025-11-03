@@ -1328,6 +1328,7 @@ SRCS+=	amd_powerplay.c \
 	smu_v14_0_0_ppt.c \
 	smu_v14_0_2_ppt.c \
 	smu_v15_0_0_ppt.c \
+	smu_v15_0_8_ppt.c \
 	smu_helper.c \
 	smumgr.c \
 	tonga_baco.c \
@@ -1875,6 +1876,7 @@ CWARNFLAGS.smu_v13_0_12_ppt.c=		-Wno-initializer-overrides
 CWARNFLAGS.smu_v14_0_0_ppt.c=		-Wno-initializer-overrides
 CWARNFLAGS.smu_v14_0_2_ppt.c=		-Wno-unused-variable -Wno-initializer-overrides
 CWARNFLAGS.smu_v15_0_0_ppt.c=		-Wno-initializer-overrides
+CWARNFLAGS.smu_v15_0_8_ppt.c=           -Wno-initializer-overrides
 CWARNFLAGS.tonga_smumgr.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.vega10_hwmgr.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.vega10_processpptables.c=	-Wno-missing-prototypes
