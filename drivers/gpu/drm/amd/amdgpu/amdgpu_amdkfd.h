@@ -42,6 +42,7 @@
 struct mmu_interval_notifier;
 #endif
 
+#include "kfd_topology.h"
 extern uint64_t amdgpu_amdkfd_total_mem_size;
 
 enum TLB_FLUSH_TYPE {

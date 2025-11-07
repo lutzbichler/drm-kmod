@@ -1359,6 +1359,7 @@ CFLAGS+= -I${SRCDIR}/display/dc/dml2_0/dml21/src/inc
 
 CFLAGS+= -I${.CURDIR:H:H}/linuxkpi/gplv2/include
 CFLAGS+= -I${.CURDIR:H:H}/linuxkpi/bsd/include
+CFLAGS+= -I${.CURDIR:H:H}/linuxkpi/bsd/include/uapi
 CFLAGS+= -I${SYSDIR}/compat/linuxkpi/common/include
 CFLAGS+= -I${SYSDIR}/compat/linuxkpi/dummy/include
 
