@@ -565,6 +565,7 @@ SRCS+=	aldebaran.c \
 	uvd_v5_0.c \
 	uvd_v6_0.c \
 	uvd_v7_0.c \
+	vce_v1_0.c \
 	vce_v2_0.c \
 	vce_v3_0.c \
 	vce_v4_0.c \
