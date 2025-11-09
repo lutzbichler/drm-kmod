@@ -195,16 +195,6 @@ struct drm_device {
 	char *unique;
 
 	/**
-	 * @struct_mutex:
-	 *
-	 * Lock for others (not &drm_minor.master and &drm_file.is_master)
-	 *
-	 * TODO: This lock used to be the BKL of the DRM subsystem. Move the
-	 *       lock into i915, which is the only remaining user.
-	 */
-	struct mutex struct_mutex;
-
-	/**
 	 * @master_mutex:
 	 *
 	 * Lock for &drm_minor.master and &drm_file.is_master
@@ -356,9 +346,6 @@ struct drm_device {
 	void *sysctl_private;
 	char busid_str[128];
 	int modesetting;
-/* FIXME: Should be defined in linux/mmzone.h and include linux/mmzone.h in the
- * correct headers, such as gfp.h. */
-#define	MAX_ORDER 11
 #endif
 	/**
 	 * @fb_helper:
