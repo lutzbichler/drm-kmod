@@ -216,13 +216,11 @@ static int drm_name_info DRM_SYSCTL_HANDLER_ARGS
 	DRM_SYSCTL_PRINT("%s 0x%jx", dev->driver->name,
 	    (uintmax_t)dev2udev(minor->bsd_device));
 
-	mutex_lock(&dev->struct_mutex);
 	master = dev->master;
 	if (master != NULL && master->unique) {
 		snprintf(buf, sizeof(buf), " %s", master->unique);
 		hasunique = 1;
 	}
-	mutex_unlock(&dev->struct_mutex);
 
 	if (hasunique)
 		SYSCTL_OUT(req, buf, strlen(buf));
@@ -241,8 +239,6 @@ static int drm_clients_info DRM_SYSCTL_HANDLER_ARGS
 	int retcode;
 	int privcount, i;
 
-	mutex_lock(&dev->struct_mutex);
-
 	privcount = 0;
 	list_for_each_entry(priv, &dev->filelist, lhead)
 		privcount++;
@@ -250,14 +246,11 @@ static int drm_clients_info DRM_SYSCTL_HANDLER_ARGS
 	tempprivs = malloc(sizeof(struct drm_file) * privcount, DRM_MEM_DRIVER,
 	    M_NOWAIT);
 	if (tempprivs == NULL) {
-		mutex_unlock(&dev->struct_mutex);
 		return ENOMEM;
 	}
 	i = 0;
 	list_for_each_entry(priv, &dev->filelist, lhead)
 		tempprivs[i++] = *priv;
-
-	mutex_unlock(&dev->struct_mutex);
 
 	DRM_SYSCTL_PRINT(
 	    "\na dev            pid   uid      magic     ioctls\n");
@@ -285,7 +278,6 @@ static int drm_vblank_info DRM_SYSCTL_HANDLER_ARGS
 	int retcode;
 	int i;
 
-	mutex_lock(&dev->struct_mutex);
 	DRM_SYSCTL_PRINT("\ncrtc ref count    last     enabled inmodeset\n");
 	if (dev->vblank == NULL)
 		goto done;
@@ -298,7 +290,6 @@ static int drm_vblank_info DRM_SYSCTL_HANDLER_ARGS
 		    dev->vblank[i].inmodeset);
 	}
 done:
-	mutex_unlock(&dev->struct_mutex);
 
 	SYSCTL_OUT(req, "", -1);
 	return retcode;
