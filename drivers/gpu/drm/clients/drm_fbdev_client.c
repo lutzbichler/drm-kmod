@@ -13,22 +13,36 @@
  * struct drm_client_funcs
  */
 
+static void drm_fbdev_client_free(struct drm_client_dev *client)
+{
+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
+
+	drm_fb_helper_unprepare(fb_helper);
+	kfree(fb_helper);
+}
+
 static void drm_fbdev_client_unregister(struct drm_client_dev *client)
 {
 	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
 
 	if (fb_helper->info) {
+		/*
+		 * Fully probed framebuffer device
+		 */
 		drm_fb_helper_unregister_info(fb_helper);
 	} else {
+		/*
+		 * Partially initialized client, no framebuffer device yet
+		 */
 		drm_client_release(&fb_helper->client);
-		drm_fb_helper_unprepare(fb_helper);
-		kfree(fb_helper);
 	}
 }
 
-static int drm_fbdev_client_restore(struct drm_client_dev *client)
+static int drm_fbdev_client_restore(struct drm_client_dev *client, bool force)
 {
-	drm_fb_helper_lastclose(client->dev);
+	struct drm_fb_helper *fb_helper = drm_fb_helper_from_client(client);
+
+	drm_fb_helper_restore_fbdev_mode_unlocked(fb_helper, force);
 
 	return 0;
 }
@@ -82,6 +96,7 @@ static int drm_fbdev_client_resume(struct drm_client_dev *client)
 
 static const struct drm_client_funcs drm_fbdev_client_funcs = {
 	.owner		= THIS_MODULE,
+	.free		= drm_fbdev_client_free,
 	.unregister	= drm_fbdev_client_unregister,
 	.restore	= drm_fbdev_client_restore,
 	.hotplug	= drm_fbdev_client_hotplug,
