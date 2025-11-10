@@ -142,7 +142,8 @@ SRCS+=	drm_panic.c
 .if !empty(KCONFIG:MDRM_CLIENT)
 SRCS+= 	drm_client.c \
 	drm_client_event.c \
-	drm_client_modeset.c
+	drm_client_modeset.c \
+	drm_client_sysrq.c
 .endif
 .if !empty(KCONFIG:MDRM_CLIENT_SETUP)
 SRCS+= 	drm_client_setup.c
