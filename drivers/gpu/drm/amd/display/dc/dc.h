@@ -1188,6 +1188,7 @@ struct dc_debug_options {
 	bool disable_stutter_for_wm_program;
 	bool enable_pg_cntl_debug_logs;
 	bool enable_block_sequence_programming;
+	uint32_t custom_psp_footer_size;
 };
 
 
