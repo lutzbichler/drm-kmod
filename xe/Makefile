@@ -193,6 +193,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
 	xe_pci_sriov.c \
+	xe_sriov_packet.c \
 	xe_sriov_pf.c \
 	xe_sriov_pf_control.c \
 	xe_sriov_pf_migration.c \
