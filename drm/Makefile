@@ -26,6 +26,7 @@ SRCS=	drm_atomic.c \
 	drm_client_modeset.c \
 	drm_client_sysrq.c \
 	drm_color_mgmt.c \
+	drm_colorop.c \
 	drm_connector.c \
 	drm_crtc.c \
 	drm_crtc_helper.c \
