@@ -5,7 +5,6 @@ I915_SRCDIR= ${.CURDIR:H}/drivers/gpu/drm/i915
 
 .PATH:	${SRCDIR} \
 	${SRCDIR}/display \
-	${SRCDIR}/display/ext \
 	${SRCDIR}/generated \
 	${I915_SRCDIR} \
 	${I915_SRCDIR}/display \
@@ -160,9 +159,6 @@ SRCS+=	intel_bo.c \
 	xe_stolen.c \
 	xe_tdf.c
 
-# xe/display/ext
-SRCS+=	i915_irq.c
-
 .if !empty(KCONFIG:MCONFIGFS_FS)
 SRCS+=	xe_configfs.c
 .endif
@@ -308,6 +304,7 @@ SRCS+=	icl_dsi.c \
 	intel_opregion.c \
 	intel_plane.c \
 	intel_panel.c \
+	intel_parent.c \
 	intel_pfit.c \
 	intel_pipe_crc.c \
 	intel_pmdemand.c \
@@ -346,7 +343,6 @@ CFLAGS+= -I${.CURDIR:H}/include/uapi
 CFLAGS+= -I${SRCDIR:H:H}
 CFLAGS+= -I${SRCDIR}
 CFLAGS+= -I${SRCDIR}/display
-CFLAGS+= -I${SRCDIR}/display/ext
 CFLAGS+= -I${SRCDIR}/compat-i915-headers
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
