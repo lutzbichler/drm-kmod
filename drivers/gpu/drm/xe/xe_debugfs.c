@@ -68,7 +68,7 @@ static int info(struct seq_file *m, void *data)
 	struct xe_gt *gt;
 	u8 id;
 
-	xe_pm_runtime_get(xe);
+	guard(xe_pm_runtime)(xe);
 
 	drm_printf(&p, "graphics_verx100 %d\n", xe->info.graphics_verx100);
 	drm_printf(&p, "media_verx100 %d\n", xe->info.media_verx100);
@@ -95,7 +95,6 @@ static int info(struct seq_file *m, void *data)
 			   gt->info.engine_mask);
 	}
 
-	xe_pm_runtime_put(xe);
 	return 0;
 }
 
@@ -110,9 +109,8 @@ static int sriov_info(struct seq_file *m, void *data)
 
 static int workarounds(struct xe_device *xe, struct drm_printer *p)
 {
-	xe_pm_runtime_get(xe);
+	guard(xe_pm_runtime)(xe);
 	xe_wa_device_dump(xe, p);
-	xe_pm_runtime_put(xe);
 
 	return 0;
 }
@@ -134,7 +132,7 @@ static int dgfx_pkg_residencies_show(struct seq_file *m, void *data)
 
 	xe = node_to_xe(m->private);
 	p = drm_seq_file_printer(m);
-	xe_pm_runtime_get(xe);
+	guard(xe_pm_runtime)(xe);
 	mmio = xe_root_tile_mmio(xe);
 	static const struct {
 		u32 offset;
@@ -151,7 +149,6 @@ static int dgfx_pkg_residencies_show(struct seq_file *m, void *data)
 	for (int i = 0; i < ARRAY_SIZE(residencies); i++)
 		read_residency_counter(xe, mmio, residencies[i].offset, residencies[i].name, &p);
 
-	xe_pm_runtime_put(xe);
 	return 0;
 }
 
@@ -163,7 +160,7 @@ static int dgfx_pcie_link_residencies_show(struct seq_file *m, void *data)
 
 	xe = node_to_xe(m->private);
 	p = drm_seq_file_printer(m);
-	xe_pm_runtime_get(xe);
+	guard(xe_pm_runtime)(xe);
 	mmio = xe_root_tile_mmio(xe);
 
 	static const struct {
@@ -178,7 +175,6 @@ static int dgfx_pcie_link_residencies_show(struct seq_file *m, void *data)
 	for (int i = 0; i < ARRAY_SIZE(residencies); i++)
 		read_residency_counter(xe, mmio, residencies[i].offset, residencies[i].name, &p);
 
-	xe_pm_runtime_put(xe);
 	return 0;
 }
 
