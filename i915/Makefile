@@ -150,6 +150,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_dp_test.c \
 	intel_dpt.c \
 	intel_dpt_common.c \
+	intel_dram.c \
 	intel_drrs.c \
 	intel_dsi.c \
 	intel_dsi_dcs_backlight.c \
@@ -326,8 +327,7 @@ SRCS+=	intel_pxp.c \
 .endif
 
 # soc/*
-SRCS+=	intel_dram.c \
-	intel_gmch.c \
+SRCS+=	intel_gmch.c \
 	intel_pch.c \
 	intel_rom.c
 
