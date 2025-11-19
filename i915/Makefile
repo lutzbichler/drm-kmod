@@ -29,6 +29,7 @@ SRCS=	\
 	i915_gem_evict.c \
 	i915_gem_gtt.c \
 	i915_gem_ww.c \
+	i915_gmch.c \
 	i915_ioctl.c \
 	i915_irq.c \
 	i915_memcpy.c \
@@ -425,7 +426,6 @@ CWARNFLAGS.intel_fbdev.c=	-Wno-initializer-overrides
 CWARNFLAGS.intel_freebsd.c=	-Wno-unused-function
 CWARNFLAGS.i915_gem_context.c=	-Wno-unused-function
 CWARNFLAGS.intel_ggtt.c=	-Wno-integer-overflow
-CWARNFLAGS.intel_gmch.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.intel_gt_mcr.c=	-Wno-tautological-constant-out-of-range-compare
 CWARNFLAGS.intel_guc_capture.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.intel_guc_submission.c=	-Wno-unused-function
@@ -443,6 +443,7 @@ CWARNFLAGS.i915_gem_execbuffer.c=	-Wno-unused-but-set-variable -Wno-sometimes-un
 CWARNFLAGS.i915_gem_mman.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.i915_gem_shmem.c=	-Wno-unused-but-set-variable
 CWARNFLAGS.i915_gem_ttm_move.c=	-Wno-unused-variable
+CWARNFLAGS.i915_gmch.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.i915_pci.c=		-Wno-initializer-overrides
 CWARNFLAGS.i915_active.c=	-Wno-unused-function
 CWARNFLAGS.i915_sw_fence.c=	-Wno-unused-function
