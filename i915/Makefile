@@ -9,7 +9,6 @@ SRCDIR=	${.CURDIR:H}/drivers/gpu/drm/i915
 	${SRCDIR}/gt/uc \
 	${SRCDIR}/oa \
 	${SRCDIR}/pxp \
-	${SRCDIR}/soc
 
 .include "../kconfig.mk"
 .include "../linuxkpi_version.mk"
@@ -149,6 +148,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_dp_test.c \
 	intel_dpt.c \
 	intel_dpt_common.c \
+	intel_dram.c \
 	intel_drrs.c \
 	intel_dsb.c \
 	intel_dsb_buffer.c \
@@ -179,6 +179,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_panel.c \
 	intel_panic.c \
 	intel_parent.c \
+	intel_pch.c \
 	intel_pch_display.c \
 	intel_pch_refclk.c \
 	intel_pfit.c \
@@ -187,6 +188,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_pmdemand.c \
 	intel_pps.c \
 	intel_qp_tables.c \
+	intel_rom.c \
 	intel_sbi.c \
 	intel_sdvo.c \
 	intel_snps_hdmi_pll.c \
@@ -324,12 +326,6 @@ SRCS+=	intel_pxp.c \
 	intel_pxp_session.c \
 	intel_pxp_tee.c
 .endif
-
-# soc/*
-SRCS+=	intel_dram.c \
-	intel_gmch.c \
-	intel_pch.c \
-	intel_rom.c
 
 .if !empty(KCONFIG:MCOMPAT)
 SRCS+=	i915_ioc32.c
