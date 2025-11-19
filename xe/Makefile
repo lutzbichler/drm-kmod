@@ -280,6 +280,7 @@ SRCS+=	icl_dsi.c \
 	intel_dpll.c \
 	intel_dpll_mgr.c \
 	intel_dpt_common.c \
+	intel_dram.c \
 	intel_drrs.c \
 	intel_dsb.c \
 	intel_dsi.c \
@@ -332,8 +333,7 @@ SRCS+=	icl_dsi.c \
 	skl_watermark.c
 
 # i915/soc
-SRCS+=	intel_dram.c \
-	intel_pch.c \
+SRCS+=	intel_pch.c \
 	intel_rom.c
 
 SRCS    +=                      \
