@@ -21,7 +21,6 @@
 #include <drm/intel/display_parent_interface.h>
 #include <uapi/drm/xe_drm.h>
 
-#include "soc/intel_dram.h"
 #include "intel_acpi.h"
 #include "intel_audio.h"
 #include "intel_bw.h"
@@ -33,6 +32,7 @@
 #include "intel_dmc.h"
 #include "intel_dmc_wl.h"
 #include "intel_dp.h"
+#include "intel_dram.h"
 #include "intel_encoder.h"
 #include "intel_fbdev.h"
 #include "intel_hdcp.h"
