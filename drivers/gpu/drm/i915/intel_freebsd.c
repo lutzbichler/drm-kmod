@@ -8,7 +8,7 @@ __FBSDID("$FreeBSD$");
 
 #include <asm/pgtable.h>
 
-#include "soc/intel_gmch.h"
+#include "i915_gmch.h"
 #include "intel_acpi.h"
 #include <linux/console.h>
 #include <linux/module.h>
