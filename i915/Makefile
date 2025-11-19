@@ -329,8 +329,7 @@ SRCS+=	intel_pxp.c \
 .endif
 
 # soc/*
-SRCS+=	intel_gmch.c \
-	intel_pch.c \
+SRCS+=	intel_pch.c \
 	intel_rom.c
 
 .if !empty(KCONFIG:MCOMPAT)
