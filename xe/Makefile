@@ -90,6 +90,7 @@ SRCS=	xe_bb.c \
 	xe_late_bind_fw.c \
 	xe_lrc.c \
 	xe_memirq.c \
+	xe_mert.c \
 	xe_migrate.c \
 	xe_mmio.c \
 	xe_mmio_gem.c \
