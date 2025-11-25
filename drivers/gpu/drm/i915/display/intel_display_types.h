@@ -1667,7 +1667,7 @@ struct intel_pps {
 	unsigned long last_power_on;
 	unsigned long last_backlight_off;
 	ktime_t panel_power_off_time;
-	intel_wakeref_t vdd_wakeref;
+	struct ref_tracker *vdd_wakeref;
 
 	union {
 		/*
@@ -1949,8 +1949,8 @@ struct intel_digital_port {
 	/* Used for DP and ICL+ TypeC/DP and TypeC/HDMI ports. */
 	enum aux_ch aux_ch;
 	enum intel_display_power_domain ddi_io_power_domain;
-	intel_wakeref_t ddi_io_wakeref;
-	intel_wakeref_t aux_wakeref;
+	struct ref_tracker *ddi_io_wakeref;
+	struct ref_tracker *aux_wakeref;
 
 	struct intel_tc_port *tc;
 
