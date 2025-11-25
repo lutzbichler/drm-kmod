@@ -172,6 +172,7 @@ static const struct xe_device_desc tgl_desc = {
 	.pre_gmdid_media_ip = &media_ip_xem,
 	PLATFORM(TIGERLAKE),
 	.dma_mask_size = 39,
+	.has_cached_pt = true,
 	.has_display = true,
 	.has_llc = true,
 	.has_sriov = true,
@@ -186,6 +187,7 @@ static const struct xe_device_desc rkl_desc = {
 	.pre_gmdid_media_ip = &media_ip_xem,
 	PLATFORM(ROCKETLAKE),
 	.dma_mask_size = 39,
+	.has_cached_pt = true,
 	.has_display = true,
 	.has_llc = true,
 	.max_gt_per_tile = 1,
@@ -201,6 +203,7 @@ static const struct xe_device_desc adl_s_desc = {
 	.pre_gmdid_media_ip = &media_ip_xem,
 	PLATFORM(ALDERLAKE_S),
 	.dma_mask_size = 39,
+	.has_cached_pt = true,
 	.has_display = true,
 	.has_llc = true,
 	.has_sriov = true,
@@ -221,6 +224,7 @@ static const struct xe_device_desc adl_p_desc = {
 	.pre_gmdid_media_ip = &media_ip_xem,
 	PLATFORM(ALDERLAKE_P),
 	.dma_mask_size = 39,
+	.has_cached_pt = true,
 	.has_display = true,
 	.has_llc = true,
 	.has_sriov = true,
@@ -239,6 +243,7 @@ static const struct xe_device_desc adl_n_desc = {
 	.pre_gmdid_media_ip = &media_ip_xem,
 	PLATFORM(ALDERLAKE_N),
 	.dma_mask_size = 39,
+	.has_cached_pt = true,
 	.has_display = true,
 	.has_llc = true,
 	.has_sriov = true,
@@ -664,6 +669,7 @@ static int xe_info_init_early(struct xe_device *xe,
 	xe->info.vram_flags = desc->vram_flags;
 
 	xe->info.is_dgfx = desc->is_dgfx;
+	xe->info.has_cached_pt = desc->has_cached_pt;
 	xe->info.has_fan_control = desc->has_fan_control;
 	/* runtime fusing may force flat_ccs to disabled later */
 	xe->info.has_flat_ccs = desc->has_flat_ccs;
