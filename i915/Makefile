@@ -29,6 +29,7 @@ SRCS=	\
 	i915_gem_gtt.c \
 	i915_gem_ww.c \
 	i915_gmch.c \
+	i915_hdcp_gsc.c \
 	i915_ioctl.c \
 	i915_irq.c \
 	i915_memcpy.c \
@@ -163,7 +164,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_dvo.c \
 	intel_global_state.c \
 	intel_gmbus.c \
-	intel_hdcp_gsc.c \
 	intel_hdcp_gsc_message.c \
 	intel_hdmi.c \
 	intel_hotplug_irq.c \
