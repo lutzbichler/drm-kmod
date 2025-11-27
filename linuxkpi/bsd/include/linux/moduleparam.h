@@ -37,6 +37,12 @@
 
 #include <linux/types.h>
 
+struct kernel_param {
+};
+
+struct kernel_param_ops {
+};
+
 #ifndef LINUXKPI_PARAM_PARENT
 #define	LINUXKPI_PARAM_PARENT	_compat_linuxkpi
 #endif
