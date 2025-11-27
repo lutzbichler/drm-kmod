@@ -37,6 +37,14 @@
 
 #include <linux/types.h>
 
+struct kernel_param {
+};
+
+struct kernel_param_ops {
+	int (*set)(const char *, const struct kernel_param *);
+	int (*get)(char *, const struct kernel_param *);
+};
+
 #ifndef LINUXKPI_PARAM_PARENT
 #define	LINUXKPI_PARAM_PARENT	_compat_linuxkpi
 #endif
@@ -188,6 +196,8 @@ SYSCTL_DECL(_dev_drm);
 	LINUXKPI_PARAM_##type(var, var, mode)
 
 #define	module_param_array(var, type, addr_argc, mode)
+
+#define	module_param_cb(name, cb, args, mode)
 
 #define	MODULE_PARM_DESC(name, desc) \
 	const char LINUXKPI_PARAM_DESC(name)[] = { desc }
