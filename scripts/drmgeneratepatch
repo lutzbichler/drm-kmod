@@ -127,7 +127,17 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     ':!include/drm/gma*' \
     ':!include/drm/drm_*vram*' \
     ':!include/drm/intel/display_member.h' \
+    ':!include/drm/intel/display_parent_interface.h' \
+    ':!include/drm/intel/i915_component.h' \
+    ':!include/drm/intel/i915_drm.h' \
+    ':!include/drm/intel/i915_gsc_proxy_mei_interface.h' \
+    ':!include/drm/intel/i915_pxp_tee_interface.h' \
     ':!include/drm/intel/i915_hdcp_interface.h' \
+    ':!include/drm/intel/intel-gtt.h' \
+    ':!include/drm/intel/intel_lb_mei_interface.h' \
+    ':!include/drm/intel/intel_lpe_audio.h' \
+    ':!include/drm/intel/pciids.h' \
+    ':!include/drm/intel/xe_sriov_vfio.h' \
     ':!include/uapi/drm/etnaviv*' \
     ':!include/uapi/drm/exynos_drm*' \
     ':!include/uapi/drm/habanalabs_accel.h' \

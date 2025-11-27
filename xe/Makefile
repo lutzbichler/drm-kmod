@@ -197,7 +197,8 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_sriov_pf_sysfs.c \
 	xe_sriov_vf.c \
 	xe_sriov_vf_ccs.c \
-	xe_sriov_pf_control.c
+	xe_sriov_pf_control.c \
+	xe_sriov_vfio.c
 
 .if !empty(KCONFIG:MDEBUG_FS)
 SRCS+=	xe_gt_sriov_pf_debugfs.c \
