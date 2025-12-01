@@ -173,7 +173,7 @@ dma_fence_signal(struct dma_fence *fence)
 ktime_t
 dma_fence_timestamp(struct dma_fence *fence)
 {
-	if (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (!dma_fence_test_signaled_flag(fence))
 		return (ktime_get());
 
 	while (!test_bit(DMA_FENCE_FLAG_TIMESTAMP_BIT, &fence->flags))
@@ -238,7 +238,7 @@ dma_fence_enable_sw_signaling(struct dma_fence *fence)
 	spin_lock(fence->lock);
 	was_enabled = test_and_set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
 	    &fence->flags);
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (dma_fence_test_signaled_flag(fence))
 		goto out;
 	if (was_enabled == false &&
 	    fence->ops && fence->ops->enable_signaling) {
@@ -262,7 +262,7 @@ dma_fence_add_callback(struct dma_fence *fence, struct dma_fence_cb *cb,
 	if (fence == NULL || func == NULL)
 		return (-EINVAL);
 
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
+	if (dma_fence_test_signaled_flag(fence)) {
 		INIT_LIST_HEAD(&cb->node);
 		return (-ENOENT);
 	}
@@ -271,7 +271,7 @@ dma_fence_add_callback(struct dma_fence *fence, struct dma_fence_cb *cb,
 	was_enabled = test_and_set_bit(DMA_FENCE_FLAG_ENABLE_SIGNAL_BIT,
 	    &fence->flags);
 
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (dma_fence_test_signaled_flag(fence))
 		rv = -ENOENT;
 	else if (was_enabled == false && fence->ops
 	    && fence->ops->enable_signaling) {
@@ -347,7 +347,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 
 	spin_lock(fence->lock);
 
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (dma_fence_test_signaled_flag(fence))
 		goto out;
 
 	if (timeout == 0) {
@@ -359,7 +359,7 @@ dma_fence_default_wait(struct dma_fence *fence, bool intr, signed long timeout)
 	cb.task = current;
 	list_add(&cb.base.node, &fence->cb_list);
 
-	while (!test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags) && rv > 0) {
+	while (!dma_fence_test_signaled_flag(fence) && rv > 0) {
 		if (intr)
 			__set_current_state(TASK_INTERRUPTIBLE);
 		else
@@ -389,7 +389,7 @@ dma_fence_test_signaled_any(struct dma_fence **fences, uint32_t count,
 
 	for (i = 0; i < count; ++i) {
 		struct dma_fence *fence = fences[i];
-		if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags)) {
+		if (dma_fence_test_signaled_flag(fence)) {
 			if (idx)
 				*idx = i;
 			return true;
@@ -603,7 +603,7 @@ bool
 dma_fence_is_signaled_locked(struct dma_fence *fence)
 {
 
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (dma_fence_test_signaled_flag(fence))
 		return (true);
 
 	if (fence->ops->signaled && fence->ops->signaled(fence)) {
@@ -621,7 +621,7 @@ bool
 dma_fence_is_signaled(struct dma_fence *fence)
 {
 
-	if (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags))
+	if (dma_fence_test_signaled_flag(fence))
 		return (true);
 
 	if (fence->ops->signaled && fence->ops->signaled(fence)) {

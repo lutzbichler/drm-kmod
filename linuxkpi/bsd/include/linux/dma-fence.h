@@ -141,6 +141,11 @@ dma_fence_is_container(struct dma_fence *fence)
 {
 	return (dma_fence_is_array(fence) || dma_fence_is_chain(fence));
 }
+static inline bool
+dma_fence_test_signaled_flag(struct dma_fence *fence)
+{
+	return (test_bit(DMA_FENCE_FLAG_SIGNALED_BIT, &fence->flags));
+}
 
 #define	dma_fence_begin_signalling() true
 #define	dma_fence_end_signalling(cookie) do { (void)cookie; } while (0)
