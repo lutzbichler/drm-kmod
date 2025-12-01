@@ -9,7 +9,6 @@
 #include <drm/drm_fourcc.h>
 #include <drm/drm_print.h>
 
-#include "pxp/intel_pxp.h"
 #include "intel_bo.h"
 #include "intel_color.h"
 #include "intel_color_pipeline.h"
@@ -2308,7 +2307,7 @@ static void check_protection(struct intel_plane_state *plane_state)
 	if (DISPLAY_VER(display) < 11)
 		return;
 
-	plane_state->decrypt = intel_pxp_key_check(obj, false) == 0;
+	plane_state->decrypt = intel_bo_key_check(obj) == 0;
 	plane_state->force_black = intel_bo_is_protected(obj) &&
 		!plane_state->decrypt;
 }
