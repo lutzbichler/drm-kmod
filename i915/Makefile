@@ -120,6 +120,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_crtc_state_dump.c \
 	intel_cmtg.c \
 	intel_colorop.c \
+	intel_color_pipeline.c \
 	intel_cx0_phy.c \
 	intel_dbuf_bw.c \
 	intel_ddi.c \
