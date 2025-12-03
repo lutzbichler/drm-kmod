@@ -115,6 +115,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_bo.c \
 	intel_casf.c \
 	intel_colorop.c \
+	intel_color_pipeline.c \
 	intel_crt.c \
 	intel_crtc_state_dump.c \
 	intel_cmtg.c \

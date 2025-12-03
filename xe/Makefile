@@ -241,6 +241,7 @@ SRCS+=	icl_dsi.c \
 	intel_cmtg.c \
 	intel_color.c \
 	intel_colorop.c \
+	intel_color_pipeline.c \
 	intel_combo_phy.c \
 	intel_connector.c \
 	intel_crtc.c \
