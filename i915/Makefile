@@ -114,6 +114,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_backlight.c \
 	intel_bo.c \
 	intel_casf.c \
+	intel_colorop.c \
 	intel_crt.c \
 	intel_crtc_state_dump.c \
 	intel_cmtg.c \
