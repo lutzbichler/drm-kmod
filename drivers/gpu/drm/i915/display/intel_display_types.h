@@ -512,6 +512,12 @@ struct intel_hdcp {
 	bool force_hdcp14;
 };
 
+enum intel_panel_replay_dsc_support {
+	INTEL_DP_PANEL_REPLAY_DSC_NOT_SUPPORTED,
+	INTEL_DP_PANEL_REPLAY_DSC_FULL_FRAME_ONLY,
+	INTEL_DP_PANEL_REPLAY_DSC_SELECTIVE_UPDATE,
+};
+
 struct intel_connector {
 	struct drm_connector base;
 	/*
@@ -568,6 +574,8 @@ struct intel_connector {
 		struct {
 			u8 dpcd[DP_PANEL_REPLAY_CAP_SIZE];
 #define INTEL_PR_DPCD_INDEX(pr_dpcd_register)	((pr_dpcd_register) - DP_PANEL_REPLAY_CAP_SUPPORT)
+
+			enum intel_panel_replay_dsc_support dsc_support;
 
 			u16 su_w_granularity;
 			u16 su_y_granularity;
@@ -971,12 +979,6 @@ struct intel_csc_matrix {
 	u16 coeff[9];
 	u16 preoff[3];
 	u16 postoff[3];
-};
-
-enum intel_panel_replay_dsc_support {
-	INTEL_DP_PANEL_REPLAY_DSC_NOT_SUPPORTED,
-	INTEL_DP_PANEL_REPLAY_DSC_FULL_FRAME_ONLY,
-	INTEL_DP_PANEL_REPLAY_DSC_SELECTIVE_UPDATE,
 };
 
 struct scaler_filter_coeff {
@@ -1755,7 +1757,6 @@ struct intel_psr {
 	bool source_panel_replay_support;
 	bool sink_panel_replay_support;
 	bool sink_panel_replay_su_support;
-	enum intel_panel_replay_dsc_support sink_panel_replay_dsc_support;
 	bool panel_replay_enabled;
 	u32 dc3co_exitline;
 	u32 dc3co_exit_delay;
