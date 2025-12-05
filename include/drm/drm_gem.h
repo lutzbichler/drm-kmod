@@ -461,6 +461,19 @@ struct drm_gem_object {
  * &file_operations structure.  If all you need are the default ops, use
  * DEFINE_DRM_GEM_FOPS instead.
  */
+#ifdef __linux__
+#define DRM_GEM_FOPS \
+	.open		= drm_open,\
+	.release	= drm_release,\
+	.unlocked_ioctl	= drm_ioctl,\
+	.compat_ioctl	= drm_compat_ioctl,\
+	.poll		= drm_poll,\
+	.read		= drm_read,\
+	.llseek		= noop_llseek,\
+	.get_unmapped_area	= drm_gem_get_unmapped_area,\
+	.mmap		= drm_gem_mmap, \
+	.fop_flags	= FOP_UNSIGNED_OFFSET
+#elif defined(__FreeBSD__)
 #define DRM_GEM_FOPS \
 	.open		= drm_open,\
 	.release	= drm_release,\
@@ -471,6 +484,7 @@ struct drm_gem_object {
 	.llseek		= noop_llseek,\
 	.mmap		= drm_gem_mmap, \
 	.fop_flags	= FOP_UNSIGNED_OFFSET
+#endif
 
 /**
  * DEFINE_DRM_GEM_FOPS() - macro to generate file operations for GEM drivers
@@ -510,6 +524,11 @@ void drm_gem_vm_close(struct vm_area_struct *vma);
 int drm_gem_mmap_obj(struct drm_gem_object *obj, unsigned long obj_size,
 		     struct vm_area_struct *vma);
 int drm_gem_mmap(struct file *filp, struct vm_area_struct *vma);
+#ifdef __linux__
+unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
+					unsigned long len, unsigned long pgoff,
+					unsigned long flags);
+#endif
 
 /**
  * drm_gem_object_get - acquire a GEM buffer object reference
