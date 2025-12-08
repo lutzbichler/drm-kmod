@@ -83,7 +83,7 @@ static bool xe_nvm_writable_override(struct xe_device *xe)
 	return writable_override;
 }
 
-static void xe_nvm_fini(void *arg)
+void xe_nvm_fini(void *arg)
 {
 	struct xe_device *xe = arg;
 	struct intel_dg_nvm_dev *nvm = xe->nvm;
