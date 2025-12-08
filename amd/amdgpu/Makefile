@@ -389,6 +389,7 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_rap.c \
 	amdgpu_ras.c \
 	amdgpu_ras_eeprom.c \
+	amdgpu_reg_access.c \
 	amdgpu_reset.c \
 	amdgpu_ring_mux.c \
 	amdgpu_rlc.c \
