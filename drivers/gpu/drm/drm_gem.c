@@ -176,7 +176,6 @@ drm_gem_init(struct drm_device *dev)
 
 /**
  * drm_gem_object_init - initialize an allocated shmem-backed GEM object
- * object in a given shmfs mountpoint
  *
  * @dev: drm_device the object should be initialized for
  * @obj: drm_gem_object to initialize
@@ -188,7 +187,7 @@ drm_gem_init(struct drm_device *dev)
  */
 int drm_gem_object_init(struct drm_device *dev, struct drm_gem_object *obj,
 			size_t size)
- {
+{
 	struct vfsmount *huge_mnt;
 	struct file *filp;
 
@@ -1012,41 +1011,33 @@ int drm_gem_change_handle_ioctl(struct drm_device *dev, void *data,
 {
 	struct drm_gem_change_handle *args = data;
 	struct drm_gem_object *obj;
-	int handle, ret;
+	int ret;
 
 	if (!drm_core_check_feature(dev, DRIVER_GEM))
 		return -EOPNOTSUPP;
-
-	/* idr_alloc() limitation. */
-	if (args->new_handle > INT_MAX)
-		return -EINVAL;
-	handle = args->new_handle;
 
 	obj = drm_gem_object_lookup(file_priv, args->handle);
 	if (!obj)
 		return -ENOENT;
 
-	if (args->handle == handle) {
-		ret = 0;
-		goto out;
-	}
+	if (args->handle == args->new_handle)
+		return 0;
 
 	mutex_lock(&file_priv->prime.lock);
 
 	spin_lock(&file_priv->table_lock);
-	ret = idr_alloc(&file_priv->object_idr, obj, handle, handle + 1,
-			GFP_NOWAIT);
+	ret = idr_alloc(&file_priv->object_idr, obj,
+		args->new_handle, args->new_handle + 1, GFP_NOWAIT);
 	spin_unlock(&file_priv->table_lock);
 
 	if (ret < 0)
 		goto out_unlock;
 
 	if (obj->dma_buf) {
-		ret = drm_prime_add_buf_handle(&file_priv->prime, obj->dma_buf,
-					       handle);
+		ret = drm_prime_add_buf_handle(&file_priv->prime, obj->dma_buf, args->new_handle);
 		if (ret < 0) {
 			spin_lock(&file_priv->table_lock);
-			idr_remove(&file_priv->object_idr, handle);
+			idr_remove(&file_priv->object_idr, args->new_handle);
 			spin_unlock(&file_priv->table_lock);
 			goto out_unlock;
 		}
@@ -1062,8 +1053,6 @@ int drm_gem_change_handle_ioctl(struct drm_device *dev, void *data,
 
 out_unlock:
 	mutex_unlock(&file_priv->prime.lock);
-out:
-	drm_gem_object_put(obj);
 
 	return ret;
 }
@@ -1292,6 +1281,7 @@ drm_gem_object_lookup_at_offset(struct file *filp, unsigned long start,
 	return obj;
 }
 
+#ifdef CONFIG_MMU
 /**
  * drm_gem_get_unmapped_area - get memory mapping region routine for GEM objects
  * @filp: DRM file pointer
@@ -1314,7 +1304,6 @@ drm_gem_object_lookup_at_offset(struct file *filp, unsigned long start,
  * If a GEM object is not available at the given offset or if the caller is not
  * granted access to it, fall back to mm_get_unmapped_area().
  */
-#ifdef __linux__
 unsigned long drm_gem_get_unmapped_area(struct file *filp, unsigned long uaddr,
 					unsigned long len, unsigned long pgoff,
 					unsigned long flags)
