@@ -26,6 +26,7 @@
  */
 
 #include <linux/gpio/machine.h>
+#include <linux/pm_runtime.h>
 #include "amdgpu.h"
 #include "isp_v4_1_1.h"
 
@@ -146,6 +147,9 @@ static int isp_genpd_add_device(struct device *dev, void *data)
 		return -ENODEV;
 	}
 
+	/* The devices will be managed by the pm ops from the parent */
+	dev_pm_syscore_device(dev, true);
+
 exit:
 	/* Continue to add */
 	return 0;
@@ -178,12 +182,55 @@ static int isp_genpd_remove_device(struct device *dev, void *data)
 		drm_err(&adev->ddev, "Failed to remove dev from genpd %d\n", ret);
 		return -ENODEV;
 	}
+	dev_pm_syscore_device(dev, false);
 
 exit:
 	/* Continue to remove */
 	return 0;
 }
+
+static int isp_suspend_device(struct device *dev, void *data)
+{
+	return pm_runtime_force_suspend(dev);
+}
+
+static int isp_resume_device(struct device *dev, void *data)
+{
+	return pm_runtime_force_resume(dev);
+}
 #endif
+
+static int isp_v4_1_1_hw_suspend(struct amdgpu_isp *isp)
+{
+#ifdef __linux__
+	int r;
+
+	r = device_for_each_child(isp->parent, NULL,
+				  isp_suspend_device);
+	if (r)
+		dev_err(isp->parent, "failed to suspend hw devices (%d)\n", r);
+
+	return r;
+#elif defined(__FreeBSD__)
+	return 0;
+#endif
+}
+
+static int isp_v4_1_1_hw_resume(struct amdgpu_isp *isp)
+{
+#ifdef __linux__
+	int r;
+
+	r = device_for_each_child(isp->parent, NULL,
+				  isp_resume_device);
+	if (r)
+		dev_err(isp->parent, "failed to resume hw device (%d)\n", r);
+
+	return r;
+#elif defined(__FreeBSD__)
+	return 0;
+#endif
+}
 
 static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 {
@@ -387,6 +434,8 @@ static int isp_v4_1_1_hw_fini(struct amdgpu_isp *isp)
 static const struct isp_funcs isp_v4_1_1_funcs = {
 	.hw_init = isp_v4_1_1_hw_init,
 	.hw_fini = isp_v4_1_1_hw_fini,
+	.hw_suspend = isp_v4_1_1_hw_suspend,
+	.hw_resume = isp_v4_1_1_hw_resume,
 };
 
 void isp_v4_1_1_set_isp_funcs(struct amdgpu_isp *isp)
