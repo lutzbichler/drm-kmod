@@ -37,6 +37,7 @@ SRCS=	\
 	i915_mm.c \
 	i915_mmio_range.c \
 	i915_module.c \
+	i915_panic.c \
 	i915_params.c \
 	i915_pci.c \
 	i915_query.c \
@@ -177,7 +178,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_modeset_setup.c \
 	intel_modeset_verify.c \
 	intel_panel.c \
-	intel_panic.c \
 	intel_parent.c \
 	intel_pch.c \
 	intel_pch_display.c \
