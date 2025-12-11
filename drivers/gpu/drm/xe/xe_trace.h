@@ -87,6 +87,11 @@ trace_xe_exec_queue_reset(struct xe_exec_queue *q)
 }
 
 static inline void
+trace_xe_exec_queue_cgp_context_error(struct xe_exec_queue *q)
+{
+}
+
+static inline void
 trace_xe_exec_queue_stop(struct xe_exec_queue *q)
 {
 }
