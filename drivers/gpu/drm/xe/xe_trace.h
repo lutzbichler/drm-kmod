@@ -6,9 +6,10 @@
 #include <sys/param.h>
 #include <sys/ktr.h>
 
+#include "xe_exec_queue.h"
 #include "xe_gpu_scheduler_types.h"
-#include "xe_tlb_inval_types.h"
 #include "xe_sched_job_types.h"
+#include "xe_tlb_inval_types.h"
 #include "xe_vm_types.h"
 
 static inline void
@@ -63,6 +64,11 @@ trace_xe_hw_fence_try_signal(struct xe_hw_fence *fence)
 
 static inline void
 trace_xe_exec_queue_create(struct xe_exec_queue *q)
+{
+}
+
+static inline void
+trace_xe_exec_queue_create_multi_queue(struct xe_exec_queue *q)
 {
 }
 
