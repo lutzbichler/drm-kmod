@@ -58,6 +58,12 @@ trace_xe_hw_fence_try_signal(struct xe_hw_fence *fence)
 }
 
 static inline void
+trace_xe_exec_queue_create_multi_queue(struct xe_exec_queue *q)
+{
+	CTR2(KTR_DRM, "xe_exec_queue_multi_queue q %s (%p)", q->name, q);
+}
+
+static inline void
 trace_xe_exec_queue_create(struct xe_exec_queue *q)
 {
 	CTR2(KTR_DRM, "xe_exec_queue_create q %s (%p)", q->name, q);
