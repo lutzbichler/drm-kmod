@@ -176,22 +176,11 @@ xe_svm_range_notifier_event_end(struct xe_vm *vm, struct drm_gpusvm_range *r,
 						   mmu_range);
 }
 
-static s64 xe_svm_stats_ktime_us_delta(ktime_t start)
-{
-	return IS_ENABLED(CONFIG_DEBUG_FS) ?
-		ktime_us_delta(ktime_get(), start) : 0;
-}
-
 static void xe_svm_tlb_inval_us_stats_incr(struct xe_gt *gt, ktime_t start)
 {
-	s64 us_delta = xe_svm_stats_ktime_us_delta(start);
+	s64 us_delta = xe_gt_stats_ktime_us_delta(start);
 
 	xe_gt_stats_incr(gt, XE_GT_STATS_ID_SVM_TLB_INVAL_US, us_delta);
-}
-
-static ktime_t xe_svm_stats_ktime_get(void)
-{
-	return IS_ENABLED(CONFIG_DEBUG_FS) ? ktime_get() : 0;
 }
 
 static void xe_svm_invalidate(struct drm_gpusvm *gpusvm,
@@ -202,7 +191,7 @@ static void xe_svm_invalidate(struct drm_gpusvm *gpusvm,
 	struct xe_device *xe = vm->xe;
 	struct drm_gpusvm_range *r, *first;
 	struct xe_tile *tile;
-	ktime_t start = xe_svm_stats_ktime_get();
+	ktime_t start = xe_gt_stats_ktime_get();
 	u64 adj_start = mmu_range->start, adj_end = mmu_range->end;
 	u8 tile_mask = 0, id;
 	long err;
@@ -442,7 +431,7 @@ static void xe_svm_copy_us_stats_incr(struct xe_gt *gt,
 				      unsigned long npages,
 				      ktime_t start)
 {
-	s64 us_delta = xe_svm_stats_ktime_us_delta(start);
+	s64 us_delta = xe_gt_stats_ktime_us_delta(start);
 
 	if (dir == XE_SVM_COPY_TO_VRAM) {
 		switch (npages) {
@@ -495,7 +484,7 @@ static int xe_svm_copy(struct page **pages,
 	u64 vram_addr = XE_VRAM_ADDR_INVALID;
 	int err = 0, pos = 0;
 	bool sram = dir == XE_SVM_COPY_TO_SRAM;
-	ktime_t start = xe_svm_stats_ktime_get();
+	ktime_t start = xe_gt_stats_ktime_get();
 
 	/*
 	 * This flow is complex: it locates physically contiguous device pages,
@@ -1011,7 +1000,7 @@ static void xe_svm_range_##elem##_us_stats_incr(struct xe_gt *gt, \
 						struct xe_svm_range *range, \
 						ktime_t start) \
 { \
-	s64 us_delta = xe_svm_stats_ktime_us_delta(start); \
+	s64 us_delta = xe_gt_stats_ktime_us_delta(start); \
 \
 	switch (xe_svm_range_size(range)) { \
 	case SZ_4K: \
@@ -1056,7 +1045,7 @@ static int __xe_svm_handle_pagefault(struct xe_vm *vm, struct xe_vma *vma,
 	struct drm_pagemap *dpagemap;
 	struct xe_tile *tile = gt_to_tile(gt);
 	int migrate_try_count = ctx.devmem_only ? 3 : 1;
-	ktime_t start = xe_svm_stats_ktime_get(), bind_start, get_pages_start;
+	ktime_t start = xe_gt_stats_ktime_get(), bind_start, get_pages_start;
 	int err;
 
 	lockdep_assert_held_write(&vm->lock);
@@ -1095,7 +1084,7 @@ retry:
 
 	if (--migrate_try_count >= 0 &&
 	    xe_svm_range_needs_migrate_to_vram(range, vma, !!dpagemap || ctx.devmem_only)) {
-		ktime_t migrate_start = xe_svm_stats_ktime_get();
+		ktime_t migrate_start = xe_gt_stats_ktime_get();
 
 		/* TODO : For multi-device dpagemap will be used to find the
 		 * remote tile and remote device. Will need to modify
@@ -1132,7 +1121,7 @@ retry:
 	}
 
 get_pages:
-	get_pages_start = xe_svm_stats_ktime_get();
+	get_pages_start = xe_gt_stats_ktime_get();
 
 	range_debug(range, "GET PAGES");
 	err = xe_svm_range_get_pages(vm, range, &ctx);
@@ -1159,7 +1148,7 @@ get_pages:
 	xe_svm_range_get_pages_us_stats_incr(gt, range, get_pages_start);
 	range_debug(range, "PAGE FAULT - BIND");
 
-	bind_start = xe_svm_stats_ktime_get();
+	bind_start = xe_gt_stats_ktime_get();
 	xe_validation_guard(&vctx, &vm->xe->val, &exec, (struct xe_val_flags) {}, err) {
 		err = xe_vm_drm_exec_lock(vm, &exec);
 		drm_exec_retry_on_contention(&exec);
