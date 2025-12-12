@@ -1367,6 +1367,7 @@ SRCS+=	ras_aca.c \
 	ras_core.c \
 	ras_cper.c \
 	ras_eeprom.c \
+	ras_eeprom_fw.c \
 	ras_gfx.c \
 	ras_gfx_v9_0.c \
 	ras_log_ring.c \
