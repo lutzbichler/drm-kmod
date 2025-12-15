@@ -303,6 +303,7 @@ SRCS+=	icl_dsi.c \
 	intel_hotplug.c \
 	intel_hotplug_irq.c \
 	intel_hti.c \
+	intel_initial_plane.c \
 	intel_link_bw.c \
 	intel_lspcon.c \
 	intel_lt_phy.c \
