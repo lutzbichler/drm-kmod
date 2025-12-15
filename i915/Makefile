@@ -33,6 +33,7 @@ SRCS=	\
 	i915_gem_ww.c \
 	i915_gmch.c \
 	i915_hdcp_gsc.c \
+	i915_initial_plane.c \
 	i915_ioctl.c \
 	i915_irq.c \
 	i915_memcpy.c \
@@ -187,7 +188,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_pch_refclk.c \
 	intel_pfit.c \
 	intel_plane.c \
-	intel_plane_initial.c \
 	intel_pmdemand.c \
 	intel_pps.c \
 	intel_qp_tables.c \
