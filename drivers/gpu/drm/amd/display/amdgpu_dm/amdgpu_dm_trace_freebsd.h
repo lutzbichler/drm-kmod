@@ -691,6 +691,31 @@ trace_amdgpu_dm_brightness(void *function, u32 user_brightness,
 		 (aux ? "true" : "false"), (ac ? "AC" : "DC"));
 }
 
+/* TRACE_EVENT(amdgpu_dm_ism_commit, */
+/* TP_PROTO(int active_vblank_irq_count, bool vblank_enabled, bool allow_panel_sso), */
+
+static inline void
+trace_amdgpu_dm_ism_commit(int active_vblank_irq_count, bool vblank_enabled,
+	bool allow_panel_sso)
+{
+	CTR3(KTR_DRM,
+	     "amdgpu_dm_ism_commit: active_vblank_irq_count=%d vblank_enabled=%d "
+		 "allow_panel_sso=%d",
+		 active_vblank_irq_count, vblank_enabled, allow_panel_sso);
+}
+
+/* TRACE_EVENT(amdgpu_dm_ism_event, */
+/* TP_PROTO(int crtc_id, const char *prev_state, const char *curr_state, const char *event), */
+
+static inline void
+trace_amdgpu_dm_ism_event(int crtc_id, const char *prev_state,
+	const char *curr_state, const char *event)
+{
+	CTR4(KTR_DRM,
+		 "amdgpu_dm_ism_event: [CRTC %d] %s -> %s on event %s",
+		 crtc_id, prev_state, curr_state, event);
+}
+
 static inline bool
 trace_amdgpu_dm_brightness_enabled(void)
 {
