@@ -639,6 +639,7 @@ SRCS+=	amdgpu_dm_color.c \
 	amdgpu_dm_hdcp.c \
 	amdgpu_dm_helpers.c \
 	amdgpu_dm_irq.c \
+	amdgpu_dm_ism.c \
 	amdgpu_dm_mst_types.c \
 	amdgpu_dm_plane.c \
 	amdgpu_dm_pp_smu.c \
