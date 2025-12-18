@@ -21,6 +21,7 @@ SRCS=	\
 	i915_cmd_parser.c \
 	i915_config.c \
 	i915_deps.c \
+	i915_display_pc8.c \
 	i915_driver.c \
 	i915_drm_client.c \
 	i915_edram.c \
