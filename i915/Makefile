@@ -136,6 +136,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_display_device.c \
 	intel_display_driver.c \
 	intel_display_irq.c \
+	intel_display_limits.c \
 	intel_display_params.c \
 	intel_display_power_map.c \
 	intel_display_power_well.c \
@@ -162,14 +163,15 @@ SRCS+=	dvo_ch7017.c \
 	intel_dsi_vbt.c \
 	intel_dsb.c \
 	intel_dsb_buffer.c \
+	intel_dvo.c \
 	intel_encoder.c \
 	intel_fb.c \
 	intel_fb_bo.c \
 	intel_fb_pin.c \
 	intel_flipq.c \
-	intel_dvo.c \
 	intel_global_state.c \
 	intel_gmbus.c \
+	intel_gvt_api.c \
 	intel_hdcp_gsc_message.c \
 	intel_hdmi.c \
 	intel_hotplug_irq.c \
