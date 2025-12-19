@@ -78,6 +78,7 @@ struct dma_fence_ops {
 };
 
 enum dma_fence_flag_bits {
+	DMA_FENCE_FLAG_INITIALIZED_BIT,
 	DMA_FENCE_FLAG_SEQNO64_BIT,
 	DMA_FENCE_FLAG_SIGNALED_BIT,
 	DMA_FENCE_FLAG_TIMESTAMP_BIT,
@@ -142,6 +143,11 @@ static inline bool
 dma_fence_is_container(struct dma_fence *fence)
 {
 	return (dma_fence_is_array(fence) || dma_fence_is_chain(fence));
+}
+static inline bool
+dma_fence_was_initialized(struct dma_fence *fence)
+{
+	return (fence && test_bit(DMA_FENCE_FLAG_INITIALIZED_BIT, &fence->flags));
 }
 
 #define	dma_fence_begin_signalling() true
