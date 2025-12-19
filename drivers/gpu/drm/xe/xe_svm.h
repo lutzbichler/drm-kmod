@@ -209,6 +209,7 @@ struct xe_tile;
 struct xe_vram_region;
 
 #define XE_INTERCONNECT_VRAM 1
+#define XE_INTERCONNECT_P2P (XE_INTERCONNECT_VRAM + 1)
 
 struct xe_svm_range {
 	struct {
