@@ -535,7 +535,7 @@ dma_fence_init_base(struct dma_fence *fence, const struct dma_fence_ops *ops,
 	fence->lock = lock;
 	fence->context = context;
 	fence->seqno = seqno;
-	fence->flags = flags;
+	fence->flags = flags | BIT(DMA_FENCE_FLAG_INITIALIZED_BIT);
 	fence->error = 0;
 }
 
