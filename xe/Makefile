@@ -103,6 +103,7 @@ SRCS=	xe_bb.c \
 	xe_page_reclaim.c \
 	xe_pat.c \
 	xe_pci.c \
+	xe_pci_rebar.c \
 	xe_pcode.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
