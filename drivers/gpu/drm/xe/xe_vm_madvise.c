@@ -336,11 +336,13 @@ static int xe_madvise_details_init(struct xe_vm *vm, const struct drm_xe_madvise
 		if (XE_IOCTL_DBG(xe, IS_ERR(dpagemap)))
 			return PTR_ERR(dpagemap);
 
+#ifdef __linux__
 		/* Don't allow a foreign placement without a fast interconnect! */
 		if (XE_IOCTL_DBG(xe, dpagemap->pagemap->owner != vm->svm.peer.owner)) {
 			drm_pagemap_put(dpagemap);
 			return -ENOLINK;
 		}
+#endif
 		details->dpagemap = dpagemap;
 	}
 
