@@ -231,6 +231,11 @@ void mpc401_get_gamut_remap(
 	int mpcc_id,
 	struct mpc_grph_gamut_adjustment *adjust);
 
+void mpc401_update_3dlut_fast_load_select(
+	struct mpc *mpc,
+	int mpcc_id,
+	int hubp_idx);
+
 void mpc_program_gamut_remap(
 	struct mpc *mpc,
 	unsigned int mpcc_id,

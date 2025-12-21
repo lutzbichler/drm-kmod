@@ -114,7 +114,6 @@ struct amdgpu_kfd_dev {
 	/* Client for KFD BO GEM handle allocations */
 	struct drm_client_dev client;
 
-
 	/* HMM page migration MEMORY_DEVICE_PRIVATE mapping
 	 * Must be last --ends in a flexible-array member.
 	 */
