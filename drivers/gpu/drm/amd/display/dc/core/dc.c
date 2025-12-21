@@ -2889,26 +2889,6 @@ static enum surface_update_type det_surface_update(const struct dc *dc,
 		type = UPDATE_TYPE_FULL;
 		elevate_update_type(&overall_type, type);
 	}
-	if (update_flags->bits.mcm_transfer_function_enable_change) {
-		type = UPDATE_TYPE_FULL;
-		elevate_update_type(&overall_type, type);
-	}
-	if (update_flags->bits.mcm_transfer_function_enable_change) {
-		type = UPDATE_TYPE_FULL;
-		elevate_update_type(&overall_type, type);
-	}
-	if (update_flags->bits.mcm_transfer_function_enable_change) {
-		type = UPDATE_TYPE_FULL;
-		elevate_update_type(&overall_type, type);
-	}
-	if (update_flags->bits.mcm_transfer_function_enable_change) {
-		type = UPDATE_TYPE_FULL;
-		elevate_update_type(&overall_type, type);
-	}
-	if (update_flags->bits.mcm_transfer_function_enable_change) {
-		type = UPDATE_TYPE_FULL;
-		elevate_update_type(&overall_type, type);
-	}
 
 	if (dc->debug.enable_legacy_fast_update &&
 			(update_flags->bits.gamma_change ||
@@ -3229,6 +3209,7 @@ static void copy_surface_update_to_plane(
 	if (srf_update->gamut_remap_matrix)
 		surface->gamut_remap_matrix =
 			*srf_update->gamut_remap_matrix;
+
 	if (srf_update->cursor_csc_color_matrix)
 		surface->cursor_csc_color_matrix =
 			*srf_update->cursor_csc_color_matrix;
