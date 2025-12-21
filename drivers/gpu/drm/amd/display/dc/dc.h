@@ -314,10 +314,7 @@ struct dc_caps {
 	bool ips_support;
 	bool ips_v2_support;
 	uint32_t num_of_internal_disp;
-	uint32_t max_dwb_htap;
-	uint32_t max_dwb_vtap;
 	enum dp_protocol_version max_dp_protocol_version;
-	bool spdif_aud;
 	unsigned int mall_size_per_mem_channel;
 	unsigned int mall_size_total;
 	unsigned int cursor_cache_size;
@@ -1515,7 +1512,6 @@ struct dc_plane_info {
 	int  global_alpha_value;
 	bool input_csc_enabled;
 	int layer_index;
-	bool front_buffer_rendering_active;
 	enum chroma_cositing cositing;
 };
 
@@ -1942,7 +1938,6 @@ struct dc_plane_state *dc_get_surface_for_mpcc(struct dc *dc,
 uint32_t dc_get_opp_for_plane(struct dc *dc, struct dc_plane_state *plane);
 
 void dc_set_disable_128b_132b_stream_overhead(bool disable);
-bool dc_get_disable_128b_132b_stream_overhead(void);
 
 /* The function returns minimum bandwidth required to drive a given timing
  * return - minimum required timing bandwidth in kbps.
