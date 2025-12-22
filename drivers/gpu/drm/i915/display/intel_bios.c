@@ -188,7 +188,7 @@ static const struct {
 	{ .section_id = BDB_LFP_DATA,
 	  .min_size = 0, /* special case */ },
 	{ .section_id = BDB_LFP_BACKLIGHT,
-	  .min_size = sizeof(struct bdb_lfp_backlight_data), },
+	  .min_size = sizeof(struct bdb_lfp_backlight), },
 	{ .section_id = BDB_LFP_POWER,
 	  .min_size = sizeof(struct bdb_lfp_power), },
 	{ .section_id = BDB_MIPI_CONFIG,
@@ -1014,7 +1014,7 @@ static void
 parse_lfp_backlight(struct intel_display *display,
 		    struct intel_panel *panel)
 {
-	const struct bdb_lfp_backlight_data *backlight_data;
+	const struct bdb_lfp_backlight *backlight_data;
 	const struct lfp_backlight_data_entry *entry;
 	int panel_type = panel->vbt.panel_type;
 	u16 level;
@@ -3108,7 +3108,6 @@ err_free_vbt:
 	kfree(vbt);
 err_free_rom:
 	intel_rom_free(rom);
-
 	return NULL;
 }
 

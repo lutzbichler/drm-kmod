@@ -539,7 +539,7 @@ shmem_pwrite(struct drm_i915_gem_object *obj,
 			return err;
 #endif
 
-		vaddr = kmap_local_folio(folio, offset_in_folio(folio, pos)); 
+		vaddr = kmap_local_folio(folio, offset_in_folio(folio, pos));
 		pagefault_disable();
 		unwritten = __copy_from_user_inatomic(vaddr, user_data, len);
 		pagefault_enable();
@@ -758,6 +758,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 		(void)err;
 		folio = shmem_read_mapping_folio(obj->base.filp->f_shmem, OFF_TO_IDX(pos));
 #endif
+
 		memcpy_to_folio(folio, offset_in_folio(folio, pos), data, len);
 
 #ifdef __linux__

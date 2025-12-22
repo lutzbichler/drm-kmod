@@ -23,8 +23,6 @@
 
 typedef struct ref_tracker *intel_wakeref_t;
 
-#define INTEL_WAKEREF_DEF ERR_PTR(-ENOENT)
-
 #define INTEL_REFTRACK_DEAD_COUNT 16
 #define INTEL_REFTRACK_PRINT_LIMIT 16
 
