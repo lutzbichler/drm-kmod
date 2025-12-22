@@ -331,7 +331,6 @@ static bool i915_get_crtc_scanoutpos(struct drm_crtc *_crtc,
 	int position;
 	int vbl_start, vbl_end, hsync_start, htotal, vtotal;
 	unsigned long irqflags;
-	
 	bool use_scanline_counter = DISPLAY_VER(display) >= 5 ||
 		display->platform.g4x || DISPLAY_VER(display) == 2 ||
 		crtc->mode_flags & I915_MODE_FLAG_USE_SCANLINE_COUNTER;

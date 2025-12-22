@@ -1302,7 +1302,7 @@ struct lfp_brightness_level {
 	u16 reserved;
 } __packed;
 
-struct bdb_lfp_backlight_data {
+struct bdb_lfp_backlight {
 	u8 entry_size;
 	struct lfp_backlight_data_entry data[16];
 	u8 level[16];							/* 162-233 */
