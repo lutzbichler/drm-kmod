@@ -3115,7 +3115,6 @@ err_free_vbt:
 	kfree(vbt);
 err_free_rom:
 	intel_rom_free(rom);
-
 	return NULL;
 }
 
