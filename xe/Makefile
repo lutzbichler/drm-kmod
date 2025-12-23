@@ -119,6 +119,7 @@ SRCS=	xe_bb.c \
 	xe_sa.c \
 	xe_sched_job.c \
 	xe_shrinker.c \
+	xe_soc_remapper.c \
 	xe_sriov.c \
 	xe_sriov_vf.c \
 	xe_sriov_vf_ccs.c \
