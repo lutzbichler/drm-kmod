@@ -35,7 +35,7 @@ enum i915_component_type {
 };
 
 /* MAX_PORT is the number of port
- * It must be sync with I915_MAX_PORTS defined i915_drv.h
+ * It must be sync with I915_MAX_PORTS defined intel_display_limits.h
  */
 #define MAX_PORTS 9
 
