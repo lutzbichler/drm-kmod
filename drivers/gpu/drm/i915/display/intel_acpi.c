@@ -3,7 +3,6 @@
 #include <linux/acpi.h>
 #include <acpi/video.h>
 
-#include "i915_drv.h"
 #include "intel_acpi.h"
 
 void intel_register_dsm_handler(void)

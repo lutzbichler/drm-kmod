@@ -375,7 +375,6 @@ CFLAGS+= -I${SRCDIR}/display
 CFLAGS+= -I${SRCDIR}/compat-i915-headers
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915
 CFLAGS+= -I${.CURDIR:H}/drivers/gpu/drm/i915/display
-CFLAGS+= -Ddrm_i915_private=xe_device
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
 CFLAGS+= '-DLINUXKPI_PARAM_PREFIX=xe_' -DDRM_SYSCTL_PARAM_PREFIX=_${KMOD}
