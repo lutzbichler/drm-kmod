@@ -10,7 +10,7 @@
 #include <drm/drm_print.h>
 
 #ifdef __FreeBSD__
-#include "i915_drv.h" // SYSCTL_DECL(_hw_i915kms)
+#include "i915_params.h" // SYSCTL_DECL(_hw_i915kms) or SYSCTL_DECL(_hw_xe)
 #endif
 #include "intel_display_params.h"
 
