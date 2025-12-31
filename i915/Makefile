@@ -136,7 +136,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_display_device.c \
 	intel_display_driver.c \
 	intel_display_irq.c \
-	intel_display_limits.c \
 	intel_display_params.c \
 	intel_display_power_map.c \
 	intel_display_power_well.c \
