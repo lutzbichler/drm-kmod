@@ -823,7 +823,7 @@ static const char *drm_panic_type_map[] = {
 	[DRM_PANIC_TYPE_KMSG] = "kmsg",
 	[DRM_PANIC_TYPE_USER] = "user",
 #if IS_ENABLED(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-	[DRM_PANIC_TYPE_QR] = "qr",
+	[DRM_PANIC_TYPE_QR] = "qr_code",
 #endif
 };
 
@@ -858,7 +858,7 @@ module_param_cb(panic_screen, &drm_panic_ops, NULL, 0644);
 
 MODULE_PARM_DESC(panic_screen,
 #if IS_ENABLED(CONFIG_DRM_PANIC_SCREEN_QR_CODE)
-		 "Choose what will be displayed by drm_panic, 'user', 'kmsg' or 'qr' [default="
+		 "Choose what will be displayed by drm_panic, 'user', 'kmsg' or 'qr_code' [default="
 #else
 		 "Choose what will be displayed by drm_panic, 'user' or 'kmsg' [default="
 #endif
