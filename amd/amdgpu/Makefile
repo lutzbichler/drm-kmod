@@ -747,6 +747,7 @@ SRCS+=	clk_mgr.c \
 # display/dc/dcn10
 .if !empty(KCONFIG:MDRM_AMD_DC_FP)
 SRCS+=	dcn10_cm_common.c \
+	dcn10_dio.c \
 	dcn10_dpp.c \
 	dcn10_dpp_cm.c \
 	dcn10_dpp_dscl.c \
