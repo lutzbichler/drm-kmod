@@ -859,6 +859,7 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 	u8 id;
 	u16 cache_mode;
 	u16 pat_index;
+	u64 pte;
 #endif
 	struct xe_mmio *mmio = &gt->mmio;
 	u64 src_offset;
@@ -882,7 +883,8 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 	for_each_tile(tile, xe, id)
 		if (uc_fw->bo && uc_fw->bo->ggtt_node[id]) {
 		    pat_index = tile_to_xe(tile)->pat.idx[cache_mode];
-			xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo->ggtt_node[tile->id], uc_fw->bo, pat_index);
+			pte = tile->mem.ggtt->pt_ops->pte_encode_flags(uc_fw->bo, pat_index);
+			xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo->ggtt_node[tile->id], uc_fw->bo, pte);
 		}
 #endif
 
