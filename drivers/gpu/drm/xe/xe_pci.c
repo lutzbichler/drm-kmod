@@ -393,6 +393,7 @@ static const struct xe_device_desc ptl_desc = {
 	.has_flat_ccs = 1,
 	.has_sriov = true,
 	.has_pre_prod_wa = 1,
+	.has_pxp = true,
 	.max_gt_per_tile = 2,
 	.needs_scratch = true,
 	.needs_shared_vf_gt_wq = true,
