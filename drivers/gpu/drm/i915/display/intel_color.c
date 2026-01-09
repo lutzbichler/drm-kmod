@@ -1178,7 +1178,7 @@ create_linear_lut(struct intel_display *display, int lut_size)
 	struct drm_color_lut *lut;
 	int i;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -1216,7 +1216,7 @@ create_resized_lut(struct intel_display *display,
 	const struct drm_color_lut *lut_in;
 	struct drm_color_lut *lut_out;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut_out[0]) * lut_out_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut_out[0]) * lut_out_size);
 	blob_out = drm_property_create_blob(display->drm,
 					    sizeof(lut_out[0]) * lut_out_size,
 					    NULL);
@@ -2136,6 +2136,8 @@ int intel_color_check(struct intel_atomic_state *state,
 void intel_color_get_config(struct intel_crtc_state *crtc_state)
 {
 	struct intel_display *display = to_intel_display(crtc_state);
+
+	drm_info(display->drm, "%s: reading config for crtc state %p\n", __func__, crtc_state);
 
 	display->funcs.color->get_config(crtc_state);
 
@@ -3334,7 +3336,7 @@ static struct drm_property_blob *i9xx_read_lut_8(struct intel_crtc *crtc)
 	struct drm_color_lut *lut;
 	int i;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * LEGACY_LUT_LENGTH);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * LEGACY_LUT_LENGTH);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * LEGACY_LUT_LENGTH,
 					NULL);
@@ -3363,7 +3365,7 @@ static struct drm_property_blob *i9xx_read_lut_10(struct intel_crtc *crtc)
 	u32 ldw, udw;
 	int i;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					lut_size * sizeof(lut[0]), NULL);
 	if (IS_ERR(blob))
@@ -3413,7 +3415,7 @@ static struct drm_property_blob *i965_read_lut_10p6(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3466,7 +3468,7 @@ static struct drm_property_blob *chv_read_cgm_degamma(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3493,7 +3495,7 @@ static struct drm_property_blob *chv_read_cgm_gamma(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3545,7 +3547,7 @@ static struct drm_property_blob *ilk_read_lut_8(struct intel_crtc *crtc)
 	struct drm_color_lut *lut;
 	int i;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * LEGACY_LUT_LENGTH);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * LEGACY_LUT_LENGTH);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * LEGACY_LUT_LENGTH,
 					NULL);
@@ -3571,7 +3573,7 @@ static struct drm_property_blob *ilk_read_lut_10(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3635,7 +3637,7 @@ static struct drm_property_blob *ivb_read_lut_10(struct intel_crtc *crtc,
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3703,7 +3705,7 @@ static struct drm_property_blob *bdw_read_lut_10(struct intel_crtc *crtc,
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3771,7 +3773,7 @@ static struct drm_property_blob *glk_read_degamma_lut(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
@@ -3842,7 +3844,7 @@ icl_read_lut_multi_segment(struct intel_crtc *crtc)
 	struct drm_property_blob *blob;
 	struct drm_color_lut *lut;
 
-	drm_info(display->drm, "%s: creating blob %d\n", __func__, sizeof(lut[0]) * lut_size);
+	drm_info(display->drm, "%s: creating blob %lu\n", __func__, sizeof(lut[0]) * lut_size);
 	blob = drm_property_create_blob(display->drm,
 					sizeof(lut[0]) * lut_size,
 					NULL);
