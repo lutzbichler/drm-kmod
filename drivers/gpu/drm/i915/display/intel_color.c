@@ -1474,6 +1474,9 @@ static void bdw_load_lut_10(const struct intel_crtc_state *crtc_state,
 	int i, lut_size = drm_color_lut_size(blob);
 	enum pipe pipe = crtc->pipe;
 
+	drm_info(crtc->base.dev, "%s: lut_size=%d\n", __func__, lut_size);
+	drm_color_print_blob(&crtc->base, blob);
+
 	ilk_lut_write(crtc_state, PREC_PAL_INDEX(pipe),
 		      prec_index);
 	ilk_lut_write(crtc_state, PREC_PAL_INDEX(pipe),
@@ -1788,21 +1791,29 @@ static void icl_load_luts(const struct intel_crtc_state *crtc_state)
 {
 	const struct drm_property_blob *pre_csc_lut = crtc_state->pre_csc_lut;
 	const struct drm_property_blob *post_csc_lut = crtc_state->post_csc_lut;
+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
+
+	drm_info(crtc->base.dev, "%s<START>: pre_csc_lut=%p post_csc_lut=%p\n", __func__, pre_csc_lut, post_csc_lut);
 
 	if (pre_csc_lut)
 		glk_load_degamma_lut(crtc_state, pre_csc_lut);
 
+	drm_info(crtc->base.dev, "%s<POST>: gamma_mode=%d (from %p)\n", __func__, crtc_state->gamma_mode, &(crtc_state->gamma_mode));
+
 	switch (crtc_state->gamma_mode & GAMMA_MODE_MODE_MASK) {
 	case GAMMA_MODE_MODE_8BIT:
+		drm_info(crtc->base.dev, "%s<GAMMA_MODE_MODE_8BIT>\n", __func__);
 		ilk_load_lut_8(crtc_state, post_csc_lut);
 		break;
 	case GAMMA_MODE_MODE_12BIT_MULTI_SEG:
+		drm_info(crtc->base.dev, "%s<GAMM_MODE_MODE_12BIT_MULTI_SEG>\n", __func__);
 		icl_program_gamma_superfine_segment(crtc_state);
 		icl_program_gamma_multi_segment(crtc_state);
 		ivb_load_lut_ext_max(crtc_state);
 		glk_load_lut_ext2_max(crtc_state);
 		break;
 	case GAMMA_MODE_MODE_10BIT:
+		drm_info(crtc->base.dev, "%s<GAMMA_MODE_MODE_10BIT>\n", __func__);
 		bdw_load_lut_10(crtc_state, post_csc_lut, PAL_PREC_INDEX_VALUE(0));
 		ivb_load_lut_ext_max(crtc_state);
 		glk_load_lut_ext2_max(crtc_state);
@@ -1991,23 +2002,36 @@ void intel_color_prepare_commit(struct intel_atomic_state *state,
 	struct intel_crtc_state *crtc_state =
 		intel_atomic_get_new_crtc_state(state, crtc);
 
+	drm_info(crtc->base.dev, "%s: starts.\n", __func__);
+
 	if (!crtc_state->hw.active ||
 	    intel_crtc_needs_modeset(crtc_state))
 		return;
 
+	drm_info(crtc->base.dev, "%s: hw active or needs mode setting.\n", __func__);
+
 	if (!intel_crtc_needs_color_update(crtc_state))
 		return;
+
+	drm_info(crtc->base.dev, "%s: needs color update.\n", __func__);
 
 	if (!crtc_state->pre_csc_lut && !crtc_state->post_csc_lut)
 		return;
 
-	if (HAS_DOUBLE_BUFFERED_LUT(display))
+	drm_info(crtc->base.dev, "%s: neither pre- nor pist-csc-lut.\n", __func__);
+
+	if (HAS_DOUBLE_BUFFERED_LUT(display)) {
 		crtc_state->dsb_color = intel_dsb_prepare(state, crtc, INTEL_DSB_0, 1024);
-	else
+		drm_info(crtc->base.dev, "%s: prepared DSB0.\n", __func__);
+	} else {
 		crtc_state->dsb_color = intel_dsb_prepare(state, crtc, INTEL_DSB_1, 1024);
+		drm_info(crtc->base.dev, "%s: prepared DSB1.\n", __func__);
+	}
 
 	if (!intel_color_uses_dsb(crtc_state))
 		return;
+
+	drm_info(crtc->base.dev, "%s: uses dsb.\n", __func__);
 
 	display->funcs.color->load_luts(crtc_state);
 
@@ -2016,12 +2040,16 @@ void intel_color_prepare_commit(struct intel_atomic_state *state,
 		intel_dsb_wait_vblank_delay(state, crtc_state->dsb_color);
 		intel_vrr_check_push_sent(crtc_state->dsb_color, crtc_state);
 		intel_dsb_interrupt(crtc_state->dsb_color);
+		drm_info(crtc->base.dev, "%s: use_dsb and uses chained DSB.\n", __func__);
 	}
 
-	if (intel_color_uses_gosub_dsb(crtc_state))
+	if (intel_color_uses_gosub_dsb(crtc_state)) {
 		intel_dsb_gosub_finish(crtc_state->dsb_color);
-	else
+		drm_info(crtc->base.dev, "%s: sub finish.\n", __func__);
+	} else {
 		intel_dsb_finish(crtc_state->dsb_color);
+		drm_info(crtc->base.dev, "%s: finish.\n", __func__);
+	}
 }
 
 void intel_color_cleanup_commit(struct intel_crtc_state *crtc_state)
@@ -2884,27 +2912,43 @@ static int glk_color_check(struct intel_atomic_state *state,
 static u32 icl_gamma_mode(const struct intel_crtc_state *crtc_state)
 {
 	struct intel_display *display = to_intel_display(crtc_state);
+	struct intel_crtc *crtc = to_intel_crtc(crtc_state->uapi.crtc);
+
 	u32 gamma_mode = 0;
+
+	drm_info(crtc->base.dev, "%s: STEP 0 --> gamma_mode = %d\n", __func__, gamma_mode);
 
 	if (crtc_state->hw.degamma_lut)
 		gamma_mode |= PRE_CSC_GAMMA_ENABLE;
+
+	drm_info(crtc->base.dev, "%s: STEP 1 --> gamma_mode = %d\n", __func__, gamma_mode);
 
 	if (crtc_state->hw.gamma_lut &&
 	    !crtc_state->c8_planes)
 		gamma_mode |= POST_CSC_GAMMA_ENABLE;
 
+	drm_info(crtc->base.dev, "%s: STEP 2 --> gamma_mode = %d\n", __func__, gamma_mode);
+	drm_info(crtc->base.dev, "%s: STEP 2a --> hw.gamma_lut=%s / lut_is_legacy=%s\n", __func__,
+			 (crtc_state->hw.gamma_lut ? "true" : "false"), (lut_is_legacy(crtc_state->hw.gamma_lut) ? "true" : "false"));
+
 	if (!crtc_state->hw.gamma_lut ||
-	    lut_is_legacy(crtc_state->hw.gamma_lut))
+	    lut_is_legacy(crtc_state->hw.gamma_lut)) {
 		gamma_mode |= GAMMA_MODE_MODE_8BIT;
+		drm_info(crtc->base.dev, "%s: STEP 3a --> gamma_mode = %d\n", __func__, gamma_mode);
+	}
 	/*
 	 * Enable 10bit gamma for D13
 	 * ToDo: Extend to Logarithmic Gamma once the new UAPI
 	 * is accepted and implemented by a userspace consumer
 	 */
-	else if (DISPLAY_VER(display) >= 13)
+	else if (DISPLAY_VER(display) >= 13) {
 		gamma_mode |= GAMMA_MODE_MODE_10BIT;
-	else
+		drm_info(crtc->base.dev, "%s: STEP 3b --> gamma_mode = %d\n", __func__, gamma_mode);
+	}
+	else {
 		gamma_mode |= GAMMA_MODE_MODE_12BIT_MULTI_SEG;
+		drm_info(crtc->base.dev, "%s: STEP 3c --> gamma_mode = %d\n", __func__, gamma_mode);
+	}
 
 	return gamma_mode;
 }
@@ -3482,6 +3526,8 @@ static void chv_read_luts(struct intel_crtc_state *crtc_state)
 		crtc_state->post_csc_lut = chv_read_cgm_gamma(crtc);
 	else
 		i965_read_luts(crtc_state);
+
+	drm_info(crtc->base.dev, "%s: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
 }
 
 static struct drm_property_blob *ilk_read_lut_8(struct intel_crtc *crtc)
@@ -3633,6 +3679,8 @@ static void ivb_read_luts(struct intel_crtc_state *crtc_state)
 		MISSING_CASE(crtc_state->gamma_mode);
 		break;
 	}
+
+	drm_info(crtc->base.dev, "%s: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
 }
 
 /* On BDW+ the index auto increment mode actually works */
@@ -3700,6 +3748,8 @@ static void bdw_read_luts(struct intel_crtc_state *crtc_state)
 		MISSING_CASE(crtc_state->gamma_mode);
 		break;
 	}
+
+	drm_info(crtc->base.dev, "%s: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
 }
 
 static struct drm_property_blob *glk_read_degamma_lut(struct intel_crtc *crtc)
@@ -3751,6 +3801,8 @@ static void glk_read_luts(struct intel_crtc_state *crtc_state)
 	if (crtc_state->csc_enable)
 		crtc_state->pre_csc_lut = glk_read_degamma_lut(crtc);
 
+	drm_info(crtc->base.dev, "%s<1>: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
+
 	if (!crtc_state->gamma_enable && !crtc_state->c8_planes)
 		return;
 
@@ -3765,6 +3817,8 @@ static void glk_read_luts(struct intel_crtc_state *crtc_state)
 		MISSING_CASE(crtc_state->gamma_mode);
 		break;
 	}
+
+	drm_info(crtc->base.dev, "%s<2>: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
 }
 
 static struct drm_property_blob *
@@ -3816,23 +3870,32 @@ static void icl_read_luts(struct intel_crtc_state *crtc_state)
 	if (icl_has_pre_csc_lut(crtc_state))
 		crtc_state->pre_csc_lut = glk_read_degamma_lut(crtc);
 
+	drm_info(crtc->base.dev, "%s<1>: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
+	drm_info(crtc->base.dev, "%s<1>: JUST TO BE SURE\n", __func__);
+
 	if (!icl_has_post_csc_lut(crtc_state))
 		return;
 
 	switch (crtc_state->gamma_mode & GAMMA_MODE_MODE_MASK) {
 	case GAMMA_MODE_MODE_8BIT:
+		drm_info(crtc->base.dev, "%s<GAMMA_MODE_MODE_8BIT>: %d\n", __func__, crtc_state->gamma_mode);
 		crtc_state->post_csc_lut = ilk_read_lut_8(crtc);
 		break;
 	case GAMMA_MODE_MODE_10BIT:
+		drm_info(crtc->base.dev, "%s<GAMMA_MODE_MODE_10BIT>: %d\n", __func__, crtc_state->gamma_mode);
 		crtc_state->post_csc_lut = bdw_read_lut_10(crtc, PAL_PREC_INDEX_VALUE(0));
 		break;
 	case GAMMA_MODE_MODE_12BIT_MULTI_SEG:
+		drm_info(crtc->base.dev, "%s<GAMMA_MODE_MODE_12BIT_MULTI_SEG>: %d\n", __func__, crtc_state->gamma_mode);
 		crtc_state->post_csc_lut = icl_read_lut_multi_segment(crtc);
 		break;
 	default:
+		drm_info(crtc->base.dev, "%s<default>: %d\n", __func__, crtc_state->gamma_mode);
 		MISSING_CASE(crtc_state->gamma_mode);
 		break;
 	}
+
+	drm_info(crtc->base.dev, "%s<2>: pre-csc: %p post-csc: %p\n", __func__, crtc_state->pre_csc_lut, crtc_state->post_csc_lut);
 }
 
 static const struct intel_color_funcs chv_color_funcs = {
