@@ -635,6 +635,46 @@ int drm_color_lut_check(const struct drm_property_blob *lut, u32 tests)
 }
 EXPORT_SYMBOL(drm_color_lut_check);
 
+void drm_color_print_blob(struct drm_crtc *crtc, const struct drm_property_blob *blob)
+{
+	int i = 0;
+	char *data = blob->data;
+	int length = blob->length;
+
+	while (i < length) {
+		drm_info(crtc->dev, "%s: %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x %02x\n",
+			__func__,
+			(i < length ? data[i] : 0xff),
+			(i+1 < length ? data[i+1] : 0xff),
+			(i+2 < length ? data[i+2] : 0xff),
+			(i+3 < length ? data[i+3] : 0xff),
+			(i+4 < length ? data[i+4] : 0xff),
+			(i+5 < length ? data[i+5] : 0xff),
+			(i+6 < length ? data[i+6] : 0xff),
+			(i+7 < length ? data[i+7] : 0xff),
+			(i+8 < length ? data[i+8] : 0xff),
+			(i+9 < length ? data[i+9] : 0xff),
+			(i+10 < length ? data[i+10] : 0xff),
+			(i+11 < length ? data[i+11] : 0xff),
+			(i+12 < length ? data[i+12] : 0xff),
+			(i+13 < length ? data[i+13] : 0xff),
+			(i+14 < length ? data[i+14] : 0xff),
+			(i+15 < length ? data[i+15] : 0xff),
+			(i+16 < length ? data[i+16] : 0xff),
+			(i+17 < length ? data[i+17] : 0xff),
+			(i+18 < length ? data[i+18] : 0xff),
+			(i+19 < length ? data[i+19] : 0xff),
+			(i+20 < length ? data[i+20] : 0xff),
+			(i+21 < length ? data[i+21] : 0xff),
+			(i+22 < length ? data[i+22] : 0xff),
+			(i+23 < length ? data[i+23] : 0xff),
+			(i+24 < length ? data[i+24] : 0xff));
+		
+		i += 25;
+	}
+}
+EXPORT_SYMBOL(drm_color_print_blob);
+
 /*
  * Gamma-LUT programming
  */
