@@ -124,12 +124,6 @@ trace_xe_exec_queue_destroy(struct xe_exec_queue *q)
 }
 
 static inline void
-trace_xe_exec_queue_lr_cleanup(struct xe_exec_queue *q)
-{
-	CTR2(KTR_DRM, "xe_exec_queue_lr_cleanup q %s (%p)", q->name, q);
-}
-
-static inline void
 trace_xe_exec_queue_memory_cat_error(struct xe_exec_queue *q)
 {
 	CTR2(KTR_DRM, "xe_exec_queue_memory_cat_error q %s (%p)", q->name, q);
