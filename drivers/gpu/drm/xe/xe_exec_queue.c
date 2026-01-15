@@ -24,13 +24,11 @@
 #endif
 #include "xe_hw_engine_class_sysfs.h"
 #include "xe_hw_engine_group.h"
-#include "xe_hw_fence.h"
 #include "xe_irq.h"
 #include "xe_lrc.h"
 #include "xe_macros.h"
 #include "xe_migrate.h"
 #include "xe_pm.h"
-#include "xe_ring_ops_types.h"
 #ifdef __FreeBSD__
 #include "xe_sched_job.h"
 #endif
