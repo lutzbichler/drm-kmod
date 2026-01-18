@@ -739,7 +739,6 @@ SRCS+=	clk_mgr.c \
 	dce110_clk_mgr.c \
 	dce112_clk_mgr.c \
 	dce120_clk_mgr.c \
-	dce60_clk_mgr.c \
 	rv1_clk_mgr.c \
 	rv1_clk_mgr_vbios_smu.c \
 	rv2_clk_mgr.c
