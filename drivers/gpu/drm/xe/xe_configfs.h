@@ -9,6 +9,7 @@
 #include <linux/types.h>
 
 #include "xe_hw_engine_types.h"
+#include "xe_module.h"
 
 struct pci_dev;
 
@@ -45,7 +46,12 @@ static inline u32 xe_configfs_get_ctx_restore_mid_bb(struct pci_dev *pdev,
 static inline u32 xe_configfs_get_ctx_restore_post_bb(struct pci_dev *pdev,
 							enum xe_engine_class class,
 							const u32 **cs) { return 0; }
-static inline unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev) { return UINT_MAX; }
+#ifdef CONFIG_PCI_IOV
+static inline unsigned int xe_configfs_get_max_vfs(struct pci_dev *pdev)
+{
+	return xe_modparam.max_vfs;
+}
+#endif
 #endif
 
 #endif
