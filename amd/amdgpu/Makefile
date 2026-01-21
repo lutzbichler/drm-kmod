@@ -119,6 +119,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dio/dcn321 \
 	${SRCDIR}/display/dc/dio/dcn35 \
 	${SRCDIR}/display/dc/dio/dcn401 \
+	${SRCDIR}/display/dc/dio/virtual \
 	${SRCDIR}/display/dc/dpp/dcn10 \
 	${SRCDIR}/display/dc/dpp/dcn20 \
 	${SRCDIR}/display/dc/dpp/dcn201 \
@@ -275,7 +276,6 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/soc_and_ip_translator \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/sspl \
-	${SRCDIR}/display/dc/virtual \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
 	${SRCDIR}/display/modules/color \
@@ -1148,6 +1148,7 @@ SRCS+=	link_ddc.c \
 	link_hwss_dpia.c \
 	link_hwss_hpo_dp.c \
 	link_hwss_hpo_fixed_vs_pe_retimer_dp.c \
+	link_hwss_virtual.c \
 	link_resource.c \
 	link_validation.c
 
@@ -1160,9 +1161,8 @@ SRCS+=	dc_spl.c \
 	spl_custom_float.c \
 	spl_fixpt31_32.c
 
-# display/dc/virtual
+# display/dc/dio/virtual
 SRCS+=	virtual_link_encoder.c \
-	virtual_link_hwss.c \
 	virtual_stream_encoder.c
 
 # display/modules/*
