@@ -705,7 +705,7 @@ dma_buf_unmap_attachment_unlocked(struct dma_buf_attachment *dba,
 }
 
 void
-dma_buf_move_notify(struct dma_buf *db)
+dma_buf_invalidate_mappings(struct dma_buf *db)
 {
 	struct dma_buf_attachment *dba;
 
