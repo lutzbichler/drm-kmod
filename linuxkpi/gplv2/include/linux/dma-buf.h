@@ -185,7 +185,7 @@ void dma_buf_unmap_attachment(struct dma_buf_attachment *, struct sg_table *,
 				enum dma_data_direction);
 void dma_buf_unmap_attachment_unlocked(struct dma_buf_attachment *,
     struct sg_table *, enum dma_data_direction);
-void dma_buf_move_notify(struct dma_buf *);
+void dma_buf_invalidate_mappings(struct dma_buf *);
 int dma_buf_vmap(struct dma_buf *dmabuf, struct iosys_map *map);
 void dma_buf_vunmap(struct dma_buf *dmabuf, struct iosys_map *map);
 
