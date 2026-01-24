@@ -144,7 +144,7 @@ struct dma_buf_attachment {
 
 struct dma_buf_attach_ops {
 	bool allow_peer2peer;
-	void (*move_notify)(struct dma_buf_attachment *attach);
+	void (*invalidate_mappings)(struct dma_buf_attachment *attach);
 };
 
 #define file linux_file

@@ -394,9 +394,9 @@ dma_buf_dynamic_attach(struct dma_buf *db, struct device *dev,
 
 	MPASS(db != NULL);
 	MPASS(dev != NULL);
-	MPASS(iops == NULL || iops->move_notify != NULL);
+	MPASS(iops == NULL || iops->invalidate_mappings != NULL);
 	if (db == NULL || dev == NULL ||
-	    (iops != NULL && iops->move_notify == NULL))
+	    (iops != NULL && iops->invalidate_mappings == NULL))
 		return (ERR_PTR(-EINVAL));
 
 	if ((dba = malloc(sizeof(*dba), M_DMABUF, M_NOWAIT|M_ZERO)) == NULL)
@@ -713,8 +713,8 @@ dma_buf_move_notify(struct dma_buf *db)
 
 	list_for_each_entry(dba, &db->attachments, node)
 		if (dba->importer_ops != NULL &&
-		    dba->importer_ops->move_notify != NULL)
-			dba->importer_ops->move_notify(dba);
+		    dba->importer_ops->invalidate_mappings != NULL)
+			dba->importer_ops->invalidate_mappings(dba);
 }
 
 int
