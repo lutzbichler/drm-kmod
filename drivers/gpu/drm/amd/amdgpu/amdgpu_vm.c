@@ -2574,7 +2574,11 @@ void amdgpu_vm_set_task_info(struct amdgpu_vm *vm)
 	if (current->group_leader->mm != current->mm)
 		return;
 
+#ifdef __linux__
+	vm->task_info->tgid = current->tgid;
+#elif defined(__FreeBSD__)
 	vm->task_info->tgid = current->group_leader->pid;
+#endif
 	get_task_comm(vm->task_info->process_name, current->group_leader);
 }
 
