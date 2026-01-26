@@ -154,6 +154,7 @@ SRCS+=	intel_bo.c \
 	intel_fb_bo.c \
 	intel_fbdev_fb.c \
 	xe_display.c \
+	xe_display_pcode.c \
 	xe_display_rpm.c \
 	xe_display_wa.c \
 	xe_dsb_buffer.c \
