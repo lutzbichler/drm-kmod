@@ -1603,6 +1603,7 @@ CWARNFLAGS.atombios_encoders.c=			-Wno-unused-but-set-variable
 CWARNFLAGS.dce_v6_0.c=				-Wno-unused-but-set-variable
 CWARNFLAGS.dce_v8_0.c=				-Wno-unused-but-set-variable
 CWARNFLAGS.gmc_v9_0.c=				-Wno-initializer-overrides
+CWARNFLAGS.gmc_v12_1.c=				-Wno-c23-extensions
 CWARNFLAGS.gfx_v7_0.c=				-Wno-unused-const-variable
 CWARNFLAGS.gfx_v9_0.c=				-Wno-missing-prototypes
 CWARNFLAGS.gfx_v9_4_2.c=			-Wno-missing-prototypes
