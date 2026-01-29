@@ -1374,6 +1374,9 @@ int radeon_device_init(struct radeon_device *rdev,
 		pr_warn("radeon: No suitable DMA available\n");
 		return r;
 	}
+#ifdef __linux__
+	rdev->pdev->msi_addr_mask = DMA_BIT_MASK(dma_bits);
+#endif
 	rdev->need_swiotlb = drm_need_swiotlb(dma_bits);
 
 	/* Registers mapping */
