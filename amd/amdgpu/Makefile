@@ -1205,6 +1205,7 @@ SRCS+=	dmub_dcn20.c \
 	dmub_dcn351.c \
 	dmub_dcn36.c \
 	dmub_dcn401.c \
+	dmub_dcn42.c \
 	dmub_reg.c \
 	dmub_srv.c \
 	dmub_srv_stat.c
