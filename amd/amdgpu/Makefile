@@ -75,6 +75,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/clk_mgr/dcn32 \
 	${SRCDIR}/display/dc/clk_mgr/dcn35 \
 	${SRCDIR}/display/dc/clk_mgr/dcn401 \
+	${SRCDIR}/display/dc/clk_mgr/dcn42 \
 	${SRCDIR}/display/dc/dccg/dcn20 \
 	${SRCDIR}/display/dc/dccg/dcn201 \
 	${SRCDIR}/display/dc/dccg/dcn21 \
@@ -87,6 +88,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dccg/dcn32 \
 	${SRCDIR}/display/dc/dccg/dcn35 \
 	${SRCDIR}/display/dc/dccg/dcn401 \
+	${SRCDIR}/display/dc/dccg/dcn42 \
 	${SRCDIR}/display/dc/dce \
 	${SRCDIR}/display/dc/dce100 \
 	${SRCDIR}/display/dc/dce110 \
@@ -119,6 +121,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dio/dcn321 \
 	${SRCDIR}/display/dc/dio/dcn35 \
 	${SRCDIR}/display/dc/dio/dcn401 \
+	${SRCDIR}/display/dc/dio/dcn42 \
 	${SRCDIR}/display/dc/dio/virtual \
 	${SRCDIR}/display/dc/dpp/dcn10 \
 	${SRCDIR}/display/dc/dpp/dcn20 \
@@ -127,10 +130,12 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dpp/dcn32 \
 	${SRCDIR}/display/dc/dpp/dcn35 \
 	${SRCDIR}/display/dc/dpp/dcn401 \
+	${SRCDIR}/display/dc/dpp/dcn42 \
 	${SRCDIR}/display/dc/dwb/dcn30 \
 	${SRCDIR}/display/dc/dwb/dcn35 \
 	${SRCDIR}/display/dc/hpo/dcn31 \
 	${SRCDIR}/display/dc/hpo/dcn32 \
+	${SRCDIR}/display/dc/hpo/dcn42 \
 	${SRCDIR}/display/dc/hubp/dcn10 \
 	${SRCDIR}/display/dc/hubp/dcn20 \
 	${SRCDIR}/display/dc/hubp/dcn201 \
@@ -140,6 +145,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hubp/dcn32 \
 	${SRCDIR}/display/dc/hubp/dcn35 \
 	${SRCDIR}/display/dc/hubp/dcn401 \
+	${SRCDIR}/display/dc/hubp/dcn42 \
 	${SRCDIR}/display/dc/hubbub/dcn10 \
 	${SRCDIR}/display/dc/hubbub/dcn20 \
 	${SRCDIR}/display/dc/hubbub/dcn201 \
@@ -150,6 +156,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hubbub/dcn32 \
 	${SRCDIR}/display/dc/hubbub/dcn35 \
 	${SRCDIR}/display/dc/hubbub/dcn401 \
+	${SRCDIR}/display/dc/hubbub/dcn42 \
 	${SRCDIR}/display/dc/hwss/dce \
 	${SRCDIR}/display/dc/hwss/dce100 \
 	${SRCDIR}/display/dc/hwss/dce110 \
@@ -174,6 +181,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hwss/dcn35 \
 	${SRCDIR}/display/dc/hwss/dcn351 \
 	${SRCDIR}/display/dc/hwss/dcn401 \
+	${SRCDIR}/display/dc/hwss/dcn42 \
 	${SRCDIR}/display/dc/dml/calcs \
 	${SRCDIR}/display/dc/dsc \
 	${SRCDIR}/display/dc/dsc/dcn20 \
@@ -192,6 +200,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/gpio/dcn315 \
 	${SRCDIR}/display/dc/gpio/dcn32 \
 	${SRCDIR}/display/dc/gpio/dcn401 \
+	${SRCDIR}/display/dc/gpio/dcn42 \
 	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
@@ -223,6 +232,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/irq/dcn36 \
 	${SRCDIR}/display/dc/irq/dcn351 \
 	${SRCDIR}/display/dc/irq/dcn401 \
+	${SRCDIR}/display/dc/irq/dcn42 \
 	${SRCDIR}/display/dc/link \
 	${SRCDIR}/display/dc/link/accessories \
 	${SRCDIR}/display/dc/link/hwss \
@@ -230,11 +240,13 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/mmhubbub/dcn20 \
 	${SRCDIR}/display/dc/mmhubbub/dcn32 \
 	${SRCDIR}/display/dc/mmhubbub/dcn35 \
+	${SRCDIR}/display/dc/mmhubbub/dcn42 \
 	${SRCDIR}/display/dc/mpc/dcn10 \
 	${SRCDIR}/display/dc/mpc/dcn20 \
 	${SRCDIR}/display/dc/mpc/dcn30 \
 	${SRCDIR}/display/dc/mpc/dcn32 \
 	${SRCDIR}/display/dc/mpc/dcn401 \
+	${SRCDIR}/display/dc/mpc/dcn42 \
 	${SRCDIR}/display/dc/opp/dcn10 \
 	${SRCDIR}/display/dc/opp/dcn20 \
 	${SRCDIR}/display/dc/opp/dcn35 \
@@ -248,7 +260,9 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/optc/dcn32 \
 	${SRCDIR}/display/dc/optc/dcn35 \
 	${SRCDIR}/display/dc/optc/dcn401 \
+	${SRCDIR}/display/dc/optc/dcn42 \
 	${SRCDIR}/display/dc/pg/dcn35 \
+	${SRCDIR}/display/dc/pg/dcn42 \
 	${SRCDIR}/display/dc/resource/dce100 \
 	${SRCDIR}/display/dc/resource/dce110 \
 	${SRCDIR}/display/dc/resource/dce112 \
@@ -273,6 +287,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn351 \
 	${SRCDIR}/display/dc/resource/dcn36 \
 	${SRCDIR}/display/dc/resource/dcn401 \
+	${SRCDIR}/display/dc/resource/dcn42 \
 	${SRCDIR}/display/dc/soc_and_ip_translator \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/sspl \
@@ -863,6 +878,27 @@ SRCS+=	dcn303_hwseq.c \
 	dcn303_resource.c \
 	irq_service_dcn303.c
 
+# display/dc/dcn31
+SRCS+=	dcn31_afmt.c \
+	dcn31_apg.c \
+	dcn31_smu.c \
+	dcn31_clk_mgr.c \
+	dcn31_dccg.c \
+	dcn31_dio_link_encoder.c \
+	dcn31_hpo_dp_link_encoder.c \
+	dcn31_hpo_dp_stream_encoder.c \
+	dcn31_hubp.c \
+	dcn31_hubbub.c \
+	dcn31_hwseq.c \
+	dcn31_init.c \
+	dcn31_optc.c \
+	dcn31_panel_cntl.c \
+	dcn31_resource.c \
+	dcn31_vpg.c \
+	display_mode_vba_31.c \
+	display_rq_dlg_calc_31.c \
+	irq_service_dcn31.c
+
 # display/dc/dcn314
 SRCS+=	dcn314_dccg.c \
 	dcn314_dio_stream_encoder.c \
@@ -950,26 +986,25 @@ SRCS+=	dcn401_clk_mgr.c \
 	hw_translate_dcn401.c \
 	irq_service_dcn401.c
 
-# display/dc/clk_mgr/dcn31
-SRCS+=	dcn31_afmt.c \
-	dcn31_apg.c \
-	dcn31_smu.c \
-	dcn31_clk_mgr.c \
-	dcn31_dccg.c \
-	dcn31_dio_link_encoder.c \
-	dcn31_hpo_dp_link_encoder.c \
-	dcn31_hpo_dp_stream_encoder.c \
-	dcn31_hubp.c \
-	dcn31_hubbub.c \
-	dcn31_hwseq.c \
-	dcn31_init.c \
-	dcn31_optc.c \
-	dcn31_panel_cntl.c \
-	dcn31_resource.c \
-	dcn31_vpg.c \
-	display_mode_vba_31.c \
-	display_rq_dlg_calc_31.c \
-	irq_service_dcn31.c
+# display/dc/dcn42
+SRCS+= dcn42_dccg.c \
+	dcn42_dpp.c \
+	dcn42_dio_link_encoder.c \
+	dcn42_dio_stream_encoder.c \
+	dcn42_hpo_dp_link_encoder.c \
+	dcn42_hubbub.c \
+	dcn42_hubp.c \
+	dcn42_hwseq.c \
+	dcn42_init.c \
+	dcn42_mmhubbub.c \
+	dcn42_mpc.c \
+	dcn42_optc.c \
+	dcn42_pg_cntl.c \
+	dcn42_resource.c \
+	dcn42_resource_fpu.c \
+	hw_factory_dcn42.c \
+	hw_translate_dcn42.c \
+	irq_service_dcn42.c
 
 # display/dc/clk_mgr/dcn314
 SRCS+=	dcn314_clk_mgr.c \
@@ -986,6 +1021,10 @@ SRCS+=	dcn316_clk_mgr.c \
 # display/dc/clk_mgr/dcn32
 SRCS+=	dcn32_clk_mgr.c \
 	dcn32_clk_mgr_smu_msg.c
+
+# display/dc/clk_mgr/dcn42
+SRCS+=	dcn42_clk_mgr.c \
+	dcn42_smu.c
 
 # display/dc/dml
 SRCS+=	display_mode_lib.c \
@@ -1463,7 +1502,7 @@ CFLAGS.dcn321_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn35_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn351_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dcn351_resource.c= ${FPUFLAGS} -mstack-alignment=4
-CFLAGS.dcn410_resource.c= ${FPUFLAGS} -mstack_alignment=4
+CFLAGS.dcn42_resource_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_mode_core.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.display_mode_util.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
@@ -1746,6 +1785,8 @@ CWARNFLAGS.dcn351_fpu.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn351_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn36_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn401_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn42_clk_mgr.c=		-Wno-incompatible-pointer-types
+CWARNFLAGS.dcn42_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
 CWARNFLAGS.spl_fixpt31_32.c=		-Wno-incompatible-pointer-types
 
