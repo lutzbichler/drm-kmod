@@ -3,21 +3,21 @@
 # `kconfig.mk` defines variables used to conditionally add files to $(SRCS).
 .include "../kconfig.mk"
 
-SRCDIR=	${.CURDIR:H}/drivers/gpu/drm
+SRCDIR=	${.CURDIR:H}/drivers/gpu
 
-.PATH:	${SRCDIR} ${SRCDIR}/clients ${SRCDIR}/display ${SRCDIR}/scheduler
+.PATH:	${SRCDIR} ${SRCDIR}/drm ${SRCDIR}/drm/clients ${SRCDIR}/drm/display ${SRCDIR}/drm/scheduler
 
 KMOD=	drm
 
 EXPORT_SYMS=	YES
 
-SRCS=	drm_atomic.c \
+SRCS=	buddy.c \
+	drm_atomic.c \
 	drm_atomic_helper.c \
 	drm_atomic_state_helper.c \
 	drm_atomic_uapi.c \
 	drm_aperture.c \
 	drm_auth.c \
-	drm_buddy.c \
 	drm_blend.c \
 	drm_bridge.c \
 	drm_bridge_helper.c \
