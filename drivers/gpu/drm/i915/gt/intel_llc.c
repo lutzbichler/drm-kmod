@@ -10,6 +10,8 @@
 #include <machine/clock.h>
 #endif
 
+#include <drm/intel/intel_pcode_regs.h>
+
 #include "i915_drv.h"
 #include "i915_reg.h"
 #include "intel_gt.h"
