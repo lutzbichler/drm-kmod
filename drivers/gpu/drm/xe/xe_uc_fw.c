@@ -25,7 +25,7 @@
 #include "xe_uc_fw.h"
 
 #ifdef __FreeBSD__
-#include "xe_ggtt.h"
+#include "xe_ggtt.h" /* xe_ggtt_rewrite_fw */
 #endif
 
 /*
@@ -859,13 +859,6 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 {
 	struct xe_device *xe = uc_fw_to_xe(uc_fw);
 	struct xe_gt *gt = uc_fw_to_gt(uc_fw);
-#ifdef __FreeBSD__
-	struct xe_tile *tile;
-	u8 id;
-	u16 cache_mode;
-	u16 pat_index;
-	u64 pte;
-#endif
 	struct xe_mmio *mmio = &gt->mmio;
 	u64 src_offset;
 	u32 dma_ctrl;
@@ -884,13 +877,7 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 	 * in the GSM are current and forces a fresh TLB fill on the next
 	 * access.
 	 */
-	cache_mode = uc_fw->bo->flags & XE_BO_FLAG_NEEDS_UC ? XE_CACHE_NONE : XE_CACHE_WB;
-	for_each_tile(tile, xe, id)
-		if (uc_fw->bo && uc_fw->bo->ggtt_node[id]) {
-		    pat_index = tile_to_xe(tile)->pat.idx[cache_mode];
-			pte = tile->mem.ggtt->pt_ops->pte_encode_flags(uc_fw->bo, pat_index);
-			xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo->ggtt_node[tile->id], uc_fw->bo, pte);
-		}
+	xe_ggtt_rewrite_fw(xe, uc_fw->bo);
 #endif
 
 	/* Set the source address for the uCode */
