@@ -9,6 +9,7 @@
 #include "xe_ggtt_types.h"
 
 struct drm_printer;
+struct xe_bo;
 struct xe_tile;
 struct drm_exec;
 
@@ -66,5 +67,10 @@ u64 xe_ggtt_read_pte(struct xe_ggtt *ggtt, u64 offset);
 
 u64 xe_ggtt_node_addr(const struct xe_ggtt_node *node);
 u64 xe_ggtt_node_size(const struct xe_ggtt_node *node);
+
+#ifdef __FreeBSD__
+struct xe_device;
+void xe_ggtt_rewrite_fw(struct xe_device *xe, struct xe_bo *bo);
+#endif
 
 #endif
