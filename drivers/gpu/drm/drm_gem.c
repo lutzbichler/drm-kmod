@@ -790,7 +790,7 @@ EXPORT_SYMBOL(drm_gem_put_pages);
 static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
 			  struct drm_gem_object **objs)
 {
-	int i, ret = 0;
+	int i;
 	struct drm_gem_object *obj;
 
 	spin_lock(&filp->table_lock);
@@ -798,16 +798,23 @@ static int objects_lookup(struct drm_file *filp, u32 *handle, int count,
 	for (i = 0; i < count; i++) {
 		/* Check if we currently have a reference on the object */
 		obj = idr_find(&filp->object_idr, handle[i]);
-		if (!obj) {
-			ret = -ENOENT;
-			break;
-		}
+		if (!obj)
+			goto err;
+
 		drm_gem_object_get(obj);
 		objs[i] = obj;
 	}
+
+	spin_unlock(&filp->table_lock);
+	return 0;
+
+err:
 	spin_unlock(&filp->table_lock);
 
-	return ret;
+	while (i--)
+		drm_gem_object_put(objs[i]);
+
+	return -ENOENT;
 }
 
 /**
