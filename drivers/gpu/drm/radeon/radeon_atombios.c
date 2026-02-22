@@ -2120,7 +2120,7 @@ static int radeon_atombios_parse_power_table_1_3(struct radeon_device *rdev)
 	if (num_modes == 0)
 		return state_index;
 	rdev->pm.power_state = kzalloc_objs(struct radeon_power_state,
-					    num_modes, GFP_KERNEL);
+					    num_modes);
 	if (!rdev->pm.power_state)
 		return state_index;
 	/* last mode is usually default, array is low to high */
@@ -2594,8 +2594,7 @@ static int radeon_atombios_parse_power_table_4_5(struct radeon_device *rdev)
 	if (power_info->pplib.ucNumStates == 0)
 		return state_index;
 	rdev->pm.power_state = kzalloc_objs(struct radeon_power_state,
-					    power_info->pplib.ucNumStates,
-					    GFP_KERNEL);
+					    power_info->pplib.ucNumStates);
 	if (!rdev->pm.power_state)
 		return state_index;
 	/* first mode is usually default, followed by low to high */
@@ -2612,8 +2611,7 @@ static int radeon_atombios_parse_power_table_4_5(struct radeon_device *rdev)
 			  power_info->pplib.ucNonClockSize));
 		rdev->pm.power_state[i].clock_info =
 			kzalloc_objs(struct radeon_pm_clock_info,
-				     (power_info->pplib.ucStateEntrySize - 1) ? (power_info->pplib.ucStateEntrySize - 1) : 1,
-				     GFP_KERNEL);
+				     (power_info->pplib.ucStateEntrySize - 1) ? (power_info->pplib.ucStateEntrySize - 1) : 1);
 		if (!rdev->pm.power_state[i].clock_info)
 			return state_index;
 		if (power_info->pplib.ucStateEntrySize - 1) {
@@ -2696,8 +2694,7 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 	if (state_array->ucNumEntries == 0)
 		return state_index;
 	rdev->pm.power_state = kzalloc_objs(struct radeon_power_state,
-					    state_array->ucNumEntries,
-					    GFP_KERNEL);
+					    state_array->ucNumEntries);
 	if (!rdev->pm.power_state)
 		return state_index;
 	power_state_offset = (u8 *)state_array->states;
@@ -2709,8 +2706,7 @@ static int radeon_atombios_parse_power_table_6(struct radeon_device *rdev)
 			&non_clock_info_array->nonClockInfo[non_clock_array_index];
 		rdev->pm.power_state[i].clock_info =
 			kzalloc_objs(struct radeon_pm_clock_info,
-				     power_state->v2.ucNumDPMLevels ? power_state->v2.ucNumDPMLevels : 1,
-				     GFP_KERNEL);
+				     power_state->v2.ucNumDPMLevels ? power_state->v2.ucNumDPMLevels : 1);
 		if (!rdev->pm.power_state[i].clock_info)
 			return state_index;
 		if (power_state->v2.ucNumDPMLevels) {
