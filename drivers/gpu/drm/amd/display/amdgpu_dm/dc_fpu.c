@@ -56,11 +56,34 @@ inline void dc_assert_fp_enabled(void)
 #ifdef __linux__
 	int depth;
 
-	depth = __this_cpu_read(fpu_recursion_depth);
+	depth = this_cpu_read(fpu_recursion_depth);
 
 	ASSERT(depth >= 1);
 #elif defined(__FreeBSD__)
 	ASSERT(current->fpu_ctx_level >= 1);
+#endif
+}
+
+/**
+ * dc_assert_fp_enabled - Check if FPU protection is enabled
+ *
+ * This function tells if the code is already under FPU protection or not. A
+ * function that works as an API for a set of FPU operations can use this
+ * function for checking if the caller invoked it after DC_FP_START(). For
+ * example, take a look at dcn20_fpu.c file.
+ *
+ * Similar to dc_assert_fp_enabled, but does not assert, returns status instead.
+ */
+inline bool dc_is_fp_enabled(void)
+{
+#ifdef __linux__
+	int depth;
+
+	depth = this_cpu_read(fpu_recursion_depth);
+
+	return (depth >= 1);
+#elif defined(__FreeBSD__)
+	return (current->fpu_ctx_level >= 1);
 #endif
 }
 
@@ -84,7 +107,7 @@ void dc_fpu_begin(const char *function_name, const int line)
 
 	WARN_ON_ONCE(!in_task());
 	preempt_disable();
-	depth = __this_cpu_inc_return(fpu_recursion_depth);
+	depth = this_cpu_inc_return(fpu_recursion_depth);
 	if (depth == 1) {
 		BUG_ON(!kernel_fpu_available());
 		kernel_fpu_begin();
@@ -113,7 +136,7 @@ void dc_fpu_end(const char *function_name, const int line)
 #ifdef __linux__
 	int depth;
 
-	depth = __this_cpu_dec_return(fpu_recursion_depth);
+	depth = this_cpu_dec_return(fpu_recursion_depth);
 	if (depth == 0) {
 		kernel_fpu_end();
 	} else {
