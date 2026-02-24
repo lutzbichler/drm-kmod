@@ -511,26 +511,39 @@ static struct ttm_pool_type *ttm_pool_select_type(struct ttm_pool *pool,
 	return NULL;
 }
 
-/* Free pages using the global shrinker list */
-static unsigned int ttm_pool_shrink(void)
+/* Free pages using the per-node shrinker list */
+static unsigned int ttm_pool_shrink(int nid, unsigned long num_to_free)
 {
+#if defined(__linux__) || defined(PAGE_IS_LKPI_PAGE)
+	LIST_HEAD(dispose);
+#elif defined(__FreeBSD__)
+	struct page *p;
+#endif
 	struct ttm_pool_type *pt;
 	unsigned int num_pages;
-	struct page *p;
-
+	
 	down_read(&pool_shrink_rwsem);
 	spin_lock(&shrinker_lock);
 	pt = list_first_entry(&shrinker_list, typeof(*pt), shrinker_list);
 	list_move_tail(&pt->shrinker_list, &shrinker_list);
 	spin_unlock(&shrinker_lock);
 
+#if defined(__linux__) || defined(PAGE_IS_LKPI_PAGE)
+	num_pages = list_lru_walk_node(&pt->pages, nid, pool_move_to_dispose_list, &dispose, &num_to_free);
+	num_pages *= 1 << pt->order;
+
+	ttm_pool_dispose_list(pt, &dispose);
+#elif defined(__FreeBSD__)
 	p = ttm_pool_type_take(pt, ttm_pool_nid(pt->pool));
 	if (p) {
 		ttm_pool_free_page(pt->pool, pt->caching, pt->order, p, true);
 		num_pages = 1 << pt->order;
 	} else {
 		num_pages = 0;
-	}	up_read(&pool_shrink_rwsem);
+	}
+#endif
+
+	up_read(&pool_shrink_rwsem);
 
 	return num_pages;
 }
@@ -1083,8 +1096,10 @@ void ttm_pool_free(struct ttm_pool *pool, struct ttm_tt *tt)
 {
 	ttm_pool_free_range(pool, tt, tt->caching, 0, tt->num_pages);
 
-	while (atomic_long_read(&allocated_pages) > page_pool_size)
-		ttm_pool_shrink();
+	while (atomic_long_read(&allocated_pages) > page_pool_size) {
+		unsigned long diff = atomic_long_read(&allocated_pages) - page_pool_size;
+		ttm_pool_shrink(ttm_pool_nid(pool), diff);
+	}
 }
 EXPORT_SYMBOL(ttm_pool_free);
 
@@ -1351,7 +1366,7 @@ static unsigned long ttm_pool_shrinker_scan(struct shrinker *shrink,
 	unsigned long num_freed = 0;
 
 	do
-		num_freed += ttm_pool_shrink();
+		num_freed += ttm_pool_shrink(sc->nid, sc->nr_to_scan);
 	while (num_freed < sc->nr_to_scan &&
 	       atomic_long_read(&allocated_pages));
 
@@ -1496,11 +1511,15 @@ static int ttm_pool_debugfs_shrink_show(struct seq_file *m, void *data)
 		.nr_to_scan = TTM_SHRINKER_BATCH,
 	};
 	unsigned long count;
+	int nid;
 
 	fs_reclaim_acquire(GFP_KERNEL);
-	count = ttm_pool_shrinker_count(mm_shrinker, &sc);
-	seq_printf(m, "%lu/%lu\n", count,
-		   ttm_pool_shrinker_scan(mm_shrinker, &sc));
+	for_each_node(nid) {
+		sc.nid = nid;
+		count = ttm_pool_shrinker_count(mm_shrinker, &sc);
+		seq_printf(m, "%d: %lu/%lu\n", nid, count,
+			   ttm_pool_shrinker_scan(mm_shrinker, &sc));
+	}
 	fs_reclaim_release(GFP_KERNEL);
 
 	return 0;
@@ -1548,7 +1567,7 @@ int ttm_pool_mgr_init(unsigned long num_pages)
 #endif
 #endif
 
-	mm_shrinker = shrinker_alloc(0, "drm-ttm_pool");
+	mm_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE, "drm-ttm_pool");
 	if (!mm_shrinker)
 		return -ENOMEM;
 
