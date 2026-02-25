@@ -188,6 +188,10 @@ static const struct xe_ip media_ips[] = {
 	{ 3503, "Xe3p_HPM", &media_xelpmp },
 };
 
+#define MULTI_LRC_MASK \
+	.multi_lrc_mask = BIT(XE_ENGINE_CLASS_VIDEO_DECODE) | \
+			  BIT(XE_ENGINE_CLASS_VIDEO_ENHANCE)
+
 static const struct xe_device_desc tgl_desc = {
 	.pre_gmdid_graphics_ip = &graphics_ip_xelp,
 	.pre_gmdid_media_ip = &media_ip_xem,
@@ -198,6 +202,7 @@ static const struct xe_device_desc tgl_desc = {
 	.has_llc = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 3,
@@ -212,6 +217,7 @@ static const struct xe_device_desc rkl_desc = {
 	.has_display = true,
 	.has_llc = true,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 3,
@@ -229,6 +235,7 @@ static const struct xe_device_desc adl_s_desc = {
 	.has_llc = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.subplatforms = (const struct xe_subplatform_desc[]) {
 		{ XE_SUBPLATFORM_ALDERLAKE_S_RPLS, "RPLS", adls_rpls_ids },
@@ -250,6 +257,7 @@ static const struct xe_device_desc adl_p_desc = {
 	.has_llc = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.subplatforms = (const struct xe_subplatform_desc[]) {
 		{ XE_SUBPLATFORM_ALDERLAKE_P_RPLU, "RPLU", adlp_rplu_ids },
@@ -269,6 +277,7 @@ static const struct xe_device_desc adl_n_desc = {
 	.has_llc = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 3,
@@ -287,6 +296,7 @@ static const struct xe_device_desc dg1_desc = {
 	.has_gsc_nvm = 1,
 	.has_heci_gscfi = 1,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 3,
@@ -317,6 +327,7 @@ static const struct xe_device_desc ats_m_desc = {
 	.pre_gmdid_media_ip = &media_ip_xehpm,
 	.dma_mask_size = 46,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 
 	DG2_FEATURES,
@@ -329,6 +340,7 @@ static const struct xe_device_desc dg2_desc = {
 	.pre_gmdid_media_ip = &media_ip_xehpm,
 	.dma_mask_size = 46,
 	.max_gt_per_tile = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 
 	DG2_FEATURES,
@@ -347,6 +359,7 @@ static const __maybe_unused struct xe_device_desc pvc_desc = {
 	.has_heci_gscfi = 1,
 	.max_gt_per_tile = 1,
 	.max_remote_tiles = 1,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 57,
 	.vm_max_level = 4,
@@ -362,6 +375,7 @@ static const struct xe_device_desc mtl_desc = {
 	.has_display = true,
 	.has_pxp = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.va_bits = 48,
 	.vm_max_level = 3,
 };
@@ -373,6 +387,7 @@ static const struct xe_device_desc lnl_desc = {
 	.has_flat_ccs = 1,
 	.has_pxp = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.needs_scratch = true,
 	.va_bits = 48,
 	.vm_max_level = 4,
@@ -397,6 +412,7 @@ static const struct xe_device_desc bmg_desc = {
 	.has_soc_remapper_telem = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.needs_scratch = true,
 	.subplatforms = (const struct xe_subplatform_desc[]) {
 		{ XE_SUBPLATFORM_BATTLEMAGE_G21, "G21", bmg_g21_ids },
@@ -415,6 +431,7 @@ static const struct xe_device_desc ptl_desc = {
 	.has_pre_prod_wa = 1,
 	.has_pxp = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.needs_scratch = true,
 	.needs_shared_vf_gt_wq = true,
 	.va_bits = 48,
@@ -428,6 +445,7 @@ static const struct xe_device_desc nvls_desc = {
 	.has_flat_ccs = 1,
 	.has_pre_prod_wa = 1,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 4,
@@ -449,6 +467,7 @@ static const struct xe_device_desc cri_desc = {
 	.has_soc_remapper_telem = true,
 	.has_sriov = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 57,
 	.vm_max_level = 4,
@@ -463,6 +482,7 @@ static const struct xe_device_desc nvlp_desc = {
 	.has_page_reclaim_hw_assist = true,
 	.has_pre_prod_wa = true,
 	.max_gt_per_tile = 2,
+	MULTI_LRC_MASK,
 	.require_force_probe = true,
 	.va_bits = 48,
 	.vm_max_level = 4,
@@ -749,6 +769,7 @@ static int xe_info_init_early(struct xe_device *xe,
 	xe->info.skip_pcode = desc->skip_pcode;
 	xe->info.needs_scratch = desc->needs_scratch;
 	xe->info.needs_shared_vf_gt_wq = desc->needs_shared_vf_gt_wq;
+	xe->info.multi_lrc_mask = desc->multi_lrc_mask;
 
 	xe->info.probe_display = IS_ENABLED(CONFIG_DRM_XE_DISPLAY) &&
 				 xe_modparam.probe_display &&
