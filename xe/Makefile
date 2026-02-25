@@ -284,7 +284,7 @@ SRCS+=	icl_dsi.c \
 	intel_dp_test.c \
 	intel_dpll.c \
 	intel_dpll_mgr.c \
-	intel_dpt_common.c \
+	intel_dpt.c \
 	intel_dram.c \
 	intel_drrs.c \
 	intel_dsb.c \
