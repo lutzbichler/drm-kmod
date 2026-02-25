@@ -22,6 +22,7 @@ SRCS=	\
 	i915_config.c \
 	i915_deps.c \
 	i915_display_pc8.c \
+	i915_dpt.c \
 	i915_driver.c \
 	i915_drm_client.c \
 	i915_dsb_buffer.c \
@@ -154,7 +155,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_dp_link_training.c \
 	intel_dp_mst.c \
 	intel_dp_test.c \
-	intel_dpt.c \
 	intel_dpt_common.c \
 	intel_dram.c \
 	intel_drrs.c \
