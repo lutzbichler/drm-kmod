@@ -315,6 +315,7 @@ SRCS+=	icl_dsi.c \
 	intel_modeset_setup.c \
 	intel_modeset_verify.c \
 	intel_opregion.c \
+	intel_overlay.c \
 	intel_plane.c \
 	intel_panel.c \
 	intel_parent.c \
