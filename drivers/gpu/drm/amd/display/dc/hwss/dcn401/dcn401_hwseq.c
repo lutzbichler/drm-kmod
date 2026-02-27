@@ -1988,7 +1988,6 @@ void dcn401_reset_back_end_for_pipe(
 	struct dc_link *link = pipe_ctx->stream->link;
 	const struct link_hwss *link_hwss = get_link_hwss(link, &pipe_ctx->link_res);
 
-	DC_LOGGER_INIT(dc->ctx->logger);
 	if (pipe_ctx->stream_res.stream_enc == NULL) {
 		pipe_ctx->stream = NULL;
 		return;
@@ -2428,8 +2427,6 @@ void dcn401_program_front_end_for_ctx(
 	struct dce_hwseq *hws = dc->hwseq;
 	struct pipe_ctx *pipe = NULL;
 
-	DC_LOGGER_INIT(dc->ctx->logger);
-
 	if (resource_is_pipe_topology_changed(dc->current_state, context))
 		resource_log_pipe_topology_update(dc, context);
 
@@ -2592,8 +2589,6 @@ void dcn401_post_unlock_program_front_end(
 	unsigned int polling_interval_us = 1;
 	struct dce_hwseq *hwseq = dc->hwseq;
 	int i;
-
-	DC_LOGGER_INIT(dc->ctx->logger);
 
 	for (i = 0; i < dc->res_pool->pipe_count; i++)
 		if (resource_is_pipe_type(&dc->current_state->res_ctx.pipe_ctx[i], OPP_HEAD) &&
@@ -2974,8 +2969,6 @@ void dcn401_plane_atomic_power_down(struct dc *dc,
 	struct dce_hwseq *hws = dc->hwseq;
 	uint32_t org_ip_request_cntl = 0;
 
-	DC_LOGGER_INIT(dc->ctx->logger);
-
 	if (REG(DC_IP_REQUEST_CNTL)) {
 		REG_GET(DC_IP_REQUEST_CNTL, IP_REQUEST_EN, &org_ip_request_cntl);
 		if (org_ip_request_cntl == 0)
@@ -3066,8 +3059,6 @@ void dcn401_plane_atomic_power_down_sequence(struct dc *dc,
 {
 	struct dce_hwseq *hws = dc->hwseq;
 	uint32_t org_ip_request_cntl = 0;
-
-	DC_LOGGER_INIT(dc->ctx->logger);
 
 	/* Check and set DC_IP_REQUEST_CNTL if needed */
 	if (REG(DC_IP_REQUEST_CNTL)) {
