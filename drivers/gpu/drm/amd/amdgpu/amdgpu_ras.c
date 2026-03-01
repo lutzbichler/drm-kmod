@@ -2262,6 +2262,7 @@ static bool amdgpu_ras_aca_is_supported(struct amdgpu_device *adev)
 	case IP_VERSION(13, 0, 6):
 	case IP_VERSION(13, 0, 12):
 	case IP_VERSION(13, 0, 14):
+	case IP_VERSION(13, 0, 15):
 		ret = true;
 		break;
 	default:
@@ -4018,6 +4019,7 @@ static bool amdgpu_ras_asic_supported(struct amdgpu_device *adev)
 		case IP_VERSION(13, 0, 6):
 		case IP_VERSION(13, 0, 12):
 		case IP_VERSION(13, 0, 14):
+		case IP_VERSION(13, 0, 15):
 			return true;
 		default:
 			return false;
@@ -4031,6 +4033,7 @@ static bool amdgpu_ras_asic_supported(struct amdgpu_device *adev)
 		case IP_VERSION(13, 0, 10):
 		case IP_VERSION(13, 0, 12):
 		case IP_VERSION(13, 0, 14):
+		case IP_VERSION(13, 0, 15):
 		case IP_VERSION(14, 0, 3):
 			return true;
 		default:
@@ -4200,7 +4203,8 @@ init_ras_enabled_flag:
 		adev->aca.is_enabled =
 			(amdgpu_ip_version(adev, MP0_HWIP, 0) == IP_VERSION(13, 0, 6) ||
 			amdgpu_ip_version(adev, MP0_HWIP, 0) == IP_VERSION(13, 0, 12) ||
-			amdgpu_ip_version(adev, MP0_HWIP, 0) == IP_VERSION(13, 0, 14));
+			amdgpu_ip_version(adev, MP0_HWIP, 0) == IP_VERSION(13, 0, 14) ||
+			amdgpu_ip_version(adev, MP0_HWIP, 0) == IP_VERSION(13, 0, 15));
 	}
 
 	/* bad page feature is not applicable to specific app platform */
@@ -4288,6 +4292,7 @@ static void amdgpu_ras_init_reserved_vram_size(struct amdgpu_device *adev)
 	case IP_VERSION(13, 0, 2):
 	case IP_VERSION(13, 0, 6):
 	case IP_VERSION(13, 0, 12):
+	case IP_VERSION(13, 0, 15):
 		con->reserved_pages_in_bytes = AMDGPU_RAS_RESERVED_VRAM_SIZE_DEFAULT;
 		break;
 	case IP_VERSION(13, 0, 14):
