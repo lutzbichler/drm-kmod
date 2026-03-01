@@ -35,6 +35,7 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     drivers/gpu/drm/display/ \
     drivers/gpu/drm/i915/ \
     drivers/gpu/drm/radeon/ \
+    drivers/gpu/drm/xe \
     drivers/gpu/drm/scheduler/ \
     drivers/gpu/drm/ttm/ \
     drivers/dma-buf/dma-fence.c \
