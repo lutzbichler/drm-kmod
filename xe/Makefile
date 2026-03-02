@@ -161,6 +161,7 @@ SRCS+=	intel_bo.c \
 	xe_display_wa.c \
 	xe_dsb_buffer.c \
 	xe_fb_pin.c \
+	xe_frontbuffer.c \
 	xe_hdcp_gsc.c \
 	xe_initial_plane.c \
 	xe_panic.c \
