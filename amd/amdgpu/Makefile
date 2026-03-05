@@ -726,6 +726,7 @@ SRCS+=	dce_abm.c \
 	dce_stream_encoder.c \
 	dce_transform.c \
 	dmub_abm.c \
+	dmub_abm_cacp.c \
 	dmub_abm_lcd.c \
 	dmub_psr.c \
 	dmub_replay.c \
