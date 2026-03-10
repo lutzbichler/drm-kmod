@@ -1226,6 +1226,7 @@ SRCS+=	color_gamma.c \
 	hdcp2_transition.c \
 	info_packet.c \
 	power.c \
+	power_abm.c \
 	power_helpers.c
 
 # display/dc/soc_and_ip_translator
