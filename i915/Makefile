@@ -18,6 +18,7 @@ EXPORT_SYMS=	YES
 
 SRCS=	\
 	i915_active.c \
+	i915_bo.c \
 	i915_cmd_parser.c \
 	i915_config.c \
 	i915_deps.c \
@@ -124,7 +125,6 @@ SRCS+=	dvo_ch7017.c \
 	icl_dsi.c \
 	intel_alpm.c \
 	intel_backlight.c \
-	intel_bo.c \
 	intel_casf.c \
 	intel_crt.c \
 	intel_crtc_state_dump.c \
