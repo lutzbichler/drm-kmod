@@ -53,6 +53,7 @@
 
 #define MAX_WALK_BYTE	(2UL << 30)
 
+#ifdef __linux__
 /**
  * amdgpu_hmm_invalidate_gfx - callback to notify about mm change
  *
@@ -117,6 +118,7 @@ static bool amdgpu_hmm_invalidate_hsa(struct mmu_interval_notifier *mni,
 static const struct mmu_interval_notifier_ops amdgpu_hmm_hsa_ops = {
 	.invalidate = amdgpu_hmm_invalidate_hsa,
 };
+#endif
 
 /**
  * amdgpu_hmm_register - register a BO for notifier updates
@@ -129,6 +131,7 @@ static const struct mmu_interval_notifier_ops amdgpu_hmm_hsa_ops = {
  */
 int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr)
 {
+#ifdef __linux__
 	int r;
 
 	if (bo->kfd_bo)
@@ -148,6 +151,9 @@ int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr)
 		bo->notifier.mm = NULL;
 
 	return r;
+#elif defined(__FreeBSD__)
+	return 0;
+#endif
 }
 
 /**
@@ -159,12 +165,15 @@ int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr)
  */
 void amdgpu_hmm_unregister(struct amdgpu_bo *bo)
 {
+#ifdef __linux__
 	if (!bo->notifier.mm)
 		return;
 	mmu_interval_notifier_remove(&bo->notifier);
 	bo->notifier.mm = NULL;
+#endif
 }
 
+#ifdef __linux__
 int amdgpu_hmm_range_get_pages(struct mmu_interval_notifier *notifier,
 			       uint64_t start, uint64_t npages, bool readonly,
 			       void *owner,
@@ -226,14 +235,19 @@ out_free_range:
 		r = -EAGAIN;
 	return r;
 }
+#endif
 
 bool amdgpu_hmm_range_valid(struct amdgpu_hmm_range *range)
 {
+#ifdef __linux__
 	if (!range)
 		return false;
 
 	return !mmu_interval_read_retry(range->hmm_range.notifier,
 					range->hmm_range.notifier_seq);
+#elif defined(__FreeBSD__)
+	return false;
+#endif
 }
 
 struct amdgpu_hmm_range *amdgpu_hmm_range_alloc(struct amdgpu_bo *bo)
@@ -252,8 +266,11 @@ void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range)
 {
 	if (!range)
 		return;
-
+#ifdef __linux__
 	kvfree(range->hmm_range.hmm_pfns);
+#elif defined(__FreeBSD__)
+	kvfree(range->user_pages);
+#endif
 	amdgpu_bo_unref(&range->bo);
 	kfree(range);
 }

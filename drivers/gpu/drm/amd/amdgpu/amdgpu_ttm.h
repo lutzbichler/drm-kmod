@@ -186,30 +186,17 @@ void amdgpu_ttm_recover_gart(struct ttm_buffer_object *tbo);
 uint64_t amdgpu_ttm_domain_start(struct amdgpu_device *adev, uint32_t type);
 
 #if IS_ENABLED(CONFIG_DRM_AMDGPU_USERPTR)
-#ifdef __linux__
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-#elif defined(__FreeBSD__)
-int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
-#endif
-				 struct amdgpu_hmm_range *range);
+					struct amdgpu_hmm_range *range);
 #else
-#ifdef __linux__
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-#elif defined(__FreeBSD__)
-static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-					       struct page **pages,
-#endif
-					       struct amdgpu_hmm_range *range)
+					struct amdgpu_hmm_range *range)
 {
 	return -EPERM;
 }
 #endif
 
-#ifdef __linux__
 void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct amdgpu_hmm_range *range);
-#elif defined(__FreeBSD__)
-void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct page **pages);
-#endif
 int amdgpu_ttm_tt_get_userptr(const struct ttm_buffer_object *tbo,
 			      uint64_t *user_addr);
 int amdgpu_ttm_tt_set_userptr(struct ttm_buffer_object *bo,

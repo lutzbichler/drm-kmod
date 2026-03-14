@@ -712,12 +712,8 @@ struct amdgpu_ttm_tt {
  * once afterwards to stop HMM tracking. Its the caller responsibility to ensure
  * that range is a valid memory and it is freed too.
  */
-#ifdef __linux__
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-#elif defined(__FreeBSD__)
-int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo, struct page **pages,
-#endif
-				 struct hmm_range *range)
+				struct amdgpu_hmm_range *range)
 {
 	struct ttm_tt *ttm = bo->tbo.ttm;
 	struct amdgpu_ttm_tt *gtt = ttm_to_amdgpu_ttm_tt(ttm);
@@ -774,11 +770,7 @@ out_unlock:
  * that backs user memory and will ultimately be mapped into the device
  * address space.
  */
-#ifdef __linux__
-void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct hmm_range *range)
-#elif defined(__FreeBSD__)
-void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct page **pages)
-#endif
+void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct amdgpu_hmm_range *range)
 {
 	unsigned long i;
 
@@ -786,7 +778,7 @@ void amdgpu_ttm_tt_set_user_pages(struct ttm_tt *ttm, struct page **pages)
 #ifdef __linux__
 		ttm->pages[i] = range ? hmm_pfn_to_page(range->hmm_pfns[i]) : NULL;
 #elif defined(__FreeBSD__)
-		ttm->pages[i] = pages ? pages[i] : NULL;
+		ttm->pages[i] = range && range->user_pages ? range->user_pages[i] : NULL;
 #endif
 }
 

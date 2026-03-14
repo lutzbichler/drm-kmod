@@ -307,7 +307,6 @@ SRCS=	acp_hw.c
 
 # amdgpu
 # amdgpu_acp.c \ # not yet - need i2s
-# amdgpu_hmm.c \  # disabled
 
 SRCS+=	aldebaran.c \
 	aldebaran_reg_init.c \
@@ -586,6 +585,10 @@ SRCS+=	aldebaran.c \
 
 .if !empty(KCONFIG:MCOMPAT)
 SRCS+=	amdgpu_ioc32.c
+.endif
+
+.if !empty(KCONFIG:MHMM_MIRROR)
+SRCS+=	amdgpu_hmm.c
 .endif
 
 # amdxcp

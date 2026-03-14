@@ -34,6 +34,8 @@
 struct amdgpu_hmm_range {
 #ifdef linux__
 	struct hmm_range hmm_range;
+#elif defined(__FreeBSD__)
+	struct page **user_pages;
 #endif
 	struct amdgpu_bo *bo;
 };
@@ -46,8 +48,8 @@ int amdgpu_hmm_range_get_pages(struct mmu_interval_notifier *notifier,
 #endif
 
 #if defined(CONFIG_HMM_MIRROR)
-bool amdgpu_hmm_range_valid(struct hmm_range *hmm_range);
-struct hmm_range *amdgpu_hmm_range_alloc(void);
+int amdgpu_hmm_register(struct amdgpu_bo *bo, unsigned long addr);
+void amdgpu_hmm_unregister(struct amdgpu_bo *bo);
 bool amdgpu_hmm_range_valid(struct amdgpu_hmm_range *range);
 struct amdgpu_hmm_range *amdgpu_hmm_range_alloc(struct amdgpu_bo *bo);
 void amdgpu_hmm_range_free(struct amdgpu_hmm_range *range);
