@@ -1091,6 +1091,7 @@ SRCS+=	display_mode_core.c \
 	dml2_mcg_dcn42.c \
 	dml2_mcg_factory.c \
 	dml2_pmo_dcn3.c \
+	dml2_pmo_dcn42.c \
 	dml2_pmo_dcn4_fams2.c \
 	dml2_pmo_factory.c \
 	dml2_policy.c \
