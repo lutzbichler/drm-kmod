@@ -480,11 +480,19 @@ dma_fence_timeline_name(struct dma_fence *fence)
 void
 dma_fence_describe(struct dma_fence *fence, struct seq_file *seq)
 {
-	seq_printf(seq, "%s %s seq %llu %ssignalled\n",
-		   dma_fence_driver_name(fence),
-		   dma_fence_timeline_name(fence),
-		   fence->seqno,
-		   dma_fence_is_signaled(fence) ? "" : "un");
+	const char *timeline_name = "";
+	const char *driver_name = "";
+	const char *is_signaled = "";
+
+	if (!dma_fence_is_signaled(fence)) {
+		timeline_name = dma_fence_timeline_name(fence);
+		driver_name = dma_fence_driver_name(fence);
+		is_signaled = "un";
+	}
+
+	seq_printf(seq, "%llu %llu %s %s %ssignalled\n",
+		   fence->context, fence->seqno,
+		   timeline_name, driver_name, is_signaled);
 }
 
 /*
