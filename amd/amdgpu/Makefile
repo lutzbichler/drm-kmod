@@ -1532,6 +1532,7 @@ CFLAGS.dml2_dpmm_dcn4.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_mall_phantom.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml2_pmo_dcn3.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_pmo_dcn4_fams2.c = ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml2_pmo_dcn42.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_policy.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml2_translation_helper.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml2_utils.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
