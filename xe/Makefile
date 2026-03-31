@@ -343,7 +343,8 @@ SRCS+=	icl_dsi.c \
 	skl_prefill.c \
 	skl_scaler.c \
 	skl_universal_plane.c \
-	skl_watermark.c
+	skl_watermark.c \
+	vlv_sideband.c
 
 # i915/soc
 SRCS+=	intel_pch.c \
