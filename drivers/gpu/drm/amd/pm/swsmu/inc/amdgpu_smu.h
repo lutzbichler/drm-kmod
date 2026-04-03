@@ -1623,12 +1623,6 @@ struct pptable_funcs {
 			    enum smu_message_type msg, uint32_t param, uint32_t *read_arg);
 
 	/**
-	 * @get_ras_smu_drv: Get RAS smu driver interface
-	 * Return: ras_smu_drv *
-	 */
-	int (*get_ras_smu_drv)(struct smu_context *smu, const struct ras_smu_drv **ras_smu_drv);
-
-	/**
 	 * @set_power_dep: Create or destroy a power dependency link
 	 * from an integrated xHCI controller to the GPU so that the GPU is
 	 * resumed before the USB controller during PM resume. @enable is true
@@ -1982,7 +1976,6 @@ int smu_set_pm_policy(struct smu_context *smu, enum pp_pm_policy p_type,
 		      int level);
 ssize_t smu_get_pm_policy_info(struct smu_context *smu,
 			       enum pp_pm_policy p_type, char *sysbuf);
-const struct ras_smu_drv *smu_get_ras_smu_driver(void *handle);
 
 int amdgpu_smu_ras_send_msg(struct amdgpu_device *adev, enum smu_message_type msg,
 			    uint32_t param, uint32_t *readarg);
