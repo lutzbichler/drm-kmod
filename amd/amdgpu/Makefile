@@ -333,8 +333,7 @@ SRCS=	acp_hw.c
 # amdgpu
 # amdgpu_acp.c \ # not yet - need i2s
 
-SRCS+=	amdgpu_aca.c \
-	amdgpu_afmt.c \
+SRCS+=	amdgpu_afmt.c \
 	amdgpu_amdkfd.c \
 	amdgpu_atombios.c \
 	amdgpu_atomfirmware.c \
