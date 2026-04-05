@@ -719,3 +719,27 @@ dma_fence_wait(struct dma_fence *fence, bool intr)
 
 	return (ret < 0 ? ret : 0);
 }
+
+bool
+dma_fence_check_and_signal_locked(struct dma_fence *fence)
+{
+	int ret;
+
+	assert_spin_locked(fence->lock);
+	ret = dma_fence_test_signaled_flag(fence);
+	dma_fence_signal_locked(fence);
+
+	return (ret);
+}
+
+bool
+dma_fence_check_and_signal(struct dma_fence *fence)
+{
+	int ret;
+
+	spin_lock(fence->lock);
+	ret = dma_fence_check_and_signal_locked(fence);
+	spin_unlock(fence->lock);
+
+	return (ret);
+}
