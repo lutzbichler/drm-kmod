@@ -28,6 +28,7 @@ SRCS=	\
 	i915_drm_client.c \
 	i915_dsb_buffer.c \
 	i915_edram.c \
+	i915_fb_pin.c \
 	i915_freq.c \
 	i915_getparam.c \
 	i915_gem.c \
@@ -168,7 +169,6 @@ SRCS+=	dvo_ch7017.c \
 	intel_dvo.c \
 	intel_encoder.c \
 	intel_fb.c \
-	intel_fb_pin.c \
 	intel_flipq.c \
 	intel_global_state.c \
 	intel_gmbus.c \
