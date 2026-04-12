@@ -23,6 +23,7 @@ dmabuf/vnode_if_newproto.h
 dmabuf/vnode_if_typedef.h
 dmabuf/i386
 dmabuf/x86
+drivers/gpu/drm/xe/generated
 drm/*.h
 drm/i386
 drm/x86
@@ -77,3 +78,9 @@ vmwgfx/i386
 vmwgfx/x86
 vmwgfx/machine
 vmwgfx/export_syms
+xe/*.h
+xe/i386
+xe/x86
+xe/machine
+xe/export_syms
+xe/xe_gen_wa_oob
