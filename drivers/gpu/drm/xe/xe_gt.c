@@ -416,6 +416,10 @@ static int gt_fw_domain_init(struct xe_gt *gt)
 			xe_lmtt_init(&gt_to_tile(gt)->sriov.pf.lmtt);
 	}
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&gt->uc.guc.fw, "post-ggtt_init");
+#endif
+
 	/* Enable per hw engine IRQs */
 	xe_irq_enable_hwe(gt);
 
@@ -483,6 +487,10 @@ static int all_fw_domain_init(struct xe_gt *gt)
 	err = xe_uc_init_post_hwconfig(&gt->uc);
 	if (err)
 		goto err_force_wake;
+
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&gt->uc.guc.fw, "post-uc_init_post_hwconfig");
+#endif
 
 	if (!xe_gt_is_media_type(gt)) {
 		/*
@@ -578,6 +586,10 @@ int xe_gt_init(struct xe_gt *gt)
 	int err;
 	int i;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&gt->uc.guc.fw, "gt_init-entry");
+#endif
+
 	INIT_WORK(&gt->reset.worker, gt_reset_worker);
 
 	for (i = 0; i < XE_ENGINE_CLASS_MAX; ++i) {
@@ -602,6 +614,10 @@ int xe_gt_init(struct xe_gt *gt)
 	err = gt_fw_domain_init(gt);
 	if (err)
 		return err;
+
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&gt->uc.guc.fw, "post-gt_fw_domain_init");
+#endif
 
 	err = xe_gt_idle_init(&gt->gtidle);
 	if (err)
