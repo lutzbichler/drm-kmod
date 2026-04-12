@@ -502,6 +502,12 @@ static int guc_xfer_rsa(struct xe_guc *guc)
 	if (copied < sizeof(rsa))
 		return -ENOMEM;
 
+#ifdef __FreeBSD__
+	drm_info(&guc_to_xe(guc)->drm,
+		 "GuC RSA xfer diag: rsa_size=%u copied=%zu path=MMIO rsa[0..3]=%08x %08x %08x %08x\n",
+		 guc->fw.rsa_size, copied, rsa[0], rsa[1], rsa[2], rsa[3]);
+#endif
+
 	for (i = 0; i < UOS_RSA_SCRATCH_COUNT; i++)
 		xe_mmio_write32(gt, UOS_RSA_SCRATCH(i), rsa[i]);
 
@@ -707,6 +713,18 @@ static int __xe_guc_upload(struct xe_guc *guc)
 
 	guc_write_params(guc);
 	guc_prepare_xfer(guc);
+
+#ifdef __FreeBSD__
+	{
+		struct xe_gt *gt = guc_to_gt(guc);
+
+		drm_info(&guc_to_xe(guc)->drm,
+			 "GuC upload diag: WOPCM_OFFSET=%08x WOPCM_SIZE=%08x SHIM_CTRL=%08x\n",
+			 xe_mmio_read32(gt, DMA_GUC_WOPCM_OFFSET),
+			 xe_mmio_read32(gt, GUC_WOPCM_SIZE),
+			 xe_mmio_read32(gt, GUC_SHIM_CONTROL));
+	}
+#endif
 
 	/*
 	 * Note that GuC needs the CSS header plus uKernel code to be copied

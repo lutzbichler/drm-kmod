@@ -24,6 +24,7 @@
 
 #ifdef __FreeBSD__
 #include "xe_ggtt.h"
+#include <linux/crc32.h>
 #endif
 
 /*
@@ -760,6 +761,30 @@ static int uc_fw_copy(struct xe_uc_fw *uc_fw, const void *data, size_t size, u32
 		goto fail;
 	}
 
+#ifdef __FreeBSD__
+	/* Diagnostic: verify firmware data integrity in BO after copy */
+	{
+		u32 src_crc = crc32_le(0, data, size);
+		u32 bo_crc = 0;
+
+		if (!iosys_map_is_null(&obj->vmap)) {
+			u8 *bo_data = kmalloc(size, GFP_KERNEL);
+
+			if (bo_data) {
+				xe_map_memcpy_from(xe, bo_data, &obj->vmap, 0,
+						   size);
+				bo_crc = crc32_le(0, bo_data, size);
+				kfree(bo_data);
+			}
+		}
+		drm_info(&xe->drm,
+			 "%s fw %s: copy diag: size=%zu src_crc=%08x bo_crc=%08x match=%d ggtt_addr=%08x\n",
+			 xe_uc_fw_type_repr(uc_fw->type), uc_fw->path,
+			 size, src_crc, bo_crc, src_crc == bo_crc,
+			 obj->ggtt_node ? (u32)obj->ggtt_node->base.start : 0);
+	}
+#endif
+
 	uc_fw->bo = obj;
 	uc_fw->size = size;
 
@@ -836,6 +861,59 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 
 	/* Set the source address for the uCode */
 	src_offset = uc_fw_ggtt_offset(uc_fw) + uc_fw->css_offset;
+
+#ifdef __FreeBSD__
+	/* Diagnostic: verify firmware data integrity in BO at upload time */
+	{
+		struct xe_bo *bo = uc_fw->bo;
+		u32 xfer_size = sizeof(struct uc_css_header) + uc_fw->ucode_size;
+		u32 rsa_off = xe_uc_fw_rsa_offset(uc_fw);
+		u32 bo_crc = 0;
+		u32 rsa[4] = {};
+		dma_addr_t first_dma = 0;
+		u64 first_pte = 0;
+
+		/* CRC of the data region that will be DMA'd */
+		if (!iosys_map_is_null(&bo->vmap)) {
+			u8 *buf = kmalloc(xfer_size, GFP_KERNEL);
+
+			if (buf) {
+				xe_map_memcpy_from(xe, buf, &bo->vmap,
+						   uc_fw->css_offset, xfer_size);
+				bo_crc = crc32_le(0, buf, xfer_size);
+				kfree(buf);
+			}
+			/* Read first 16 bytes of RSA key */
+			xe_map_memcpy_from(xe, rsa, &bo->vmap, rsa_off,
+					   min_t(u32, 16, uc_fw->rsa_size));
+		}
+
+		/* First page DMA address from SG table */
+		if (bo->ttm.ttm && xe_bo_sg(bo) && xe_bo_sg(bo)->sgl)
+			first_dma = sg_dma_address(xe_bo_sg(bo)->sgl);
+
+		/* Read first GGTT PTE from GSM */
+		if (bo->ggtt_node) {
+			struct xe_ggtt *ggtt = gt_to_tile(gt)->mem.ggtt;
+
+			first_pte = readq(&ggtt->gsm[bo->ggtt_node->base.start >> 12]);
+		}
+
+		drm_info(&xe->drm,
+			 "%s fw xfer diag: ggtt_off=%llx css_off=%u xfer_size=%u rsa_off=%u rsa_size=%u\n",
+			 xe_uc_fw_type_repr(uc_fw->type),
+			 src_offset, uc_fw->css_offset, xfer_size,
+			 rsa_off, uc_fw->rsa_size);
+		drm_info(&xe->drm,
+			 "%s fw xfer diag: bo_crc=%08x first_dma=%llx first_pte=%016llx\n",
+			 xe_uc_fw_type_repr(uc_fw->type),
+			 bo_crc, (u64)first_dma, first_pte);
+		drm_info(&xe->drm,
+			 "%s fw xfer diag: rsa[0..3]=%08x %08x %08x %08x\n",
+			 xe_uc_fw_type_repr(uc_fw->type),
+			 rsa[0], rsa[1], rsa[2], rsa[3]);
+	}
+#endif
 	xe_mmio_write32(gt, DMA_ADDR_0_LOW, lower_32_bits(src_offset));
 	xe_mmio_write32(gt, DMA_ADDR_0_HIGH,
 			upper_32_bits(src_offset) | DMA_ADDRESS_SPACE_GGTT);
