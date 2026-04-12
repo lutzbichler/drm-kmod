@@ -22,6 +22,10 @@
 #include "xe_sriov.h"
 #include "xe_uc_fw.h"
 
+#ifdef __FreeBSD__
+#include "xe_ggtt.h"
+#endif
+
 /*
  * List of required GuC and HuC binaries per-platform. They must be ordered
  * based on platform, from newer to older.
@@ -806,11 +810,29 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 {
 	struct xe_device *xe = uc_fw_to_xe(uc_fw);
 	struct xe_gt *gt = uc_fw_to_gt(uc_fw);
+#ifdef __FreeBSD__
+	struct xe_tile *tile = gt_to_tile(gt);
+#endif
 	u64 src_offset;
 	u32 dma_ctrl;
 	int ret;
 
 	xe_force_wake_assert_held(gt_to_fw(gt), XE_FW_GT);
+
+#ifdef __FreeBSD__
+	/*
+	 * Re-write the firmware BO's GGTT PTEs before each upload.
+	 *
+	 * Between the initial firmware copy and subsequent uploads, the GGTT
+	 * TLB may have been invalidated (.e.g. by xe_ggtt_initial_clear) while
+	 * the GuC was held in reset, which can leave the TLB in an
+	 * indeterminate state on some platforms. Re-mapping ensures the PTEs
+	 * in the GSM are current and forces a fresh TLB fill on the next
+	 * access.
+	 */
+	if (uc_fw->bo && uc_fw->bo->ggtt_node)
+		xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo);
+#endif
 
 	/* Set the source address for the uCode */
 	src_offset = uc_fw_ggtt_offset(uc_fw) + uc_fw->css_offset;
