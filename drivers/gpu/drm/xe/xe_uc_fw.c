@@ -826,6 +826,27 @@ int xe_uc_fw_init(struct xe_uc_fw *uc_fw)
 	return err;
 }
 
+#ifdef __FreeBSD__
+void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
+{
+	struct xe_device *xe = uc_fw_to_xe(uc_fw);
+	struct xe_bo *bo = uc_fw->bo;
+	u32 rsa_off, rsa[4] = {};
+
+	if (!bo || iosys_map_is_null(&bo->vmap) || !uc_fw->rsa_size)
+		return;
+
+	rsa_off = xe_uc_fw_rsa_offset(uc_fw);
+	xe_map_memcpy_from(xe, rsa, &bo->vmap, rsa_off,
+			   min_t(u32, 16, uc_fw->rsa_size));
+
+	drm_info(&xe->drm,
+		 "%s fw diag [%s]: rsa[0..3]=%08x %08x %08x %08x\n",
+		 xe_uc_fw_type_repr(uc_fw->type), label,
+		 rsa[0], rsa[1], rsa[2], rsa[3]);
+}
+#endif
+
 static u32 uc_fw_ggtt_offset(struct xe_uc_fw *uc_fw)
 {
 	return xe_bo_ggtt_addr(uc_fw->bo);

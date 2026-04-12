@@ -186,9 +186,17 @@ int xe_uc_init_hw(struct xe_uc *uc)
 	if (IS_SRIOV_VF(uc_to_xe(uc)))
 		return vf_uc_init_hw(uc);
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&uc->guc.fw, "pre-huc-upload");
+#endif
+
 	ret = xe_huc_upload(&uc->huc);
 	if (ret)
 		return ret;
+
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&uc->guc.fw, "post-huc-upload");
+#endif
 
 	ret = xe_guc_upload(&uc->guc);
 	if (ret)

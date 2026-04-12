@@ -822,11 +822,18 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 	if (ret)
 		return ret;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-hwconfig");
+#endif
+
 	return 0;
 }
 
 int xe_guc_upload(struct xe_guc *guc)
 {
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "pre-upload2");
+#endif
 	xe_guc_ads_populate(&guc->ads);
 
 	return __xe_guc_upload(guc);
