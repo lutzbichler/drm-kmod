@@ -59,6 +59,25 @@
 #include "intel_wm.h"
 #include "skl_watermark.h"
 
+#ifdef __FreeBSD__
+#if IS_ENABLED(CONFIG_DRM_XE_DISPLAY)
+extern unsigned long xe_uc_fw_diag_rsa_phys;
+extern unsigned int xe_uc_fw_diag_rsa_pgoff;
+
+static inline u32 diag_peek_rsa(void)
+{
+	if (xe_uc_fw_diag_rsa_phys)
+		return *(volatile u32 *)((char *)PHYS_TO_DMAP(xe_uc_fw_diag_rsa_phys) +
+					 xe_uc_fw_diag_rsa_pgoff);
+	return 0xdeadbeef;
+}
+#define PROBE_DIAG(i915, step) \
+	drm_info(&(i915)->drm, "disp-probe [%s]: rsa0=%08x\n", step, diag_peek_rsa())
+#else
+#define PROBE_DIAG(i915, step) do {} while (0)
+#endif
+#endif
+
 bool intel_display_driver_probe_defer(struct pci_dev *pdev)
 {
 	struct drm_privacy_screen *privacy_screen;
@@ -230,12 +249,24 @@ int intel_display_driver_probe_noirq(struct drm_i915_private *i915)
 
 	intel_pmdemand_init_early(i915);
 
+#ifdef __FreeBSD__
+	PROBE_DIAG(i915, "pre-power_domains_init_hw");
+#endif
+
 	intel_power_domains_init_hw(i915, false);
+
+#ifdef __FreeBSD__
+	PROBE_DIAG(i915, "post-power_domains_init_hw");
+#endif
 
 	if (!HAS_DISPLAY(i915))
 		return 0;
 
 	intel_dmc_init(i915);
+
+#ifdef __FreeBSD__
+	PROBE_DIAG(i915, "post-dmc_init");
+#endif
 
 	i915->display.wq.modeset = alloc_ordered_workqueue("i915_modeset", 0);
 	i915->display.wq.flip = alloc_workqueue("i915_flip", WQ_HIGHPRI |
@@ -246,6 +277,10 @@ int intel_display_driver_probe_noirq(struct drm_i915_private *i915)
 #endif
 
 	intel_mode_config_init(i915);
+
+#ifdef __FreeBSD__
+	PROBE_DIAG(i915, "post-mode_config_init");
+#endif
 
 	ret = intel_cdclk_init(i915);
 	if (ret)

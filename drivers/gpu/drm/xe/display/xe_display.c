@@ -8,6 +8,7 @@
 
 #ifdef __FreeBSD__
 #include <linux/acpi.h>
+#include "xe_uc_fw.h"
 #endif
 
 #include <linux/fb.h>
@@ -148,10 +149,21 @@ int xe_display_init_noirq(struct xe_device *xe)
 	if (!xe->info.probe_display)
 		return 0;
 
+#ifdef __FreeBSD__
+#define DISP_DIAG(step) \
+	xe_uc_fw_diag_check(&xe_device_get_root_tile(xe)->primary_gt->uc.guc.fw, \
+			    "disp-" step)
+	DISP_DIAG("entry");
+#endif
+
 	intel_display_driver_early_probe(xe);
 
 	/* Early display init.. */
 	intel_opregion_setup(display);
+
+#ifdef __FreeBSD__
+	DISP_DIAG("post-opregion");
+#endif
 
 	/*
 	 * Fill the dram structure to get the system dram info. This will be
@@ -163,11 +175,20 @@ int xe_display_init_noirq(struct xe_device *xe)
 
 	intel_display_device_info_runtime_init(xe);
 
+#ifdef __FreeBSD__
+	DISP_DIAG("pre-probe_noirq");
+#endif
+
 	err = intel_display_driver_probe_noirq(xe);
 	if (err) {
 		intel_opregion_cleanup(display);
 		return err;
 	}
+
+#ifdef __FreeBSD__
+	DISP_DIAG("post-probe_noirq");
+#undef DISP_DIAG
+#endif
 
 	return devm_add_action_or_reset(xe->drm.dev, xe_display_fini_noirq, xe);
 }

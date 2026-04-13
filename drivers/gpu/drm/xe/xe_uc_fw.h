@@ -21,6 +21,18 @@ int xe_uc_fw_check_version_requirements(struct xe_uc_fw *uc_fw);
 void xe_uc_fw_print(struct xe_uc_fw *uc_fw, struct drm_printer *p);
 #ifdef __FreeBSD__
 void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label);
+
+/* Lightweight RSA watchpoint: can be called from anywhere (e.g. i915 display code) */
+extern unsigned long xe_uc_fw_diag_rsa_phys;
+extern unsigned int xe_uc_fw_diag_rsa_pgoff;
+
+static inline u32 xe_uc_fw_diag_peek_rsa(void)
+{
+	if (xe_uc_fw_diag_rsa_phys)
+		return *(volatile u32 *)((char *)PHYS_TO_DMAP(xe_uc_fw_diag_rsa_phys) +
+					 xe_uc_fw_diag_rsa_pgoff);
+	return 0xdeadbeef;
+}
 #endif
 
 static inline u32 xe_uc_fw_rsa_offset(struct xe_uc_fw *uc_fw)

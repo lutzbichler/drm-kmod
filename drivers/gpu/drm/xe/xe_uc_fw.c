@@ -827,6 +827,10 @@ int xe_uc_fw_init(struct xe_uc_fw *uc_fw)
 }
 
 #ifdef __FreeBSD__
+/* Global diagnostic state: physical address of RSA data for watchpoint-style checking */
+unsigned long xe_uc_fw_diag_rsa_phys;
+unsigned int xe_uc_fw_diag_rsa_pgoff;
+
 void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 {
 	struct xe_device *xe = uc_fw_to_xe(uc_fw);
@@ -854,6 +858,11 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 			unsigned long rsa_phys = (unsigned long)page_to_phys(
 				bo->ttm.ttm->pages[rsa_pgidx]);
 			dmap_val = *(volatile u32 *)((char *)PHYS_TO_DMAP(rsa_phys) + rsa_pgoff);
+			/* Store for external watchpoint checks */
+			if (!xe_uc_fw_diag_rsa_phys) {
+				xe_uc_fw_diag_rsa_phys = rsa_phys;
+				xe_uc_fw_diag_rsa_pgoff = rsa_pgoff;
+			}
 		}
 	}
 	pin_count = bo->ttm.pin_count;
