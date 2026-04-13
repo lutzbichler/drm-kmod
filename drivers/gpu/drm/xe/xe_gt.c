@@ -555,6 +555,18 @@ err_hw_fence_irq:
 int xe_gt_init_hwconfig(struct xe_gt *gt)
 {
 	int err;
+#ifdef __FreeBSD__
+	struct xe_device *xe = gt_to_xe(gt);
+	struct xe_uc_fw *pgt_fw = &xe_device_get_root_tile(xe)->primary_gt->uc.guc.fw;
+	char diagbuf[64];
+
+#define HWCFG_DIAG(step) do { \
+	snprintf(diagbuf, sizeof(diagbuf), "hwcfg-gt%u-" step, gt->info.id); \
+	xe_uc_fw_diag_check(pgt_fw, diagbuf); \
+} while (0)
+
+	HWCFG_DIAG("entry");
+#endif
 
 	err = xe_force_wake_get(gt_to_fw(gt), XE_FW_GT);
 	if (err)
@@ -567,9 +579,17 @@ int xe_gt_init_hwconfig(struct xe_gt *gt)
 	if (err)
 		goto out_fw;
 
+#ifdef __FreeBSD__
+	HWCFG_DIAG("post-uc_init");
+#endif
+
 	err = xe_uc_init_hwconfig(&gt->uc);
 	if (err)
 		goto out_fw;
+
+#ifdef __FreeBSD__
+	HWCFG_DIAG("post-uc_init_hwconfig");
+#endif
 
 	xe_gt_topology_init(gt);
 	xe_gt_mcr_init(gt);
@@ -578,6 +598,10 @@ int xe_gt_init_hwconfig(struct xe_gt *gt)
 out_fw:
 	xe_force_wake_put(gt_to_fw(gt), XE_FW_GT);
 out:
+#ifdef __FreeBSD__
+	HWCFG_DIAG("exit");
+#undef HWCFG_DIAG
+#endif
 	return err;
 }
 

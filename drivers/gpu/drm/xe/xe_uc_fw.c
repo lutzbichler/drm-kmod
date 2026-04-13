@@ -832,6 +832,9 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 	struct xe_device *xe = uc_fw_to_xe(uc_fw);
 	struct xe_bo *bo = uc_fw->bo;
 	u32 rsa_off, rsa[4] = {};
+	unsigned long page0_phys = 0;
+	int pin_count = 0;
+	u32 dmap_val = 0;
 
 	if (!bo || iosys_map_is_null(&bo->vmap) || !uc_fw->rsa_size)
 		return;
@@ -840,10 +843,26 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 	xe_map_memcpy_from(xe, rsa, &bo->vmap, rsa_off,
 			   min_t(u32, 16, uc_fw->rsa_size));
 
+	/* Get physical page info and pin count */
+	if (bo->ttm.ttm && bo->ttm.ttm->pages && bo->ttm.ttm->pages[0]) {
+		unsigned int rsa_pgidx = rsa_off >> PAGE_SHIFT;
+		unsigned int rsa_pgoff = rsa_off & (PAGE_SIZE - 1);
+		struct page *pg = bo->ttm.ttm->pages[0];
+		page0_phys = (unsigned long)page_to_phys(pg);
+		/* Read RSA first word via DMAP to cross-check vmap */
+		if (bo->ttm.ttm->pages[rsa_pgidx]) {
+			unsigned long rsa_phys = (unsigned long)page_to_phys(
+				bo->ttm.ttm->pages[rsa_pgidx]);
+			dmap_val = *(volatile u32 *)((char *)PHYS_TO_DMAP(rsa_phys) + rsa_pgoff);
+		}
+	}
+	pin_count = bo->ttm.pin_count;
+
 	drm_info(&xe->drm,
-		 "%s fw diag [%s]: rsa[0..3]=%08x %08x %08x %08x\n",
+		 "%s fw diag [%s]: rsa[0..3]=%08x %08x %08x %08x page0=%lx pin=%d dmap_rsa0=%08x\n",
 		 xe_uc_fw_type_repr(uc_fw->type), label,
-		 rsa[0], rsa[1], rsa[2], rsa[3]);
+		 rsa[0], rsa[1], rsa[2], rsa[3],
+		 page0_phys, pin_count, dmap_val);
 }
 #endif
 
