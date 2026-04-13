@@ -57,6 +57,12 @@
 #include "xe_wait_user_fence.h"
 #include "xe_wa.h"
 
+#ifdef __FreeBSD__
+#include "xe_uc_fw.h"
+#define XE_FW_DIAG(xe, label) \
+	xe_uc_fw_diag_check(&xe_device_get_root_tile(xe)->primary_gt->uc.guc.fw, label)
+#endif
+
 #include <generated/xe_wa_oob.h>
 
 static int xe_file_open(struct drm_device *dev, struct drm_file *file)
@@ -674,6 +680,10 @@ int xe_device_probe(struct xe_device *xe)
 			return err;
 	}
 
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-hwconfig-loop");
+#endif
+
 	err = xe_devcoredump_init(xe);
 	if (err)
 		return err;
@@ -681,13 +691,25 @@ int xe_device_probe(struct xe_device *xe)
 	if (err)
 		return err;
 
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-devcoredump");
+#endif
+
 	err = xe_display_init_noirq(xe);
 	if (err)
 		return err;
 
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-display_noirq");
+#endif
+
 	err = xe_irq_install(xe);
 	if (err)
 		goto err;
+
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-irq_install");
+#endif
 
 	err = xe_device_set_has_flat_ccs(xe);
 	if (err)
@@ -703,6 +725,10 @@ int xe_device_probe(struct xe_device *xe)
 			goto err;
 	}
 
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-tile_init");
+#endif
+
 	/* Allocate and map stolen after potential VRAM resize */
 	xe_ttm_stolen_mgr_init(xe);
 
@@ -715,6 +741,10 @@ int xe_device_probe(struct xe_device *xe)
 	err = xe_display_init_noaccel(xe);
 	if (err)
 		goto err;
+
+#ifdef __FreeBSD__
+	XE_FW_DIAG(xe, "post-display_noaccel");
+#endif
 
 	for_each_gt(gt, xe, id) {
 		last_gt = id;
