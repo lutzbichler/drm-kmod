@@ -827,6 +827,49 @@ int xe_uc_fw_init(struct xe_uc_fw *uc_fw)
 }
 
 #ifdef __FreeBSD__
+/**
+ * xe_uc_fw_restore - Re-load firmware from disk and re-copy into the BO
+ * @uc_fw: uC firmware
+ *
+ * Work around a FreeBSD-specific issue where the firmware BO's physical pages
+ * get corrupted between the first and second GuC upload. This re-reads the
+ * firmware file and copies it back into the existing BO.
+ */
+int xe_uc_fw_restore(struct xe_uc_fw *uc_fw)
+{
+	struct xe_device *xe = uc_fw_to_xe(uc_fw);
+	const struct firmware *fw = NULL;
+	int err;
+
+	if (!uc_fw->bo || !uc_fw->path)
+		return -EINVAL;
+
+	err = request_firmware(&fw, uc_fw->path, xe->drm.dev);
+	if (err) {
+		drm_err(&xe->drm, "%s fw restore: request_firmware failed (%d)\n",
+			xe_uc_fw_type_repr(uc_fw->type), err);
+		return err;
+	}
+
+	if (fw->size != uc_fw->size) {
+		drm_err(&xe->drm, "%s fw restore: size mismatch (%zu vs %zu)\n",
+			xe_uc_fw_type_repr(uc_fw->type), fw->size, uc_fw->size);
+		release_firmware(fw);
+		return -EINVAL;
+	}
+
+	/* Re-copy firmware data into the existing BO */
+	xe_map_memcpy_to(xe, &uc_fw->bo->vmap, 0, fw->data, fw->size);
+
+	drm_info(&xe->drm, "%s fw restore: re-copied %zu bytes\n",
+		 xe_uc_fw_type_repr(uc_fw->type), fw->size);
+
+	release_firmware(fw);
+	return 0;
+}
+#endif
+
+#ifdef __FreeBSD__
 /* Global diagnostic state: physical address of RSA data for watchpoint-style checking */
 unsigned long xe_uc_fw_diag_rsa_phys;
 unsigned int xe_uc_fw_diag_rsa_pgoff;

@@ -833,6 +833,11 @@ int xe_guc_upload(struct xe_guc *guc)
 {
 #ifdef __FreeBSD__
 	xe_uc_fw_diag_check(&guc->fw, "pre-upload2");
+
+	/* Re-copy firmware: physical pages may have been corrupted */
+	xe_uc_fw_restore(&guc->fw);
+
+	xe_uc_fw_diag_check(&guc->fw, "post-restore");
 #endif
 	xe_guc_ads_populate(&guc->ads);
 

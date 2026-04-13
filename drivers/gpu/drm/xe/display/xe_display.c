@@ -158,6 +158,10 @@ int xe_display_init_noirq(struct xe_device *xe)
 
 	intel_display_driver_early_probe(xe);
 
+#ifdef __FreeBSD__
+	DISP_DIAG("post-early_probe");
+#endif
+
 	/* Early display init.. */
 	intel_opregion_setup(display);
 
@@ -171,12 +175,20 @@ int xe_display_init_noirq(struct xe_device *xe)
 	 */
 	intel_dram_detect(xe);
 
+#ifdef __FreeBSD__
+	DISP_DIAG("post-dram_detect");
+#endif
+
 	intel_bw_init_hw(xe);
+
+#ifdef __FreeBSD__
+	DISP_DIAG("post-bw_init_hw");
+#endif
 
 	intel_display_device_info_runtime_init(xe);
 
 #ifdef __FreeBSD__
-	DISP_DIAG("pre-probe_noirq");
+	DISP_DIAG("post-runtime_init");
 #endif
 
 	err = intel_display_driver_probe_noirq(xe);
