@@ -814,9 +814,17 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 	if (ret)
 		return ret;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-upload1");
+#endif
+
 	ret = xe_guc_hwconfig_init(guc);
 	if (ret)
 		return ret;
+
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-hwconfig_init");
+#endif
 
 	ret = xe_guc_enable_communication(guc);
 	if (ret)
