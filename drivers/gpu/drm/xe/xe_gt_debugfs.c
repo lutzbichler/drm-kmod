@@ -326,7 +326,9 @@ void xe_gt_debugfs_register(struct xe_gt *gt)
 	 * so other GT specific attributes under that directory may refer to
 	 * it by looking at its parent node private data.
 	 */
+#ifdef __linux__
 	root->d_inode->i_private = gt;
+#endif
 
 	drm_debugfs_create_files(debugfs_list,
 				 ARRAY_SIZE(debugfs_list),
