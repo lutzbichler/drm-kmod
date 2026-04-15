@@ -816,6 +816,24 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 
 #ifdef __FreeBSD__
 	xe_uc_fw_diag_check(&guc->fw, "post-upload1");
+
+	/* Log GGTT addresses of all GuC BOs for overlap analysis */
+	{
+		struct xe_device *xe = guc_to_xe(guc);
+		u32 fw_start = xe_bo_ggtt_addr(guc->fw.bo);
+		u32 fw_end = fw_start + guc->fw.bo->size;
+		u32 log_start = xe_bo_ggtt_addr(guc->log.bo);
+		u32 log_end = log_start + guc->log.bo->size;
+		u32 ads_start = xe_bo_ggtt_addr(guc->ads.bo);
+		u32 ads_end = ads_start + guc->ads.bo->size;
+		u32 ct_start = xe_bo_ggtt_addr(guc->ct.bo);
+		u32 ct_end = ct_start + guc->ct.bo->size;
+
+		drm_info(&xe->drm,
+			 "GuC GGTT map: FW=[%08x-%08x] LOG=[%08x-%08x] ADS=[%08x-%08x] CT=[%08x-%08x]\n",
+			 fw_start, fw_end, log_start, log_end,
+			 ads_start, ads_end, ct_start, ct_end);
+	}
 #endif
 
 	ret = xe_guc_hwconfig_init(guc);
