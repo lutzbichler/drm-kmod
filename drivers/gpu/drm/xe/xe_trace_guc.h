@@ -10,24 +10,32 @@ static inline void
 trace_xe_guc_ctb_g2h(struct xe_device *xe, u32 head, u32 tail, u32 size,
         u32 space, u32 len)
 {
+	CTR6(KTR_DRM, "xe_guc_ctb_g2h xe %p head %u tail %u size %u space %u len %u",
+	    xe, head, tail, size, space, len);
 }
 
 static inline void
 trace_xe_guc_ctb_h2g(struct xe_device *xe, u32 head, u32 tail, u32 size,
         u32 space, u32 len)
 {
+	CTR6(KTR_DRM, "xe_guc_ctb_h2g xe %p head %u tail %u size %u space %u len %u",
+	    xe, head, tail, size, space, len);
 }
 
 static inline void
 trace_xe_guc_ct_g2h_flow_control(struct xe_device *xe, u32 head, u32 tail,
         u32 size, u32 space, u32 len)
 {
+	CTR6(KTR_DRM, "xe_guc_ct_g2h_flow_control xe %p head %u tail %u size %u space %u len %u",
+	    xe, head, tail, size, space, len);
 }
 
 static inline void
 trace_xe_guc_ct_h2g_flow_control(struct xe_device *xe, u32 head, u32 tail,
         u32 size, u32 space, u32 len)
 {
+	CTR6(KTR_DRM, "xe_guc_ct_h2g_flow_control xe %p head %u tail %u size %u space %u len %u",
+	    xe, head, tail, size, space, len);
 }
 
 #endif /* _XE_TRACE_GUC_FREEBSD_H_ */
