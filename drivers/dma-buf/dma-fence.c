@@ -27,6 +27,7 @@
 #include <linux/dma-fence.h>
 #include <linux/module.h>
 #include <linux/seq_file.h>
+#include <trace/events/dma_fence.h>
 
 MALLOC_DECLARE(M_DMABUF);
 
@@ -116,6 +117,8 @@ dma_fence_signal_timestamp_locked(struct dma_fence *fence,
 	if (test_and_set_bit(DMA_FENCE_FLAG_SIGNALED_BIT,
 	      &fence->flags))
 		return;
+
+	trace_dma_fence_signaled(fence);
 
 	list_replace(&fence->cb_list, &cb_list);
 
