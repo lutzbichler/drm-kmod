@@ -18,6 +18,25 @@
 #include "intel_fbc.h"
 #include "intel_step.h"
 
+#ifdef __FreeBSD__
+#if IS_ENABLED(CONFIG_DRM_XE_DISPLAY)
+extern unsigned long xe_uc_fw_diag_rsa_phys;
+extern unsigned int xe_uc_fw_diag_rsa_pgoff;
+
+static inline u32 diag_peek_rsa(void)
+{
+	if (xe_uc_fw_diag_rsa_phys)
+		return *(volatile u32 *)((char *)PHYS_TO_DMAP(xe_uc_fw_diag_rsa_phys) +
+					 xe_uc_fw_diag_rsa_pgoff);
+	return 0xdeadbeef;
+}
+#define RT_INIT_DIAG(i915, step) \
+	drm_info(&(i915)->drm, "rt-init [%s]: rsa0=%08x\n", step, diag_peek_rsa())
+#else
+#define RT_INIT_DIAG(i915, step) do {} while (0)
+#endif
+#endif
+
 __diag_push();
 __diag_ignore_all("-Woverride-init", "Allow field initialization overrides for display info");
 
@@ -1534,6 +1553,10 @@ static void __intel_display_device_info_runtime_init(struct drm_i915_private *i9
 	struct intel_display_runtime_info *display_runtime = DISPLAY_RUNTIME_INFO(i915);
 	enum pipe pipe;
 
+#ifdef __FreeBSD__
+	RT_INIT_DIAG(i915, "entry");
+#endif
+
 	BUILD_BUG_ON(BITS_PER_TYPE(display_runtime->pipe_mask) < I915_MAX_PIPES);
 	BUILD_BUG_ON(BITS_PER_TYPE(display_runtime->cpu_transcoder_mask) < I915_MAX_TRANSCODERS);
 	BUILD_BUG_ON(BITS_PER_TYPE(display_runtime->port_mask) < I915_MAX_PORTS);
@@ -1588,6 +1611,10 @@ static void __intel_display_device_info_runtime_init(struct drm_i915_private *i9
 			display_runtime->num_sprites[pipe] = 1;
 	}
 
+#ifdef __FreeBSD__
+	RT_INIT_DIAG(i915, "post-sprites");
+#endif
+
 	if ((IS_DGFX(i915) || DISPLAY_VER(i915) >= 14) &&
 	    !(intel_de_read(i915, GU_CNTL_PROTECTED) & DEPRESENT)) {
 		drm_info(&i915->drm, "Display not present, disabling\n");
@@ -1620,7 +1647,14 @@ static void __intel_display_device_info_runtime_init(struct drm_i915_private *i9
 			display_runtime->cpu_transcoder_mask &= ~BIT(TRANSCODER_C);
 		}
 	} else if (DISPLAY_VER(i915) >= 9) {
-		u32 dfsm = intel_de_read(i915, SKL_DFSM);
+		u32 dfsm;
+#ifdef __FreeBSD__
+		RT_INIT_DIAG(i915, "pre-dfsm");
+#endif
+		dfsm = intel_de_read(i915, SKL_DFSM);
+#ifdef __FreeBSD__
+		RT_INIT_DIAG(i915, "post-dfsm");
+#endif
 
 		if (dfsm & SKL_DFSM_PIPE_A_DISABLE) {
 			display_runtime->pipe_mask &= ~BIT(PIPE_A);
@@ -1677,7 +1711,13 @@ static void __intel_display_device_info_runtime_init(struct drm_i915_private *i9
 		}
 	}
 
+#ifdef __FreeBSD__
+	RT_INIT_DIAG(i915, "pre-rawclk");
+#endif
 	display_runtime->rawclk_freq = intel_read_rawclk(i915);
+#ifdef __FreeBSD__
+	RT_INIT_DIAG(i915, "post-rawclk");
+#endif
 	drm_dbg_kms(&i915->drm, "rawclk rate: %d kHz\n", display_runtime->rawclk_freq);
 
 	return;
