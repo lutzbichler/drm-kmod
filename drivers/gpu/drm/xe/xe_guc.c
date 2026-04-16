@@ -915,6 +915,10 @@ int xe_guc_enable_communication(struct xe_guc *guc)
 	struct xe_device *xe = guc_to_xe(guc);
 	int err;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "enable-comm-entry");
+#endif
+
 	if (IS_SRIOV_VF(xe) && xe_device_has_memirq(xe)) {
 		struct xe_gt *gt = guc_to_gt(guc);
 		struct xe_tile *tile = gt_to_tile(gt);
@@ -926,11 +930,23 @@ int xe_guc_enable_communication(struct xe_guc *guc)
 		guc_enable_irq(guc);
 	}
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-enable-irq");
+#endif
+
 	err = xe_guc_ct_enable(&guc->ct);
 	if (err)
 		return err;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-ct-enable");
+#endif
+
 	guc_handle_mmio_msg(guc);
+
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&guc->fw, "post-mmio-msg");
+#endif
 
 	return 0;
 }

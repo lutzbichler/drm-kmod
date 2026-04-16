@@ -143,6 +143,10 @@ int xe_uc_init_hwconfig(struct xe_uc *uc)
 	if (ret)
 		return ret;
 
+#ifdef __FreeBSD__
+	xe_uc_fw_diag_check(&uc->guc.fw, "uc-init-hwconfig-exit");
+#endif
+
 	return 0;
 }
 
