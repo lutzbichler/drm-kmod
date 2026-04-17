@@ -161,6 +161,7 @@ void mipi_dsi_dcs_set_page_address_multi(struct mipi_dsi_multi_context *,
     u16, u16);
 void mipi_dsi_dcs_set_tear_scanline_multi(struct mipi_dsi_multi_context *,
     u16);
+void mipi_dsi_shutdown_peripheral_multi(struct mipi_dsi_multi_context *ctx);
 void mipi_dsi_dcs_set_tear_off_multi(struct mipi_dsi_multi_context *ctx);
 
 u32 drm_mipi_dsi_get_input_bus_fmt(enum mipi_dsi_pixel_format dsi_format);
