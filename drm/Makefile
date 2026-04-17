@@ -113,7 +113,8 @@ SRCS+=	drm_privacy_screen.c \
 # drm scheduler (moved from amdgpu)
 SRCS+=	sched_main.c \
 	sched_fence.c \
-	sched_entity.c
+	sched_entity.c \
+	sched_rq.c
 
 # drm display (moved from amdgpu)
 SRCS+=	drm_scdc_helper.c \
