@@ -873,6 +873,59 @@ int xe_uc_fw_restore(struct xe_uc_fw *uc_fw)
 /* Global diagnostic state: physical address of RSA data for watchpoint-style checking */
 unsigned long xe_uc_fw_diag_rsa_phys;
 unsigned int xe_uc_fw_diag_rsa_pgoff;
+static bool xe_uc_fw_diag_wp_armed;
+
+/*
+ * Arm a CPU hardware write watchpoint (DR0) on the RSA first dword.
+ * When anything writes to this address, a #DB trap fires and the kernel
+ * drops into DDB with a full backtrace showing the culprit.
+ */
+void xe_uc_fw_diag_arm_watchpoint(struct xe_device *xe)
+{
+	unsigned long watch_addr;
+	unsigned long dr7;
+
+	if (!xe_uc_fw_diag_rsa_phys || xe_uc_fw_diag_wp_armed)
+		return;
+
+	watch_addr = (unsigned long)PHYS_TO_DMAP(xe_uc_fw_diag_rsa_phys) +
+		     xe_uc_fw_diag_rsa_pgoff;
+
+	/*
+	 * DR0 = address to watch
+	 * DR7 bits:
+	 *   bit 0     = DR0 local enable
+	 *   bits 17:16 = condition for DR0: 01 = write-only
+	 *   bits 19:18 = length for DR0: 11 = 4 bytes
+	 */
+	dr7 = (1UL << 0) | (1UL << 16) | (3UL << 18);
+
+	__asm__ __volatile__("mov %0, %%dr0" :: "r"(watch_addr));
+	__asm__ __volatile__("mov %0, %%dr7" :: "r"(dr7));
+
+	xe_uc_fw_diag_wp_armed = true;
+
+	drm_info(&xe->drm,
+		 "GuC fw diag: armed DR0 write watchpoint at VA %lx (phys %lx+%x)\n",
+		 watch_addr, xe_uc_fw_diag_rsa_phys,
+		 xe_uc_fw_diag_rsa_pgoff);
+}
+
+void xe_uc_fw_diag_disarm_watchpoint(struct xe_device *xe)
+{
+	unsigned long dr7;
+
+	if (!xe_uc_fw_diag_wp_armed)
+		return;
+
+	/* Clear DR7 to disable all breakpoints */
+	dr7 = 0;
+	__asm__ __volatile__("mov %0, %%dr7" :: "r"(dr7));
+
+	xe_uc_fw_diag_wp_armed = false;
+
+	drm_info(&xe->drm, "GuC fw diag: disarmed DR0 watchpoint\n");
+}
 
 void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 {

@@ -817,6 +817,9 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 #ifdef __FreeBSD__
 	xe_uc_fw_diag_check(&guc->fw, "post-upload1");
 
+	/* Arm hardware watchpoint on RSA first dword to catch the corruptor */
+	xe_uc_fw_diag_arm_watchpoint(guc_to_xe(guc));
+
 	/* Log GGTT addresses of all GuC BOs for overlap analysis */
 	{
 		struct xe_device *xe = guc_to_xe(guc);
@@ -864,6 +867,9 @@ int xe_guc_upload(struct xe_guc *guc)
 	xe_uc_fw_restore(&guc->fw);
 
 	xe_uc_fw_diag_check(&guc->fw, "post-restore");
+
+	/* Disarm watchpoint before second upload */
+	xe_uc_fw_diag_disarm_watchpoint(guc_to_xe(guc));
 #endif
 	xe_guc_ads_populate(&guc->ads);
 

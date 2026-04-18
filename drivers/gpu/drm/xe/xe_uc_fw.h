@@ -22,6 +22,8 @@ void xe_uc_fw_print(struct xe_uc_fw *uc_fw, struct drm_printer *p);
 #ifdef __FreeBSD__
 void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label);
 int xe_uc_fw_restore(struct xe_uc_fw *uc_fw);
+void xe_uc_fw_diag_arm_watchpoint(struct xe_device *xe);
+void xe_uc_fw_diag_disarm_watchpoint(struct xe_device *xe);
 
 /* Lightweight RSA watchpoint: can be called from anywhere (e.g. i915 display code) */
 extern unsigned long xe_uc_fw_diag_rsa_phys;
