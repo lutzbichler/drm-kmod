@@ -882,6 +882,11 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 	unsigned long page0_phys = 0;
 	int pin_count = 0;
 	u32 dmap_val = 0;
+	/* vm_page state for corruption detection */
+	int pg_ref = -1;
+	u32 pg_oflags = 0, pg_flags = 0, pg_busy = 0;
+	u8 pg_pool = 0xff;
+	int pg_pat = -1;
 
 	if (!bo || iosys_map_is_null(&bo->vmap) || !uc_fw->rsa_size)
 		return;
@@ -896,6 +901,15 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 		unsigned int rsa_pgoff = rsa_off & (PAGE_SIZE - 1);
 		struct page *pg = bo->ttm.ttm->pages[0];
 		page0_phys = (unsigned long)page_to_phys(pg);
+
+		/* Capture vm_page state of page 0 */
+		pg_ref = pg->ref_count;
+		pg_oflags = pg->oflags;
+		pg_flags = pg->flags;
+		pg_busy = pg->busy_lock;
+		pg_pool = pg->pool;
+		pg_pat = pg->md.pat_mode;
+
 		/* Read RSA first word via DMAP to cross-check vmap */
 		if (bo->ttm.ttm->pages[rsa_pgidx]) {
 			unsigned long rsa_phys = (unsigned long)page_to_phys(
@@ -911,10 +925,11 @@ void xe_uc_fw_diag_check(struct xe_uc_fw *uc_fw, const char *label)
 	pin_count = bo->ttm.pin_count;
 
 	drm_info(&xe->drm,
-		 "%s fw diag [%s]: rsa[0..3]=%08x %08x %08x %08x page0=%lx pin=%d dmap_rsa0=%08x\n",
+		 "%s fw diag [%s]: rsa[0..3]=%08x %08x %08x %08x page0=%lx pin=%d dmap_rsa0=%08x ref=%d ofl=%x fl=%x busy=%x pool=%u pat=%d\n",
 		 xe_uc_fw_type_repr(uc_fw->type), label,
 		 rsa[0], rsa[1], rsa[2], rsa[3],
-		 page0_phys, pin_count, dmap_val);
+		 page0_phys, pin_count, dmap_val,
+		 pg_ref, pg_oflags, pg_flags, pg_busy, pg_pool, pg_pat);
 }
 #endif
 
