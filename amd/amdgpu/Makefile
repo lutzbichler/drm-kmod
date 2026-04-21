@@ -618,6 +618,7 @@ SRCS+=	amdgpu_aca.c \
 	vega20_ih.c \
 	vega20_reg_init.c \
 	vi.c \
+	vpe_v2_0.c \
 	vpe_v6_1.c
 
 .if !empty(KCONFIG:MCOMPAT)
