@@ -1057,7 +1057,8 @@ SRCS+=	display_mode_lib.c \
 	display_rq_dlg_helpers.c \
 	display_rq_dlg_calc_20.c \
 	display_rq_dlg_calc_21.c \
-	dml1_display_rq_dlg_calc.c
+	dml1_display_rq_dlg_calc.c \
+	dml1_frl_cap_chk.c
 
 # display/dc/clk_mgr
 SRCS+=	rn_clk_mgr.c \
@@ -1570,6 +1571,7 @@ CFLAGS.display_mode_vba_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba_util_32.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_pipe_clocks.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml1_display_rq_dlg_calc.c= ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.dml1_frl_cap_chk.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_helpers.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_20.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_rq_dlg_calc_21.c= ${FPUFLAGS} -mstack-alignment=4 -Wno-missing-prototypes
