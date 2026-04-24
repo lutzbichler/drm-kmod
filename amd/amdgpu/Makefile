@@ -640,7 +640,8 @@ SRCS+=	amdgpu_hmm.c
 SRCS+=	amdgpu_xcp_drv.c
 
 # display/amdgpu_dm
-SRCS+=	amdgpu_dm_color.c \
+SRCS+=	amdgpu_dm_backlight.c \
+	amdgpu_dm_color.c \
 	amdgpu_dm_colorop.c \
 	amdgpu_dm_crc.c \
 	amdgpu_dm_crtc.c \
