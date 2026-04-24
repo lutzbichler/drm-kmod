@@ -134,8 +134,10 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/dpp/dcn42 \
 	${SRCDIR}/display/dc/dwb/dcn30 \
 	${SRCDIR}/display/dc/dwb/dcn35 \
+	${SRCDIR}/display/dc/hpo/dcn30 \
 	${SRCDIR}/display/dc/hpo/dcn31 \
 	${SRCDIR}/display/dc/hpo/dcn32 \
+	${SRCDIR}/display/dc/hpo/dcn401 \
 	${SRCDIR}/display/dc/hpo/dcn42 \
 	${SRCDIR}/display/dc/hubp/dcn10 \
 	${SRCDIR}/display/dc/hubp/dcn20 \
@@ -854,6 +856,8 @@ SRCS+=	dcn30_dio_link_encoder.c \
 	dcn30_dwb.c \
 	dcn30_dwb_cm.c \
 	dcn30_dio_stream_encoder.c \
+	dcn30_hpo_frl_link_encoder.c \
+	dcn30_hpo_frl_stream_encoder.c \
 	dcn30_hwseq.c \
 	dcn30_resource.c \
 	dcn30_afmt.c \
@@ -987,6 +991,7 @@ SRCS+=	dcn401_clk_mgr.c \
 	dcn401_dpp_cm.c \
 	dcn401_dpp_dscl.c \
 	dcn401_dsc.c \
+	dcn401_hpo_frl_stream_encoder.c \
 	dcn401_hubbub.c \
 	dcn401_hubp.c \
 	dcn401_hwseq.c \
@@ -1004,6 +1009,7 @@ SRCS+= dcn42_dccg.c \
 	dcn42_dio_link_encoder.c \
 	dcn42_dio_stream_encoder.c \
 	dcn42_hpo_dp_link_encoder.c \
+	dcn42_hpo_frl_stream_encoder.c \
 	dcn42_hubbub.c \
 	dcn42_hubp.c \
 	dcn42_hwseq.c \
@@ -1422,7 +1428,7 @@ SRCS+=	device_if.h \
 	pci_iov_if.h \
 	iicbus_if.h \
 	opt_drm.h \
-        opt_vm.h \
+	opt_vm.h \
 	opt_syscons.h \
 	opt_acpi.h
 
