@@ -1214,11 +1214,13 @@ SRCS+=	link_ddc.c \
 	link_dpms.c \
 	link_edp_panel_control.c \
 	link_factory.c \
+	link_hdmi_frl.c \
 	link_hpd.c \
 	link_hwss_dio.c \
 	link_hwss_dio_fixed_vs_pe_retimer.c \
 	link_hwss_dpia.c \
 	link_hwss_hpo_dp.c \
+	link_hwss_hpo_frl.c \
 	link_hwss_hpo_fixed_vs_pe_retimer_dp.c \
 	link_hwss_virtual.c \
 	link_resource.c \
