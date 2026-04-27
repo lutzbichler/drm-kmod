@@ -53,7 +53,7 @@ trace_amdgpu_dm_connector_atomic_check(const struct drm_connector_state *state)
 #ifdef KTR
 	uint32_t conn_id;
 	const struct drm_connector_state * conn_state;
-	const struct drm_atomic_state * state_state;
+	const struct drm_atomic_commit * state_state;
 	const struct drm_crtc_commit * commit;
 	uint32_t crtc_id;
 	uint32_t best_encoder_id;
@@ -113,7 +113,7 @@ static inline void
 trace_amdgpu_dm_crtc_atomic_check(const struct drm_crtc_state *state)
 {
 #ifdef KTR
-	const struct drm_atomic_state * state_state;
+	const struct drm_atomic_commit * state_state;
 	const struct drm_crtc_state * crtc_state;
 	const struct drm_crtc_commit * commit;
 	uint32_t crtc_id;
@@ -186,7 +186,7 @@ static inline void trace_ ## name(const struct drm_plane_state *state) \
 	uint32_t plane_id; \
 	enum drm_plane_type plane_type; \
 	const struct drm_plane_state * plane_state; \
-	const struct drm_atomic_state * state_state; \
+	const struct drm_atomic_commit * state_state; \
 	uint32_t crtc_id; \
 	uint32_t fb_id; \
 	uint32_t fb_format; \
@@ -289,13 +289,13 @@ trace_amdgpu_dm_plane_state_template(amdgpu_dm_plane_atomic_check);
 trace_amdgpu_dm_plane_state_template(amdgpu_dm_atomic_update_cursor);
 
 /* TRACE_EVENT(amdgpu_dm_atomic_state_template, */
-/* 	    TP_PROTO(const struct drm_atomic_state *state), */
+/* 	    TP_PROTO(const struct drm_atomic_commit *state), */
 
 #ifdef KTR
 #define trace_amdgpu_dm_atomic_state_template(name) \
-static inline void trace_ ## name(const struct drm_atomic_state *state) \
+static inline void trace_ ## name(const struct drm_atomic_commit *state) \
 { \
-	const struct drm_atomic_state * state_state; \
+	const struct drm_atomic_commit * state_state; \
 	bool allow_modeset; \
 	bool legacy_cursor_update; \
 	bool async_update; \
@@ -323,35 +323,35 @@ static inline void trace_ ## name(const struct drm_atomic_state *state) \
 }
 #else
 #define trace_amdgpu_dm_atomic_state_template(name) \
-static inline void trace_ ## name(const struct drm_atomic_state *state) \
+static inline void trace_ ## name(const struct drm_atomic_commit *state) \
 { \
 }
 #endif
 
 /* DEFINE_EVENT(amdgpu_dm_atomic_state_template, amdgpu_dm_atomic_commit_tail_begin, */
-/* 	     TP_PROTO(const struct drm_atomic_state *state), */
+/* 	     TP_PROTO(const struct drm_atomic_commit *state), */
 
 trace_amdgpu_dm_atomic_state_template(amdgpu_dm_atomic_commit_tail_begin);
 
 /* DEFINE_EVENT(amdgpu_dm_atomic_state_template, amdgpu_dm_atomic_commit_tail_finish, */
-/* 	     TP_PROTO(const struct drm_atomic_state *state), */
+/* 	     TP_PROTO(const struct drm_atomic_commit *state), */
 
 trace_amdgpu_dm_atomic_state_template(amdgpu_dm_atomic_commit_tail_finish);
 
 /* DEFINE_EVENT(amdgpu_dm_atomic_state_template, amdgpu_dm_atomic_check_begin, */
-/* 	     TP_PROTO(const struct drm_atomic_state *state), */
+/* 	     TP_PROTO(const struct drm_atomic_commit *state), */
 
 trace_amdgpu_dm_atomic_state_template(amdgpu_dm_atomic_check_begin);
 
 /* TRACE_EVENT(amdgpu_dm_atomic_check_finish, */
-/* 	    TP_PROTO(const struct drm_atomic_state *state, int res), */
+/* 	    TP_PROTO(const struct drm_atomic_commit *state, int res), */
 
 static inline void
 trace_amdgpu_dm_atomic_check_finish(
-    const struct drm_atomic_state *state, int res)
+    const struct drm_atomic_commit *state, int res)
 {
 #ifdef KTR
-	const struct drm_atomic_state * state_state;
+	const struct drm_atomic_commit * state_state;
 	bool async_update;
 	bool allow_modeset;
 
