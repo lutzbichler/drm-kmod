@@ -116,6 +116,7 @@ SRCS=	xe_bb.c \
 	xe_psmi.c \
 	xe_query.c \
 	xe_range_fence.c \
+	xe_ras.c \
 	xe_reg_sr.c \
 	xe_reg_whitelist.c \
 	xe_ring_ops.c \
