@@ -644,6 +644,7 @@ SRCS+=	amdgpu_dm_audio.c \
 	amdgpu_dm_backlight.c \
 	amdgpu_dm_color.c \
 	amdgpu_dm_colorop.c \
+	amdgpu_dm_connector.c \
 	amdgpu_dm_crc.c \
 	amdgpu_dm_crtc.c \
 	amdgpu_dm_debugfs.c \
