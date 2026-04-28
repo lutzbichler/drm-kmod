@@ -132,6 +132,7 @@ SRCS=	xe_bb.c \
 	xe_survivability_mode.c \
 	xe_sync.c \
 	xe_sysctrl.c \
+	xe_sysctrl_event.c \
 	xe_sysctrl_mailbox.c \
 	xe_tile.c \
 	xe_tile_sriov_vf.c \
