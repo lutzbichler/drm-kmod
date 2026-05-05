@@ -90,7 +90,6 @@ SRCS=	xe_bb.c \
 	xe_pm.c \
 	xe_preempt_fence.c \
 	xe_pt.c \
-	xe_pt_walk.c \
 	xe_query.c \
 	xe_range_fence.c \
 	xe_reg_sr.c \
@@ -163,6 +162,9 @@ SRCS+=	xe_debugfs.c \
 	xe_huc_debugfs.c \
 	xe_uc_debugfs.c
 .endif
+
+# GPL-2.0.
+SRCS+=  xe_pt_walk.c
 
 # i915
 SRCS+=	intel_freebsd.c
@@ -305,17 +307,19 @@ CWARNFLAGS += -Wno-pointer-arith -Wno-format -Wno-cast-qual
 
 CWARNFLAGS.xe_dsb_buffer.c=		-Wno-uninitialized
 CWARNFLAGS.xe_ggtt.c=			-Wno-uninitialized
+CWARNFLAGS.xe_gsc_proxy.c=		-Wno-unused-function
 CWARNFLAGS.xe_gt_sriov_pf_config.c=	-Wno-integer-overflow
 CWARNFLAGS.xe_gt_topology.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.xe_guc.c=			-Wno-uninitialized
-CWARNFLAGS.xe_oa.c=			-Wno-uninitialized
+CWARNFLAGS.xe_oa.c=			-Wno-uninitialized -Wno-unused-function
 CWARNFLAGS.xe_pci.c=			-Wno-initializer-overrides
-CWARNFLAGS.xe_pt.c=			-Wno-unused-but-set-variable
+CWARNFLAGS.xe_pt.c=			-Wno-unused-but-set-variable -Wno-unused-function
 CWARNFLAGS.xe_query.c=			-Wno-incompatible-function-pointer-types
 CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
 CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
 
+CWARNFLAGS.intel_audio.c=		-Wno-unused-function
 CWARNFLAGS.intel_bios.c=		-Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides
 CWARNFLAGS.intel_dp.c=          -Wno-unused-variable -Wno-sometimes-uninitialized -Wno-constant-logical-operand -Wno-incompatible-function-pointer-types
