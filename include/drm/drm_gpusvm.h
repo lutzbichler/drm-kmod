@@ -255,6 +255,7 @@ struct drm_gpusvm_ctx {
 	unsigned int allow_mixed :1;
 };
 
+#ifdef __linux__
 int drm_gpusvm_init(struct drm_gpusvm *gpusvm,
 		    const char *name, struct drm_device *drm,
 		    struct mm_struct *mm,
@@ -330,6 +331,7 @@ void drm_gpusvm_unmap_pages(struct drm_gpusvm *gpusvm,
 void drm_gpusvm_free_pages(struct drm_gpusvm *gpusvm,
 			   struct drm_gpusvm_pages *svm_pages,
 			   unsigned long npages);
+#endif
 
 /**
  * enum drm_gpusvm_scan_result - Scan result from the drm_gpusvm_scan_mm() function.
@@ -356,9 +358,11 @@ enum drm_gpusvm_scan_result {
 	DRM_GPUSVM_SCAN_MIXED,
 };
 
+#ifdef __linux__
 enum drm_gpusvm_scan_result drm_gpusvm_scan_mm(struct drm_gpusvm_range *range,
 					       void *dev_private_owner,
 					       const struct dev_pagemap *pagemap);
+#endif
 
 #ifdef CONFIG_LOCKDEP
 /**
