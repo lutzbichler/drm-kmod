@@ -1097,6 +1097,7 @@ SRCS+=	dcn321_fpu.c
 SRCS+=	display_mode_core.c \
 	display_mode_util.c \
 	dml_display_rq_dlg_calc.c \
+	dml_frl_cap_chk.c \
 	dml2_core_dcn4.c \
 	dml2_core_factory.c \
 	dml2_core_dcn4_calcs.c \
@@ -1123,7 +1124,8 @@ SRCS+=	display_mode_core.c \
 	dml21_translation_helper.c \
 	dml21_utils.c \
 	dml21_wrapper.c \
-	lib_float_math.c
+	lib_float_math.c \
+	lib_frl_cap_check.c
 
 # display/dc/dsc
 SRCS+=	rc_calc_fpu.c
@@ -1541,6 +1543,7 @@ CFLAGS.dcn42_resource_fpu.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_core.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.display_mode_util.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml_display_rq_dlg_calc.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
+CFLAGS.dml_frl_cap_chk.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_dcn4_calcs.c = ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.dml2_core_utils.c = ${FPUFLAGS} -mstack-alignment=4
@@ -1559,6 +1562,7 @@ CFLAGS.dml21_translation_helper.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef
 CFLAGS.dml21_utils.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.dml21_wrapper.c = ${FPUFLAGS} -mstack-alignment=4 -Wno-typedef-redefinition
 CFLAGS.lib_float_math.c = ${FPUFLAGS} -mstack-alignment=4
+CFLAGS.lib_frl_cap_check.c = ${FPUFLAGS} -mstack-alignment=4
 
 CFLAGS.display_mode_lib.c= ${FPUFLAGS} -mstack-alignment=4
 CFLAGS.display_mode_vba.c= ${FPUFLAGS} -mstack-alignment=4
