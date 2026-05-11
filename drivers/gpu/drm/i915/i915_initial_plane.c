@@ -59,7 +59,7 @@ initial_plane_phys(struct drm_i915_private *i915,
 	if (intel_memory_type_is_local(mem->type) != is_local) {
 #ifdef __linux__
 		drm_err(&i915->drm, "Initial plane FB PTE unsuitable for %s\n",
-			mem->region.name);
+			mem->name);
 #elif defined(__FreeBSD__)
 		drm_err(&i915->drm, "Initial plane FB PTE unsuitable (!LMEM)\n");
 #endif
@@ -69,7 +69,7 @@ initial_plane_phys(struct drm_i915_private *i915,
 	if (dma_addr < mem->region.start || dma_addr > mem->region.end) {
 		drm_err(&i915->drm,
 			"Initial plane programming using invalid range, dma_addr=%pa (%s [%pa-%pa])\n",
-			&dma_addr, mem->region.name, &mem->region.start, &mem->region.end);
+			&dma_addr, mem->name, &mem->region.start, &mem->region.end);
 		return false;
 	}
 
@@ -124,7 +124,7 @@ initial_plane_vma(struct drm_i915_private *i915,
 					       I915_BO_PREALLOC);
 	if (IS_ERR(obj)) {
 		drm_dbg_kms(&i915->drm, "Failed to preallocate initial FB in %s\n",
-			    mem->region.name);
+			    mem->name);
 		return NULL;
 	}
 
