@@ -418,6 +418,7 @@ static struct drm_driver regular_driver = {
 	.major = DRIVER_MAJOR,
 	.minor = DRIVER_MINOR,
 	.patchlevel = DRIVER_PATCHLEVEL,
+	XE_DISPLAY_DRIVER_OPS,
 };
 
 #ifdef CONFIG_PCI_IOV
@@ -439,6 +440,7 @@ static struct drm_driver admin_only_driver = {
 	.major = DRIVER_MAJOR,
 	.minor = DRIVER_MINOR,
 	.patchlevel = DRIVER_PATCHLEVEL,
+	XE_DISPLAY_DRIVER_OPS,
 };
 
 /**
