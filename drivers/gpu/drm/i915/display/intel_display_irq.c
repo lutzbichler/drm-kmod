@@ -2027,8 +2027,8 @@ static void i965_display_irq_postinstall(struct intel_display *display)
 	i915_enable_asle_pipestat(display);
 }
 
-void i9xx_display_irq_ack(struct intel_display *display,
-			  struct intel_display_irq_state *state)
+static void i9xx_display_irq_ack(struct intel_display *display,
+				 struct intel_display_irq_state *state)
 {
 	if (state->iir & I915_DISPLAY_PORT_INTERRUPT)
 		state->hotplug_status = i9xx_hpd_irq_ack(display);
@@ -2125,8 +2125,8 @@ static u32 vlv_lpe_irq_mask(struct intel_display *display)
 }
 #endif
 
-void vlv_display_irq_ack(struct intel_display *display,
-			 struct intel_display_irq_state *state)
+static void vlv_display_irq_ack(struct intel_display *display,
+				struct intel_display_irq_state *state)
 {
 	if (state->iir & I915_DISPLAY_PORT_INTERRUPT)
 		state->hotplug_status = i9xx_hpd_irq_ack(display);
@@ -2537,6 +2537,7 @@ static void gen11_de_irq_postinstall(struct intel_display *display)
 struct intel_display_irq_funcs {
 	void (*reset)(struct intel_display *display);
 	void (*postinstall)(struct intel_display *display);
+	void (*ack)(struct intel_display *display, struct intel_display_irq_state *state);
 };
 
 static const struct intel_display_irq_funcs gen11_display_irq_funcs = {
@@ -2552,6 +2553,7 @@ static const struct intel_display_irq_funcs gen8_display_irq_funcs = {
 static const struct intel_display_irq_funcs vlv_display_irq_funcs = {
 	.reset = vlv_display_irq_reset,
 	.postinstall = vlv_display_irq_postinstall,
+	.ack = vlv_display_irq_ack,
 };
 
 static const struct intel_display_irq_funcs ilk_display_irq_funcs = {
@@ -2562,11 +2564,13 @@ static const struct intel_display_irq_funcs ilk_display_irq_funcs = {
 static const struct intel_display_irq_funcs i965_display_irq_funcs = {
 	.reset = i9xx_display_irq_reset,
 	.postinstall = i965_display_irq_postinstall,
+	.ack = i9xx_display_irq_ack,
 };
 
 static const struct intel_display_irq_funcs i915_display_irq_funcs = {
 	.reset = i9xx_display_irq_reset,
 	.postinstall = i915_display_irq_postinstall,
+	.ack = i9xx_display_irq_ack,
 };
 
 void intel_display_irq_reset(struct intel_display *display)
@@ -2583,6 +2587,15 @@ void intel_display_irq_postinstall(struct intel_display *display)
 		return;
 
 	display->irq.funcs->postinstall(display);
+}
+
+void intel_display_irq_ack(struct intel_display *display,
+			   struct intel_display_irq_state *state)
+{
+	if (!HAS_DISPLAY(display) || !display->irq.funcs->ack)
+		return;
+
+	display->irq.funcs->ack(display, state);
 }
 
 void intel_display_irq_init(struct intel_display *display)
