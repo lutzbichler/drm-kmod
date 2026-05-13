@@ -381,6 +381,7 @@ SRCS+=	amdgpu_aca.c \
 	amdgpu_job.c \
 	amdgpu_jpeg.c \
 	amdgpu_kms.c \
+	amdgpu_lockdep.c \
 	amdgpu_lsdma.c \
 	amdgpu_mca.c \
 	amdgpu_mes.c \
