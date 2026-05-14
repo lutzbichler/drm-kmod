@@ -147,6 +147,9 @@ static void guc_ct_fini(struct drm_device *drm, void *arg)
 {
 	struct xe_guc_ct *ct = arg;
 
+#ifdef __FreeBSD__
+	xe_guc_ct_disable(ct);
+#endif
 	destroy_workqueue(ct->g2h_wq);
 	xa_destroy(&ct->fence_lookup);
 }

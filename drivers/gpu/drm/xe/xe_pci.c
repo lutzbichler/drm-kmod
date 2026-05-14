@@ -23,6 +23,9 @@
 #include "xe_gt.h"
 #include "xe_gt_sriov_vf.h"
 #include "xe_guc.h"
+#ifdef __FreeBSD__
+#include "xe_guc_ct.h"
+#endif
 #include "xe_macros.h"
 #include "xe_mmio.h"
 #include "xe_module.h"
@@ -848,7 +851,11 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 
 	err = xe_device_probe(xe);
 	if (err)
+#ifdef __FreeBSD__
+		goto err_probe_ct;
+#else
 		return err;
+#endif
 
 	err = xe_pm_init(xe);
 	if (err)
@@ -862,6 +869,20 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 err_driver_cleanup:
 	xe_pci_remove(pdev);
 	return err;
+
+#ifdef __FreeBSD__
+err_probe_ct:
+	{
+		struct xe_gt *gt;
+		u8 id;
+
+		for_each_gt(gt, xe, id) {
+			if (xe_guc_ct_enabled(&gt->uc.guc.ct))
+				xe_guc_ct_disable(&gt->uc.guc.ct);
+		}
+	}
+	return err;
+#endif
 }
 
 static void xe_pci_shutdown(struct pci_dev *pdev)
