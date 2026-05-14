@@ -224,40 +224,29 @@ dma_buf_export_sync_file(struct dma_buf *db, void *data)
 	 * in the flags.
 	 */
 	if ((arg->flags & ~DMA_BUF_SYNC_RW) != 0 ||
-	    (arg->flags & DMA_BUF_SYNC_RW) == 0) {
-		printf("export_sync_file: EINVAL flags=0x%x\n", arg->flags);
+	    (arg->flags & DMA_BUF_SYNC_RW) == 0)
 		return (EINVAL);
-	}
 
 	fd = get_unused_fd_flags(O_CLOEXEC);
-	if (fd < 0) {
-		printf("export_sync_file: get_unused_fd failed=%d\n", fd);
+	if (fd < 0)
 		return (-fd);
-	}
-	printf("export_sync_file: got fd=%d\n", fd);
 
 	fence = NULL;
 	usage = dma_resv_usage_rw(arg->flags & DMA_BUF_SYNC_WRITE);
 	ret = -dma_resv_get_singleton(db->resv, usage, &fence);
 	if (ret) {
-		printf("export_sync_file: dma_resv_get_singleton failed=%d\n", ret);
 		put_unused_fd(fd);
 		return (ret);
 	}
 
 	if (!fence)
 		fence = dma_fence_get_stub();
-	printf("export_sync_file: fence=%p stub=%d\n", fence, !fence);
 
 	sync_file = sync_file_create(fence);
 	dma_fence_put(fence);
 
-	if (sync_file == NULL) {
-		printf("export_sync_file: sync_file_create failed\n");
+	if (sync_file == NULL)
 		return (ENOMEM);
-	}
-	printf("export_sync_file: sync_file=%p linux_file=%p\n",
-	       sync_file, sync_file->linux_file);
 
 	arg->fd = fd;
 
@@ -268,7 +257,6 @@ dma_buf_export_sync_file(struct dma_buf *db, void *data)
 	 * member is also renamed.
 	 */
 	fd_install(fd, sync_file->linux_file);
-	printf("export_sync_file: success fd=%d\n", fd);
 
 	return (0);
 }
@@ -383,11 +371,8 @@ dma_buf_ioctl(struct file *fp, u_long com, void *data,
 			rc = dma_buf_begin_cpu_access(db, dir);
 		return (-rc);
 
-	case DMA_BUF_IOCTL_EXPORT_SYNC_FILE: {
-		long esf_ret = dma_buf_export_sync_file(db, (void *)data);
-		printf("dma_buf_ioctl: EXPORT_SYNC_FILE returned %ld\n", esf_ret);
-		return (esf_ret);
-	}
+	case DMA_BUF_IOCTL_EXPORT_SYNC_FILE:
+		return (dma_buf_export_sync_file(db, (void *)data));
 	case DMA_BUF_IOCTL_IMPORT_SYNC_FILE:
 		return (dma_buf_import_sync_file(db, (const void *)data));
 
@@ -593,7 +578,15 @@ dma_buf_export(const struct dma_buf_export_info *exp_info)
 	if ((err = falloc_noinstall(curthread, &fp)) != 0)
 		goto err;
 
-	finit(fp, exp_info->flags, DTYPE_DMABUF, db, &dma_buf_fileops);
+	/*
+	 * Use FFLAGS() to convert O_* open flags to FREAD/FWRITE file
+	 * flags, and always ensure both FREAD and FWRITE are set.
+	 * DMA-BUF files must be readable and writable for mmap and ioctl
+	 * to work. Without FREAD|FWRITE, FreeBSD's kern_ioctl() rejects
+	 * ioctls with EBADF.
+	 */
+	finit(fp, FFLAGS(exp_info->flags) | FREAD | FWRITE, DTYPE_DMABUF,
+	    db, &dma_buf_fileops);
 
 	db->linux_file = fp;
 	mutex_init(&db->lock);
