@@ -578,7 +578,15 @@ dma_buf_export(const struct dma_buf_export_info *exp_info)
 	if ((err = falloc_noinstall(curthread, &fp)) != 0)
 		goto err;
 
-	finit(fp, exp_info->flags, DTYPE_DMABUF, db, &dma_buf_fileops);
+	/*
+	 * Use FFLAGS() to convert O_* open flags to FREAD/FWRITE file
+	 * flags, and always ensure both FREAD and FWRITE are set.
+	 * DMA-BUF files must be readable and writable for mmap and ioctl
+	 * to work. Without FREAD|FWRITE, FreeBSD's kern_ioctl() rejects
+	 * ioctls with EBADF.
+	 */
+	finit(fp, FFLAGS(exp_info->flags) | FREAD | FWRITE, DTYPE_DMABUF,
+	    db, &dma_buf_fileops);
 
 	db->linux_file = fp;
 	mutex_init(&db->lock);
