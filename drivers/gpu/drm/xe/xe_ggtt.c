@@ -619,7 +619,7 @@ void xe_ggtt_map_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
  */
 void xe_ggtt_unmap_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
 {
-	if (!bo->ggtt_node || !ggtt->scratch)
+	if (!bo->ggtt_node)
 		return;
 
 	xe_ggtt_clear(ggtt, bo->ggtt_node->base.start, bo->size);

@@ -17,6 +17,7 @@
 #include "xe_bo.h"
 #include "xe_device.h"
 #include "xe_force_wake.h"
+#include "xe_ggtt.h"
 #include "xe_gt.h"
 #include "xe_gt_printk.h"
 #include "xe_gt_sriov_vf.h"
@@ -796,6 +797,24 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 	if (ret)
 		return ret;
 
+#ifdef __FreeBSD__
+	/*
+	 * Immediately invalidate the firmware BO's GGTT entries after the
+	 * first upload completes.  The running GuC asynchronously zeroes
+	 * its firmware source pages through these GGTT entries; clearing
+	 * them now (before the zeroing starts) protects the BO's backing
+	 * pages.  The scratch page may not exist yet (it is created later
+	 * in xe_ggtt_init), so xe_ggtt_clear writes PTE=0 (invalid).
+	 * The real mapping is restored in uc_fw_xfer before each upload.
+	 */
+	{
+		struct xe_tile *tile = gt_to_tile(guc_to_gt(guc));
+
+		if (tile->mem.ggtt && guc->fw.bo)
+			xe_ggtt_unmap_bo(tile->mem.ggtt, guc->fw.bo);
+	}
+#endif
+
 	ret = xe_guc_hwconfig_init(guc);
 	if (ret)
 		return ret;
@@ -809,6 +828,15 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 
 int xe_guc_upload(struct xe_guc *guc)
 {
+#ifdef __FreeBSD__
+	/*
+	 * The GuC may have asynchronously zeroed the firmware source pages
+	 * through its GGTT mapping after the initial upload.  Re-copy the
+	 * firmware image into the BO before the second (full) upload.
+	 */
+	xe_uc_fw_restore(&guc->fw);
+#endif
+
 	xe_guc_ads_populate(&guc->ads);
 
 	return __xe_guc_upload(guc);

@@ -908,6 +908,38 @@ static const char *version_type_repr(enum xe_uc_fw_version_types type)
 	}
 }
 
+#ifdef __FreeBSD__
+/**
+ * xe_uc_fw_restore - Re-copy firmware data to the BO before a subsequent upload
+ * @uc_fw: uC firmware
+ *
+ * On FreeBSD, the GuC asynchronously zeroes the firmware source pages
+ * through its GGTT mapping after the initial upload.  This function
+ * re-reads the firmware image and copies it back into the BO so that
+ * the next upload reads valid data.
+ *
+ * Return: 0 on success, negative error code on error.
+ */
+int xe_uc_fw_restore(struct xe_uc_fw *uc_fw)
+{
+	struct xe_device *xe = uc_fw_to_xe(uc_fw);
+	const struct firmware *fw;
+	int err;
+
+	if (!uc_fw->bo)
+		return 0;
+
+	err = request_firmware(&fw, uc_fw->path, xe->drm.dev);
+	if (err)
+		return err;
+
+	xe_map_memcpy_to(xe, &uc_fw->bo->vmap, 0, fw->data, fw->size);
+	release_firmware(fw);
+
+	return 0;
+}
+#endif
+
 void xe_uc_fw_print(struct xe_uc_fw *uc_fw, struct drm_printer *p)
 {
 	int i;
