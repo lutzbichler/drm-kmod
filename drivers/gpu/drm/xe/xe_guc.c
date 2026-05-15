@@ -828,15 +828,6 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 
 int xe_guc_upload(struct xe_guc *guc)
 {
-#ifdef __FreeBSD__
-	/*
-	 * The GuC may have asynchronously zeroed the firmware source pages
-	 * through its GGTT mapping after the initial upload.  Re-copy the
-	 * firmware image into the BO before the second (full) upload.
-	 */
-	xe_uc_fw_restore(&guc->fw);
-#endif
-
 	xe_guc_ads_populate(&guc->ads);
 
 	return __xe_guc_upload(guc);
