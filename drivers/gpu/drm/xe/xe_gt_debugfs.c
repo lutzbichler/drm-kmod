@@ -72,7 +72,6 @@
  */
 int xe_gt_debugfs_simple_show(struct seq_file *m, void *data)
 {
-#ifdef __linux__
 	struct drm_printer p = drm_seq_file_printer(m);
 	struct drm_info_node *node = m->private;
 	struct dentry *parent = node->dent->d_parent;
@@ -83,9 +82,6 @@ int xe_gt_debugfs_simple_show(struct seq_file *m, void *data)
 		return -EINVAL;
 
 	return print(gt, &p);
-#elif defined(__FreeBSD__)
-	return 0;
-#endif
 }
 
 static int hw_engines(struct xe_gt *gt, struct drm_printer *p)

@@ -6,15 +6,7 @@
 #ifndef _XE_PT_TYPES_H_
 #define _XE_PT_TYPES_H_
 
-#ifdef __FreeBSD__
-#include <linux/llist.h>
-#endif
 #include <linux/types.h>
-#include <linux/llist.h>
-
-#ifdef __FreeBSD__
-#include <linux/llist.h>
-#endif
 
 #include "xe_pt_walk.h"
 

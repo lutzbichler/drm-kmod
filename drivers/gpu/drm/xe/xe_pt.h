@@ -10,9 +10,6 @@
 #include "xe_pt_types.h"
 
 struct dma_fence;
-#ifdef __FreeBSD__
-struct llist_head;
-#endif
 struct xe_bo;
 struct xe_device;
 struct xe_exec_queue;

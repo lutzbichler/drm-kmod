@@ -3,10 +3,6 @@
  * Copyright © 2023-2024 Intel Corporation
  */
 
-#ifdef __FreeBSD__
-#include <linux/uuid.h>
-#endif
-
 #include <linux/anon_inodes.h>
 #include <linux/delay.h>
 #include <linux/nospec.h>

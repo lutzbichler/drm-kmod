@@ -7,9 +7,6 @@
 #include <drm/drm_print.h>
 #include <uapi/drm/xe_drm.h>
 #include <linux/kernel.h>
-#ifdef __FreeBSD__
-#include <linux/rculist.h>
-#endif
 #include <linux/slab.h>
 #include <linux/types.h>
 

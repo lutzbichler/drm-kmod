@@ -5,9 +5,7 @@
 
 #include "xe_dma_buf.h"
 
-#ifdef __linux__
 #include <kunit/test.h>
-#endif
 #include <linux/dma-buf.h>
 #include <linux/pci-p2pdma.h>
 

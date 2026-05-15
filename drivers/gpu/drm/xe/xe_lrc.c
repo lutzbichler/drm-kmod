@@ -1704,7 +1704,6 @@ put_bo:
 
 void xe_lrc_snapshot_print(struct xe_lrc_snapshot *snapshot, struct drm_printer *p)
 {
-#ifdef __linux__
 	unsigned long i;
 
 	if (!snapshot)
@@ -1742,7 +1741,6 @@ void xe_lrc_snapshot_print(struct xe_lrc_snapshot *snapshot, struct drm_printer 
 		drm_puts(p, ascii85_encode(*val, dumped));
 	}
 	drm_puts(p, "\n");
-#endif
 }
 
 void xe_lrc_snapshot_free(struct xe_lrc_snapshot *snapshot)

@@ -28,7 +28,9 @@
 	"\n" \
 	"#endif\n"
 
+#ifdef __FreeBSD__
 static const char *program_invocation_short_name;
+#endif
 
 static void print_usage(FILE *f)
 {
@@ -150,7 +152,9 @@ int main(int argc, const char *argv[])
 		return 1;
 	}
 
+#ifdef __FreeBSD__
 	program_invocation_short_name = argv[0];
+#endif
 
 	for (int i = 0; i < _ARGS_COUNT; i++) {
 		args[i].f = fopen(args[i].fn, args[i].mode);

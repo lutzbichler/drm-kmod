@@ -52,6 +52,7 @@ SRCS=	xe_bb.c \
 	xe_gt_idle.c \
 	xe_gt_mcr.c \
 	xe_gt_pagefault.c \
+	xe_gt_sriov_vf.c \
 	xe_gt_stats.c \
 	xe_gt_sysfs.c \
 	xe_gt_throttle.c \
@@ -147,8 +148,6 @@ SRCS+=	xe_gt_sriov_pf.c \
 	xe_gt_sriov_pf_monitor.c \
 	xe_gt_sriov_pf_policy.c \
 	xe_gt_sriov_pf_service.c \
-	xe_gt_sriov_vf.c \
-	xe_gt_sriov_vf_debugfs.c \
 	xe_lmtt.c \
 	xe_lmtt_2l.c \
 	xe_lmtt_ml.c \
@@ -159,6 +158,7 @@ SRCS+=	xe_gt_sriov_pf.c \
 .if !empty(KCONFIG:MDEBUG_FS)
 SRCS+=	xe_debugfs.c \
 	xe_gt_debugfs.c \
+	xe_gt_sriov_vf_debugfs.c \
 	xe_gsc_debugfs.c \
 	xe_guc_debugfs.c \
 	xe_huc_debugfs.c \

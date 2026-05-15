@@ -6,9 +6,6 @@
 #include "xe_gsc_submit.h"
 
 #include <linux/poison.h>
-#ifdef __FreeBSD__
-#include <linux/random.h>
-#endif
 
 #include "abi/gsc_command_header_abi.h"
 #include "xe_assert.h"

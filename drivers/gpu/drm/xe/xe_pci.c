@@ -4,9 +4,8 @@
  */
 
 #include "xe_pci.h"
-#ifdef __linux__
+
 #include <kunit/static_stub.h>
-#endif
 #include <linux/device/driver.h>
 #include <linux/module.h>
 #include <linux/pci.h>
@@ -23,9 +22,6 @@
 #include "xe_gt.h"
 #include "xe_gt_sriov_vf.h"
 #include "xe_guc.h"
-#ifdef __FreeBSD__
-#include "xe_guc_ct.h"
-#endif
 #include "xe_macros.h"
 #include "xe_mmio.h"
 #include "xe_module.h"
@@ -35,6 +31,10 @@
 #include "xe_sriov.h"
 #include "xe_step.h"
 #include "xe_tile.h"
+
+#ifdef __FreeBSD__
+#include "xe_guc_ct.h"
+#endif
 
 enum toggle_d3cold {
 	D3COLD_DISABLE,
@@ -475,9 +475,8 @@ static void read_gmdid(struct xe_device *xe, enum xe_gmdid_type type, u32 *ver, 
 	struct xe_reg gmdid_reg = GMD_ID;
 	u32 val;
 
-#ifdef __linux__
 	KUNIT_STATIC_STUB_REDIRECT(read_gmdid, xe, type, ver, revid);
-#endif
+
 	if (IS_SRIOV_VF(xe)) {
 		/*
 		 * To get the value of the GMDID register, VFs must obtain it
