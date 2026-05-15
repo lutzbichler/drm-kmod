@@ -32,6 +32,7 @@ SRCS+=	device_if.h \
 	pci_if.h \
 	pci_iov_if.h \
 	iicbus_if.h \
+	opt_acpi.h \
 	opt_drm.h \
 	opt_vm.h \
 	opt_syscons.h

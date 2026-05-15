@@ -27,6 +27,8 @@
 #ifndef _BSD_LKPI_UAPI_LINUX_FB_H_
 #define	_BSD_LKPI_UAPI_LINUX_FB_H_
 
+#include <linux/acpi.h>
+
 #define	FB_ROTATE_UR	0
 #define	FB_ROTATE_CW	1
 #define	FB_ROTATE_UD	2
