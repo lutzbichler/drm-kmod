@@ -25,6 +25,9 @@ int xe_ggtt_node_insert_locked(struct xe_ggtt_node *node,
 void xe_ggtt_node_remove(struct xe_ggtt_node *node, bool invalidate);
 bool xe_ggtt_node_allocated(const struct xe_ggtt_node *node);
 void xe_ggtt_map_bo(struct xe_ggtt *ggtt, struct xe_bo *bo);
+#ifdef __FreeBSD__
+void xe_ggtt_unmap_bo(struct xe_ggtt *ggtt, struct xe_bo *bo);
+#endif
 int xe_ggtt_insert_bo(struct xe_ggtt *ggtt, struct xe_bo *bo);
 int xe_ggtt_insert_bo_at(struct xe_ggtt *ggtt, struct xe_bo *bo,
 			 u64 start, u64 end);

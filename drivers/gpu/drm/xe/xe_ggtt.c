@@ -605,6 +605,28 @@ void xe_ggtt_map_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
 	}
 }
 
+#ifdef __FreeBSD__
+/**
+ * xe_ggtt_unmap_bo - Replace a BO's GGTT PTEs with scratch page entries
+ * @ggtt: the &xe_ggtt where the BO is mapped
+ * @bo: the &xe_bo to unmap
+ *
+ * Replaces the GGTT PTEs for this BO with scratch page entries.
+ * The BO's GGTT node allocation is preserved so xe_ggtt_map_bo()
+ * can restore the real mapping later. Any stray DMA through these
+ * GGTT addresses will hit the scratch page instead of the BO's
+ * backing pages.
+ */
+void xe_ggtt_unmap_bo(struct xe_ggtt *ggtt, struct xe_bo *bo)
+{
+	if (!bo->ggtt_node || !ggtt->scratch)
+		return;
+
+	xe_ggtt_clear(ggtt, bo->ggtt_node->base.start, bo->size);
+	xe_ggtt_invalidate(ggtt);
+}
+#endif
+
 static int __xe_ggtt_insert_bo_at(struct xe_ggtt *ggtt, struct xe_bo *bo,
 				  u64 start, u64 end)
 {

@@ -416,6 +416,24 @@ static int gt_fw_domain_init(struct xe_gt *gt)
 			xe_lmtt_init(&gt_to_tile(gt)->sriov.pf.lmtt);
 	}
 
+#ifdef __FreeBSD__
+	/*
+	 * Redirect the firmware BO's GGTT entries to the scratch page now
+	 * that xe_ggtt_init() has created one.  After the first GuC upload
+	 * the GuC is running and may issue stray DMA writes back through
+	 * the GGTT to the firmware source pages, corrupting them before the
+	 * second upload.  Pointing the GGTT entries at the scratch page
+	 * absorbs those writes harmlessly.  The real mapping is restored in
+	 * uc_fw_xfer() before the next upload.
+	 */
+	if (!xe_gt_is_media_type(gt)) {
+		struct xe_ggtt *ggtt = gt_to_tile(gt)->mem.ggtt;
+
+		if (ggtt && gt->uc.guc.fw.bo)
+			xe_ggtt_unmap_bo(ggtt, gt->uc.guc.fw.bo);
+	}
+#endif
+
 	/* Enable per hw engine IRQs */
 	xe_irq_enable_hwe(gt);
 
