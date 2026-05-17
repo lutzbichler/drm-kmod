@@ -23,7 +23,12 @@
 
 #include <linux/random.h>
 
+#include "gt/intel_gt.h"
 #include "gt/intel_gt_pm.h"
+#include "gt/intel_gt_regs.h"
+#include "gt/uc/intel_gsc_fw.h"
+
+#include "i915_driver.h"
 #include "i915_drv.h"
 #include "i915_selftest.h"
 
@@ -200,12 +205,39 @@ int i915_mock_selftests(void)
 
 int i915_live_selftests(struct pci_dev *pdev)
 {
+<<<<<<< HEAD
+=======
+	struct drm_i915_private *i915 = pdev_to_i915(pdev);
+	struct intel_uncore *uncore = &i915->uncore;
+>>>>>>> e45cb87d538 (drm/i915: Sync with Linux v6.15)
 	int err;
+	u32 pg_enable;
+	intel_wakeref_t wakeref;
 
 	if (!i915_selftest.live)
 		return 0;
 
+<<<<<<< HEAD
 	err = run_selftests(live, pdev_to_i915(pdev));
+=======
+	/*
+	 * FIXME Disable render powergating, this is temporary wa and should be removed
+	 * after fixing real cause of forcewake timeouts.
+	 */
+	with_intel_runtime_pm(uncore->rpm, wakeref) {
+		if (IS_GFX_GT_IP_RANGE(to_gt(i915), IP_VER(12, 00), IP_VER(12, 74))) {
+			pg_enable = intel_uncore_read(uncore, GEN9_PG_ENABLE);
+			if (pg_enable & GEN9_RENDER_PG_ENABLE)
+				intel_uncore_write_fw(uncore, GEN9_PG_ENABLE,
+						      pg_enable & ~GEN9_RENDER_PG_ENABLE);
+		}
+	}
+
+	__wait_gsc_proxy_completed(i915);
+	__wait_gsc_huc_load_completed(i915);
+
+	err = run_selftests(live, i915);
+>>>>>>> e45cb87d538 (drm/i915: Sync with Linux v6.15)
 	if (err) {
 		i915_selftest.live = err;
 		return err;
