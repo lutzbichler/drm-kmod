@@ -1677,6 +1677,8 @@ static ssize_t amdgpu_gfx_set_enforce_isolation(struct device *dev,
 		adev->enforce_isolation[i] = partition_values[i];
 	mutex_unlock(&adev->enforce_isolation_mutex);
 
+	amdgpu_mes_update_enforce_isolation(adev);
+
 	return count;
 }
 
