@@ -1344,7 +1344,7 @@ static int vma_check_userptr(struct xe_vm *vm, struct xe_vma *vma,
 	uvma = to_userptr_vma(vma);
 	if (xe_pt_userptr_inject_eagain(uvma))
 		xe_vma_userptr_force_invalidate(uvma);
-	
+
 	notifier_seq = uvma->userptr.notifier_seq;
 
 #ifdef __linux__
