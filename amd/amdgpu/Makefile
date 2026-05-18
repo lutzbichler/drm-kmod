@@ -76,6 +76,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/clk_mgr/dcn35 \
 	${SRCDIR}/display/dc/clk_mgr/dcn401 \
 	${SRCDIR}/display/dc/clk_mgr/dcn42 \
+	${SRCDIR}/display/dc/clk_mgr/dcn42b \
 	${SRCDIR}/display/dc/dccg/dcn20 \
 	${SRCDIR}/display/dc/dccg/dcn201 \
 	${SRCDIR}/display/dc/dccg/dcn21 \
@@ -182,6 +183,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/hwss/dcn351 \
 	${SRCDIR}/display/dc/hwss/dcn401 \
 	${SRCDIR}/display/dc/hwss/dcn42 \
+	${SRCDIR}/display/dc/hwss/dcn42b \
 	${SRCDIR}/display/dc/dml/calcs \
 	${SRCDIR}/display/dc/dsc \
 	${SRCDIR}/display/dc/dsc/dcn20 \
@@ -201,6 +203,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/gpio/dcn32 \
 	${SRCDIR}/display/dc/gpio/dcn401 \
 	${SRCDIR}/display/dc/gpio/dcn42 \
+	${SRCDIR}/display/dc/gpio/dcn42b \
 	${SRCDIR}/display/dc/hdcp \
 	${SRCDIR}/display/dc/i2caux \
 	${SRCDIR}/display/dc/i2caux/dce100 \
@@ -288,6 +291,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/resource/dcn36 \
 	${SRCDIR}/display/dc/resource/dcn401 \
 	${SRCDIR}/display/dc/resource/dcn42 \
+	${SRCDIR}/display/dc/resource/dcn42b \
 	${SRCDIR}/display/dc/soc_and_ip_translator \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn42 \
@@ -1014,6 +1018,14 @@ SRCS+= dcn42_dccg.c \
 	hw_translate_dcn42.c \
 	irq_service_dcn42.c
 
+# display/dc/dcn42b
+SRCS+= dcn42b_hwseq.c \
+	dcn42b_init.c \
+	dcn42b_resource.c \
+	hw_factory_dcn42b.c \
+	hw_translate_dcn42b.c
+
+
 # display/dc/clk_mgr/dcn314
 SRCS+=	dcn314_clk_mgr.c \
 	dcn314_smu.c
@@ -1033,6 +1045,9 @@ SRCS+=	dcn32_clk_mgr.c \
 # display/dc/clk_mgr/dcn42
 SRCS+=	dcn42_clk_mgr.c \
 	dcn42_smu.c
+
+# display/dc/clk_mgr/dcn42b
+SRCS+=	dcn42b_clk_mgr.c \
 
 # display/dc/dml
 SRCS+=	display_mode_lib.c \
@@ -1807,6 +1822,7 @@ CWARNFLAGS.dcn401_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn42_clk_mgr.c=		-Wno-incompatible-pointer-types
 CWARNFLAGS.dcn42_hubp.c=		-Wno-initializer-overrides
 CWARNFLAGS.dcn42_resource.c=		-Wno-initializer-overrides
+CWARNFLAGS.dcn42b_resource.c=		-Wno-initializer-overrides
 CWARNFLAGS.fixpt31_32.c=		-Wno-unused-but-set-variable -Wno-incompatible-pointer-types -Wno-unused-const-variable
 CWARNFLAGS.spl_fixpt31_32.c=		-Wno-incompatible-pointer-types
 
