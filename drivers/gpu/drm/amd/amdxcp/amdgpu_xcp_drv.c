@@ -45,7 +45,7 @@ static const struct drm_driver amdgpu_xcp_driver = {
 	.minor = 0,
 };
 
-static int8_t pdev_num;
+static u8 pdev_num;
 static struct xcp_device *xcp_dev[MAX_XCP_PLATFORM_DEVICE];
 static DEFINE_MUTEX(xcp_mutex);
 
@@ -55,6 +55,11 @@ int amdgpu_xcp_drm_dev_alloc(struct drm_device **ddev)
 	struct xcp_device *pxcp_dev;
 	char *dev_name;
 	int ret, i;
+
+	if (!ddev)
+		return -EINVAL;
+
+	BUILD_BUG_ON(MAX_XCP_PLATFORM_DEVICE >= U8_MAX);
 
 	guard(mutex)(&xcp_mutex);
 
@@ -118,7 +123,7 @@ out_unregister:
 }
 EXPORT_SYMBOL(amdgpu_xcp_drm_dev_alloc);
 
-static void free_xcp_dev(int8_t index)
+static void free_xcp_dev(uint8_t index)
 {
 	if ((index < MAX_XCP_PLATFORM_DEVICE) && (xcp_dev[index])) {
 #ifdef __linux__
@@ -133,17 +138,18 @@ static void free_xcp_dev(int8_t index)
 #endif
 
 		xcp_dev[index] = NULL;
-		pdev_num--;
+		if (pdev_num > 0)
+			pdev_num--;
 	}
 }
 
 void amdgpu_xcp_drm_dev_free(struct drm_device *ddev)
 {
-	int8_t i;
+	uint8_t i;
 
 	guard(mutex)(&xcp_mutex);
 
-	for (i = 0; i < MAX_XCP_PLATFORM_DEVICE; i++) {
+	for (i = 0; pdev_num && i < MAX_XCP_PLATFORM_DEVICE; i++) {
 		if ((xcp_dev[i]) && (&xcp_dev[i]->drm == ddev)) {
 			free_xcp_dev(i);
 			break;
@@ -154,7 +160,7 @@ EXPORT_SYMBOL(amdgpu_xcp_drm_dev_free);
 
 void amdgpu_xcp_drv_release(void)
 {
-	int8_t i;
+	uint8_t i;
 
 	guard(mutex)(&xcp_mutex);
 
