@@ -811,6 +811,8 @@ static ssize_t amdgpu_set_pp_od_clk_voltage(struct device *dev,
 	while ((sub_str = strsep(&tmp_str, delimiter)) != NULL) {
 		if (strlen(sub_str) == 0)
 			continue;
+		if (parameter_size >= ARRAY_SIZE(parameter))
+			return -EINVAL;
 		ret = kstrtol(sub_str, 0, &parameter[parameter_size]);
 		if (ret)
 			return -EINVAL;
@@ -3968,6 +3970,7 @@ static int parse_input_od_command_lines(const char *buf,
 					size_t count,
 					u32 *type,
 					long *params,
+					size_t params_max,
 					uint32_t *num_of_params)
 {
 	const char delimiter[3] = {' ', '\n', '\0'};
@@ -4003,6 +4006,9 @@ static int parse_input_od_command_lines(const char *buf,
 		if (strlen(sub_str) == 0)
 			continue;
 
+		if (parameter_size >= params_max)
+			return -EINVAL;
+
 		ret = kstrtol(sub_str, 0, &params[parameter_size]);
 		if (ret)
 			return -EINVAL;
@@ -4034,6 +4040,7 @@ amdgpu_distribute_custom_od_settings(struct amdgpu_device *adev,
 					   count,
 					   &cmd_type,
 					   parameter,
+					   ARRAY_SIZE(parameter),
 					   &parameter_size);
 	if (ret)
 		return ret;
