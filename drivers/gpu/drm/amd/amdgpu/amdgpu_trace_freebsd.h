@@ -204,6 +204,43 @@ trace_amdgpu_cleaner_shader(struct amdgpu_ring *ring, struct dma_fence *fence)
 		(ring)->name, (fence)->seqno);
 }
 
+static inline void
+trace_amdgpu_userq_create_start(struct amdgpu_usermode_queue *queue)
+{
+	CTR5(KTR_DRM, "amdgpu_userq_create_start: queue=%p, doorbell=%llu, "
+		          "type=%d, state=%d, xcp_id=%u",
+				  queue, queue->doorbell_index, queue->queue_type,
+				  queue->state, queue->xcp_id);
+}
+
+static inline void
+trace_amdgpu_userq_create_end(struct amdgpu_usermode_queue *queue, int result)
+{
+	CTR6(KTR_DRM, "amdgpu_userq_create_end: queue=%p, doorbell=%llu, type=%d, "
+				  "state=%d, xcp_id=%u result=%d",
+				  queue, queue->doorbell_index, queue->queue_type,
+				  queue->state, queue->xcp_id, result);
+
+}
+
+static inline void
+trace_amdgpu_userq_destroy_start(struct amdgpu_usermode_queue *queue)
+{
+	CTR5(KTR_DRM, "amdgpu_userq_destroy_start: queue=%p, doorbell=%llu, "
+		          "type=%d, state=%d, xcp_id=%u",
+				  queue, queue->doorbell_index, queue->queue_type,
+				  queue->state, queue->xcp_id);
+}
+
+static inline void
+trace_amdgpu_userq_destroy_end(struct amdgpu_usermode_queue *queue, int result)
+{
+	CTR6(KTR_DRM, "amdgpu_userq_destroy_end: queue=%p, doorbell=%llu, "
+		          "type=%d, state=%d, xcp_id=%u result=%d",
+				  queue, queue->doorbell_index, queue->queue_type,
+				  queue->state, queue->xcp_id, result);
+}
+
 #define	trace_amdgpu_cs_enabled()	true
 
 #endif
