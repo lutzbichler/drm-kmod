@@ -50,10 +50,6 @@
 #include <linux/hashtable.h>
 #include <linux/dma-fence.h>
 #include <linux/pci.h>
-#ifdef __FreeBSD__
-#include <linux/acpi.h>
-#include <linux/suspend.h>
-#endif
 
 #include <drm/ttm/ttm_bo.h>
 #include <drm/ttm/ttm_placement.h>

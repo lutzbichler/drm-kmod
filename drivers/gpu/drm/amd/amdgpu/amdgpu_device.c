@@ -2696,9 +2696,7 @@ out:
 static int amdgpu_device_ip_early_init(struct amdgpu_device *adev)
 {
 	struct amdgpu_ip_block *ip_block;
-#ifdef __linux__
 	struct pci_dev *parent;
-#endif
 	bool total, skip_bios;
 	uint32_t bios_flags;
 	int i, r;
@@ -2780,13 +2778,8 @@ static int amdgpu_device_ip_early_init(struct amdgpu_device *adev)
 		adev->flags |= AMD_IS_PX;
 
 	if (!(adev->flags & AMD_IS_APU)) {
-#ifdef __linux__
 		parent = pcie_find_root_port(adev->pdev);
 		adev->has_pr3 = parent ? pci_pr3_present(parent) : false;
-#elif defined(__FreeBSD__)
-		// TODO
-		adev->has_pr3 = false;
-#endif
 	}
 
 	adev->pm.pp_feature = amdgpu_pp_feature_mask;
@@ -4824,7 +4817,6 @@ fence_driver_init:
 	amdgpu_fru_sysfs_init(adev);
 	amdgpu_reg_state_sysfs_init(adev);
 	amdgpu_xcp_sysfs_init(adev);
-
 
 	if (IS_ENABLED(CONFIG_PERF_EVENTS))
 		r = amdgpu_pmu_init(adev);
