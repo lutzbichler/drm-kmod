@@ -254,4 +254,9 @@ void mpc_read_gamut_remap(struct mpc *mpc,
 	enum mpcc_gamut_remap_id gamut_remap_block_id,
 	uint32_t *mode_select);
 
+void mpc401_update_3dlut_fast_load_select(
+	struct mpc *mpc,
+	int mpcc_id,
+	int hubp_idx);
+
 #endif

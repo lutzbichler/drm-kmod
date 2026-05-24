@@ -34,11 +34,6 @@
 #include "dc_state_priv.h"
 #include "dc_stream_priv.h"
 
-#ifdef __FreeBSD__
-#undef MIN
-#undef MAX
-#endif
-
 #define DC_LOGGER dc->ctx->logger
 #ifndef MIN
 #define MIN(X, Y) ((X) < (Y) ? (X) : (Y))

@@ -955,7 +955,7 @@ enum dc_status dcn20_enable_stream_timing(
 		return DC_ERROR_UNEXPECTED;
 	}
 
-	fsleep(stream->timing.v_total * (stream->timing.h_total * 10000u / stream->timing.pix_clk_100hz));
+	udelay(stream->timing.v_total * (stream->timing.h_total * 10000u / stream->timing.pix_clk_100hz));
 
 	params.vertical_total_min = stream->adjust.v_total_min;
 	params.vertical_total_max = stream->adjust.v_total_max;
@@ -1969,14 +1969,6 @@ static void dcn20_program_pipe(
 	if (pipe_ctx->plane_state && (pipe_ctx->update_flags.bits.enable ||
 		pipe_ctx->plane_state->update_flags.bits.hdr_mult))
 		hws->funcs.set_hdr_multiplier(pipe_ctx);
-
-	if (hws->funcs.populate_mcm_luts) {
-		if (pipe_ctx->plane_state) {
-			hws->funcs.populate_mcm_luts(dc, pipe_ctx, pipe_ctx->plane_state->mcm_luts,
-				pipe_ctx->plane_state->lut_bank_a);
-			pipe_ctx->plane_state->lut_bank_a = !pipe_ctx->plane_state->lut_bank_a;
-		}
-	}
 
 	if (pipe_ctx->plane_state &&
 		(pipe_ctx->plane_state->update_flags.bits.in_transfer_func_change ||
