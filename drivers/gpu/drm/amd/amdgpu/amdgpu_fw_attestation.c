@@ -50,7 +50,6 @@ struct FW_ATT_RECORD {
 	uint32_t AttFwTaId;              /* Ta ID (only in TA Attestation Table) */
 };
 
-#ifdef __linux__
 static ssize_t amdgpu_fw_attestation_debugfs_read(struct file *f,
 						  char __user *buf,
 						  size_t size,
@@ -117,7 +116,6 @@ static const struct file_operations amdgpu_fw_attestation_debugfs_ops = {
 	.write = NULL,
 	.llseek = default_llseek
 };
-#endif
 
 static int amdgpu_is_fw_attestation_supported(struct amdgpu_device *adev)
 {
@@ -139,11 +137,9 @@ void amdgpu_fw_attestation_debugfs_init(struct amdgpu_device *adev)
 	if (!amdgpu_is_fw_attestation_supported(adev))
 		return;
 
-#ifdef __linux__
 	debugfs_create_file("amdgpu_fw_attestation",
 			    0400,
 			    adev_to_drm(adev)->primary->debugfs_root,
 			    adev,
 			    &amdgpu_fw_attestation_debugfs_ops);
-#endif
 }

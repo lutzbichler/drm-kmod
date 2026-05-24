@@ -29,6 +29,8 @@
 #include "amdgpu.h"
 #include "isp_v4_1_1.h"
 
+MODULE_FIRMWARE("amdgpu/isp_4_1_1.bin");
+
 #define ISP_PERFORMANCE_STATE_LOW 0
 #define ISP_PERFORMANCE_STATE_HIGH 1
 
@@ -191,13 +193,13 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 	const struct software_node *amd_camera_node, *isp4_node;
 #endif
 	struct amdgpu_device *adev = isp->adev;
+	struct acpi_device *acpi_dev;
 	int idx, int_idx, num_res, r;
 	u64 isp_base;
 
 	if (adev->rmmio_size == 0 || adev->rmmio_size < 0x5289)
 		return -EINVAL;
 
-#ifdef __linux__
 	r = amdgpu_acpi_get_isp4_dev(&acpi_dev);
 	if (r) {
 		drm_dbg(&adev->ddev, "Invalid isp platform detected (%d)", r);
@@ -205,7 +207,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 		return 0;
 	}
 
-
+#ifdef __linux__
 	/* add GPIO resources required for OMNI5C10 sensor */
 	if (!strcmp("OMNI5C10", acpi_device_hid(acpi_dev))) {
 		gpiod_add_lookup_table(&isp_gpio_table);
@@ -334,6 +336,7 @@ static int isp_v4_1_1_hw_init(struct amdgpu_isp *isp)
 		drm_err(&adev->ddev, "add mfd hotplug device failed (%d)\n", r);
 		goto failure;
 	}
+
 	r = device_for_each_child(isp->parent, &isp->ispgpd,
 				  isp_genpd_add_device);
 	if (r) {
@@ -366,6 +369,7 @@ static int isp_v4_1_1_hw_fini(struct amdgpu_isp *isp)
 #ifdef __linux__
 	device_for_each_child(isp->parent, NULL,
 			      isp_genpd_remove_device);
+#endif
 
 	mfd_remove_devices(isp->parent);
 
@@ -374,7 +378,6 @@ static int isp_v4_1_1_hw_fini(struct amdgpu_isp *isp)
 	kfree(isp->isp_pdata);
 	kfree(isp->isp_i2c_res);
 	kfree(isp->isp_gpio_res);
-#endif
 
 	return 0;
 }
