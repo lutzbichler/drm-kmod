@@ -482,6 +482,22 @@ static int gt_init_with_gt_forcewake(struct xe_gt *gt)
 			xe_lmtt_init(&gt_to_tile(gt)->sriov.pf.lmtt);
 	}
 
+#ifdef __FreeBSD__
+	/*
+	 * Redirect the HuC firmware BO's GGTT entries to the scratch page
+	 * now that xe_ggtt_init() has created one.  The running GuC may
+	 * issue stray DMA writes through these GGTT entries, corrupting
+	 * the HuC firmware before it is uploaded and authenticated.
+	 * The real mapping is restored in uc_fw_xfer() before the upload.
+	 */
+	if (!xe_gt_is_media_type(gt)) {
+		struct xe_ggtt *ggtt = gt_to_tile(gt)->mem.ggtt;
+
+		if (ggtt && gt->uc.huc.fw.bo)
+			xe_ggtt_unmap_bo(ggtt, gt->uc.huc.fw.bo);
+	}
+#endif
+
 	/* Enable per hw engine IRQs */
 	xe_irq_enable_hwe(gt);
 
