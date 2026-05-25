@@ -29,7 +29,7 @@
 #include <linux/build_bug.h>
 #include <asm/fpu/api.h>
 #ifdef __FreeBSD__
-#include <linux/jump_label.h>
+#include <linux/jump_label.h> // has_movntdqa
 #endif
 
 #include "i915_memcpy.h"
