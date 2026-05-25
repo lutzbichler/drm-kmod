@@ -26,6 +26,7 @@
 
 #ifdef __FreeBSD__
 #include "xe_ggtt.h"
+#include "xe_gt_tlb_invalidation.h"
 #endif
 
 /*
@@ -880,6 +881,15 @@ static int uc_fw_xfer(struct xe_uc_fw *uc_fw, u32 offset, u32 dma_flags)
 		    pat_index = tile_to_xe(tile)->pat.idx[cache_mode];
 			xe_ggtt_map_bo(tile->mem.ggtt, uc_fw->bo->ggtt_node[tile->id], uc_fw->bo, pat_index);
 		}
+
+	/*
+	 * Invalidate the GGTT TLB after re-writing the PTEs. Without this,
+	 * the GuC may use stale TLB entries when reading firmware data for
+	 * authentication (e.g. HuC RSA verification) if a prior TLB
+	 * invalidation (from xe_ggtt_initial_clear or xe_ggtt_unmap_bo) left
+	 * the entries pointing at invalid/scratch pages.
+	 */
+	xe_gt_tlb_invalidation_ggtt(gt);
 #endif
 
 	/* Set the source address for the uCode */
