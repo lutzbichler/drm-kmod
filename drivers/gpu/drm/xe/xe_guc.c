@@ -1178,23 +1178,23 @@ int xe_guc_min_load_for_hwconfig(struct xe_guc *guc)
 	 * upload completes.  The running GuC asynchronously zeroes its
 	 * firmware source pages through these GGTT entries; clearing them
 	 * now (before the zeroing starts) protects the BOs' backing pages.
-	 * Also clear the HuC BO entries since the GuC's stray DMA may
-	 * target adjacent GGTT ranges.
+	 * The GuC BO must be unmapped FIRST — the TLB invalidation stops
+	 * the GuC's stray DMA as quickly as possible.  Only then clear the
+	 * HuC BO entries to prevent the GuC from corrupting HuC pages
+	 * through adjacent GGTT ranges.
 	 * The scratch page may not exist yet (created later in xe_ggtt_init),
 	 * so xe_ggtt_clear writes PTE=0 (invalid).
 	 * The real mapping is restored in uc_fw_xfer before each upload.
-	 * xe_ggtt_unmap_bo on the GuC BO provides a single TLB invalidation
-	 * that covers both BOs.
 	 */
 	{
 		struct xe_tile *tile = gt_to_tile(guc_to_gt(guc));
 		struct xe_huc *huc = &guc_to_gt(guc)->uc.huc;
 
 		if (tile->mem.ggtt) {
-			if (huc->fw.bo)
-				xe_ggtt_clear_bo(tile->mem.ggtt, huc->fw.bo);
 			if (guc->fw.bo)
 				xe_ggtt_unmap_bo(tile->mem.ggtt, guc->fw.bo);
+			if (huc->fw.bo)
+				xe_ggtt_clear_bo(tile->mem.ggtt, huc->fw.bo);
 		}
 	}
 #endif
