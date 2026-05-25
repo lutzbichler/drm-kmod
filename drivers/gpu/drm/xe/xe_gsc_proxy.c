@@ -506,6 +506,8 @@ int xe_gsc_proxy_init(struct xe_gsc *gsc)
 	}
 #endif
 
+	gsc->proxy.component_added = true;
+
 	return devm_add_action_or_reset(xe->drm.dev, xe_gsc_proxy_remove, gsc);
 }
 

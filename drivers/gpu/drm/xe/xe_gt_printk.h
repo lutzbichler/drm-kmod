@@ -116,11 +116,7 @@ static inline struct drm_printer xe_gt_dbg_printer(struct xe_gt *gt)
 	struct drm_printer p = {
 		.printfn = __xe_gt_printfn_dbg,
 		.arg = gt,
-#ifdef __linux__
 		.origin = (const void *)_THIS_IP_,
-#elif defined(__FreeBSD__)
-		.origin = NULL,
-#endif
 	};
 	return p;
 }

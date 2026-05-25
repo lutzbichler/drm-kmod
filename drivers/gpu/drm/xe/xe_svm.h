@@ -74,10 +74,7 @@ int xe_svm_bo_evict(struct xe_bo *bo);
 
 void xe_svm_range_debug(struct xe_svm_range *range, const char *operation);
 
-void xe_svm_flush(struct xe_vm *vm);
-
-int xe_svm_alloc_vram(struct xe_vm *vm, struct xe_tile *tile,
-		      struct xe_svm_range *range,
+int xe_svm_alloc_vram(struct xe_tile *tile, struct xe_svm_range *range,
 		      const struct drm_gpusvm_ctx *ctx);
 
 struct xe_svm_range *xe_svm_range_find_or_insert(struct xe_vm *vm, u64 addr,
@@ -165,6 +162,8 @@ static inline unsigned long xe_svm_range_size(struct xe_svm_range *range)
 #define xe_svm_notifier_unlock(vm__)	\
 	drm_gpusvm_notifier_unlock(&(vm__)->svm.gpusvm)
 
+void xe_svm_flush(struct xe_vm *vm);
+
 #else
 #include <linux/interval_tree.h>
 
@@ -241,14 +240,9 @@ void xe_svm_range_debug(struct xe_svm_range *range, const char *operation)
 {
 }
 
-static inline void xe_svm_flush(struct xe_vm *vm)
-{
-}
-
-static inline
-int xe_svm_alloc_vram(struct xe_vm *vm, struct xe_tile *tile,
-		      struct xe_svm_range *range,
-		      const struct drm_gpusvm_ctx *ctx)
+static inline int
+xe_svm_alloc_vram(struct xe_tile *tile, struct xe_svm_range *range,
+		  const struct drm_gpusvm_ctx *ctx)
 {
 	return -EOPNOTSUPP;
 }
@@ -321,6 +315,10 @@ static inline void xe_svm_notifier_lock(struct xe_vm *vm)
 }
 
 static inline void xe_svm_notifier_unlock(struct xe_vm *vm)
+{
+}
+
+static inline void xe_svm_flush(struct xe_vm *vm)
 {
 }
 #endif

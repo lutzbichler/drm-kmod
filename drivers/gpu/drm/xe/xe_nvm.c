@@ -108,7 +108,7 @@ int xe_nvm_init(struct xe_device *xe)
 	nvm = xe->nvm;
 
 	nvm->writable_override = xe_nvm_writable_override(xe);
-	nvm->non_posted_erase = xe_nvm_non_posted_erase(xe);	
+	nvm->non_posted_erase = xe_nvm_non_posted_erase(xe);
 #ifdef __linux__
 	nvm->bar.parent = &pdev->resource[0];
 	nvm->bar.start = GEN12_GUNIT_NVM_BASE + pdev->resource[0].start;
