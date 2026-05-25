@@ -1259,7 +1259,6 @@ SRCS+=	color_gamma.c \
 	info_packet.c \
 	power.c \
 	power_abm.c \
-	power_helpers.c \
 	power_psr.c \
 	power_replay.c
 
@@ -1867,7 +1866,6 @@ CWARNFLAGS.link_dp_dpia_bw.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.link_dp_trace.c=		-Wno-missing-prototypes
 CWARNFLAGS.link_dp_training.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.link_validation.c=		-Wno-missing-prototypes
-CWARNFLAGS.power_helpers.c=		-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.dc_helper.c=			-Wno-missing-prototypes -Wno-unused-but-set-variable
 CWARNFLAGS.dcn_calcs.c+=		-Wno-missing-prototypes
 CWARNFLAGS.dc_dmub_srv.c=		-Wno-unused-but-set-variable -Wno-missing-prototypes
