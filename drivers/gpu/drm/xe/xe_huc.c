@@ -25,6 +25,11 @@
 #include "xe_sriov.h"
 #include "xe_uc_fw.h"
 
+#ifdef __FreeBSD__
+#include "xe_ggtt.h"
+#include "xe_gt_tlb_invalidation.h"
+#endif
+
 static struct xe_gt *
 huc_to_gt(struct xe_huc *huc)
 {
@@ -252,6 +257,30 @@ int xe_huc_auth(struct xe_huc *huc, enum xe_huc_auth_types type)
 
 	switch (type) {
 	case XE_HUC_AUTH_VIA_GUC:
+#ifdef __FreeBSD__
+		/*
+		 * Re-map the HuC BO in GGTT and invalidate TLB right before
+		 * auth. On FreeBSD, GGTT TLB entries for the HuC BO can become
+		 * stale if xe_ggtt_initial_clear or other operations invalidated
+		 * the TLB after the PTEs were first written. The GuC needs to
+		 * read the RSA signature from this BO via GGTT to verify the
+		 * firmware.
+		 */
+		{
+			struct xe_tile *tile = gt_to_tile(gt);
+			struct xe_ggtt *ggtt = tile->mem.ggtt;
+			struct xe_bo *bo = huc->fw.bo;
+
+			if (ggtt && bo && bo->ggtt_node[tile->id]) {
+				u16 cache_mode = bo->flags & XE_BO_FLAG_NEEDS_UC ?
+					XE_CACHE_NONE : XE_CACHE_WB;
+				u16 pat_index = tile_to_xe(tile)->pat.idx[cache_mode];
+
+				xe_ggtt_map_bo(ggtt, bo->ggtt_node[tile->id], bo, pat_index);
+				xe_gt_tlb_invalidation_ggtt(gt);
+			}
+		}
+#endif
 		ret = xe_guc_auth_huc(guc, xe_bo_ggtt_addr(huc->fw.bo) +
 				      xe_uc_fw_rsa_offset(&huc->fw));
 		break;
