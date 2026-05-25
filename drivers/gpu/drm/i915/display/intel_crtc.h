@@ -7,7 +7,7 @@
 #define _INTEL_CRTC_H_
 
 #ifdef __FreeBSD__
-#include <linux/kconfig.h>
+#include <linux/kconfig.h> // IS_ENABLED
 #endif
 #include <linux/types.h>
 

@@ -20,7 +20,7 @@
 #include "intel_wakeref.h"
 
 #ifdef __FreeBSD__
-#include <linux/poison.h>
+#include <linux/poison.h> // POISON_FREE
 #endif
 
 #include "uc/intel_guc_fwif.h"
