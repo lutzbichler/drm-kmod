@@ -602,6 +602,10 @@ int xe_device_init_early(struct xe_device *xe)
 	if (err)
 		return err;
 
+	err = xe_pm_init_early(xe);
+	if (err)
+		return err;
+
 	return 0;
 }
 
