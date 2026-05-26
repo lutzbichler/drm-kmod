@@ -6713,8 +6713,6 @@ static void drm_reset_display_info(struct drm_connector *connector)
 
 	info->source_physical_address = CEC_PHYS_ADDR_INVALID;
 	memset(&info->amd_vsdb, 0, sizeof(info->amd_vsdb));
-
-	info->panel_type = DRM_MODE_PANEL_TYPE_UNKNOWN;
 }
 
 static void drm_displayid_process_base_section_header(struct drm_connector *connector,
@@ -6733,45 +6731,6 @@ static void drm_displayid_process_base_section_header(struct drm_connector *conn
 		info->non_desktop = true;
 }
 
-static void
-drm_displayid_parse_display_params(struct drm_connector *connector,
-				   const struct displayid_block *block)
-{
-	struct drm_display_info *info = &connector->display_info;
-	const struct displayid_display_params_block *params =
-		(const struct displayid_display_params_block *)block;
-	u8 tech;
-
-	if (block->num_bytes < sizeof(*params) - sizeof(params->base)) {
-		drm_dbg_kms(connector->dev,
-			    "[CONNECTOR:%d:%s] DisplayID Display Parameters block too short (%u < %zu)\n",
-			    connector->base.id, connector->name,
-			    block->num_bytes,
-			    sizeof(*params) - sizeof(params->base));
-		return;
-	}
-
-	tech = FIELD_GET(DISPLAYID_DISPLAY_PARAMS_DEVICE_TECH,
-			 params->color_depth_and_tech);
-
-	drm_dbg_kms(connector->dev,
-		    "[CONNECTOR:%d:%s] DisplayID Display Parameters: device technology %s\n",
-		    connector->base.id, connector->name,
-		    tech == DISPLAYID_DEVICE_TECH_LCD ? "LCD" :
-		    tech == DISPLAYID_DEVICE_TECH_OLED ? "OLED" : "unspecified");
-
-	switch (tech) {
-	case DISPLAYID_DEVICE_TECH_LCD:
-		info->panel_type = DRM_MODE_PANEL_TYPE_LCD;
-		break;
-	case DISPLAYID_DEVICE_TECH_OLED:
-		info->panel_type = DRM_MODE_PANEL_TYPE_OLED;
-		break;
-	default:
-		break;
-	}
-}
-
 static void update_displayid_info(struct drm_connector *connector,
 				  const struct drm_edid *drm_edid)
 {
@@ -6785,10 +6744,6 @@ static void update_displayid_info(struct drm_connector *connector,
 			drm_displayid_process_base_section_header(connector, &iter);
 			base_section_header_processed = true;
 		}
-
-		if (displayid_version(&iter) == DISPLAY_ID_STRUCTURE_VER_20 &&
-		    block->tag == DATA_BLOCK_2_DISPLAY_PARAMETERS)
-			drm_displayid_parse_display_params(connector, block);
 	}
 	displayid_iter_end(&iter);
 }
@@ -7624,14 +7579,6 @@ static void drm_parse_tiled_block(struct drm_connector *connector,
 	u8 tile_v_loc, tile_h_loc;
 	u8 num_v_tile, num_h_tile;
 	struct drm_tile_group *tg;
-
-	/* tiled block payload per spec: cap 1 + topo 3 + size 4 + bezel 5 + id 9 = 22 */
-	if (block->num_bytes < 22) {
-		drm_dbg_kms(connector->dev,
-			    "[CONNECTOR:%d:%s] Unexpected tiled block size %u\n",
-			    connector->base.id, connector->name, block->num_bytes);
-		return;
-	}
 
 	w = tile->tile_size[0] | tile->tile_size[1] << 8;
 	h = tile->tile_size[2] | tile->tile_size[3] << 8;
