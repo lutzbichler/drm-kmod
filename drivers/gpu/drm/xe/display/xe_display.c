@@ -91,7 +91,7 @@ static void xe_display_fini_early(void *arg)
 	intel_display_driver_remove_nogem(display);
 	intel_display_driver_remove_noirq(display);
 	intel_opregion_cleanup(display);
-	intel_power_domains_cleanup(display);
+	intel_display_power_cleanup(display);
 }
 
 int xe_display_init_early(struct xe_device *xe)
@@ -140,7 +140,7 @@ int xe_display_init_early(struct xe_device *xe)
 	return devm_add_action_or_reset(xe->drm.dev, xe_display_fini_early, xe);
 err_noirq:
 	intel_display_driver_remove_noirq(display);
-	intel_power_domains_cleanup(display);
+	intel_display_power_cleanup(display);
 err_opregion:
 	intel_opregion_cleanup(display);
 	return err;
@@ -180,7 +180,7 @@ void xe_display_register(struct xe_device *xe)
 		return;
 
 	intel_display_driver_register(display);
-	intel_power_domains_enable(display);
+	intel_display_power_enable(display);
 }
 
 void xe_display_unregister(struct xe_device *xe)
@@ -190,7 +190,7 @@ void xe_display_unregister(struct xe_device *xe)
 	if (!xe->info.probe_display)
 		return;
 
-	intel_power_domains_disable(display);
+	intel_display_power_disable(display);
 	intel_display_driver_unregister(display);
 }
 
@@ -258,7 +258,7 @@ static void xe_display_enable_d3cold(struct xe_device *xe)
 	 * We do a lot of poking in a lot of registers, make sure they work
 	 * properly.
 	 */
-	intel_power_domains_disable(display);
+	intel_display_power_disable(display);
 
 	intel_display_flush_cleanup_work(display);
 
@@ -291,7 +291,7 @@ static void xe_display_disable_d3cold(struct xe_device *xe)
 
 	intel_opregion_resume(display);
 
-	intel_power_domains_enable(display);
+	intel_display_power_enable(display);
 }
 
 void xe_display_pm_suspend(struct xe_device *xe)
@@ -306,7 +306,7 @@ void xe_display_pm_suspend(struct xe_device *xe)
 	 * We do a lot of poking in a lot of registers, make sure they work
 	 * properly.
 	 */
-	intel_power_domains_disable(display);
+	intel_display_power_disable(display);
 	drm_client_dev_suspend(&xe->drm);
 
 	if (intel_display_device_present(display)) {
@@ -338,7 +338,7 @@ void xe_display_pm_shutdown(struct xe_device *xe)
 	if (!xe->info.probe_display)
 		return;
 
-	intel_power_domains_disable(display);
+	intel_display_power_disable(display);
 	drm_client_dev_suspend(&xe->drm);
 
 	if (intel_display_device_present(display)) {
@@ -419,7 +419,7 @@ void xe_display_pm_shutdown_late(struct xe_device *xe)
 	 * for now leaving all display power wells in the INIT power domain
 	 * enabled.
 	 */
-	intel_power_domains_driver_remove(display);
+	intel_display_power_driver_remove(display);
 }
 
 void xe_display_pm_resume_early(struct xe_device *xe)
@@ -466,7 +466,7 @@ void xe_display_pm_resume(struct xe_device *xe)
 
 	drm_client_dev_resume(&xe->drm);
 
-	intel_power_domains_enable(display);
+	intel_display_power_enable(display);
 }
 
 void xe_display_pm_runtime_resume(struct xe_device *xe)
