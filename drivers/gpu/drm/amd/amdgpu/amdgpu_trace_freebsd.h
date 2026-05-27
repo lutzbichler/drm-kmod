@@ -5,6 +5,7 @@
 #include <sys/ktr.h>
 
 #include "amdgpu.h"
+#include "amdgpu_userq_fence.h"
 
 static inline void
 trace_amdgpu_iv(u_long ih __unused, struct amdgpu_iv_entry *iv){
@@ -208,18 +209,18 @@ static inline void
 trace_amdgpu_userq_create_start(struct amdgpu_usermode_queue *queue)
 {
 	CTR5(KTR_DRM, "amdgpu_userq_create_start: queue=%p, doorbell=%llu, "
-		          "type=%d, state=%d, xcp_id=%u",
-				  queue, queue->doorbell_index, queue->queue_type,
-				  queue->state, queue->xcp_id);
+		"type=%d, state=%d, xcp_id=%u",
+		queue, queue->doorbell_index, queue->queue_type, queue->state,
+		queue->xcp_id);
 }
 
 static inline void
 trace_amdgpu_userq_create_end(struct amdgpu_usermode_queue *queue, int result)
 {
 	CTR6(KTR_DRM, "amdgpu_userq_create_end: queue=%p, doorbell=%llu, type=%d, "
-				  "state=%d, xcp_id=%u result=%d",
-				  queue, queue->doorbell_index, queue->queue_type,
-				  queue->state, queue->xcp_id, result);
+		"state=%d, xcp_id=%u result=%d",
+		queue, queue->doorbell_index, queue->queue_type, queue->state,
+		queue->xcp_id, result);
 
 }
 
@@ -227,18 +228,61 @@ static inline void
 trace_amdgpu_userq_destroy_start(struct amdgpu_usermode_queue *queue)
 {
 	CTR5(KTR_DRM, "amdgpu_userq_destroy_start: queue=%p, doorbell=%llu, "
-		          "type=%d, state=%d, xcp_id=%u",
-				  queue, queue->doorbell_index, queue->queue_type,
-				  queue->state, queue->xcp_id);
+		"type=%d, state=%d, xcp_id=%u",
+		queue, queue->doorbell_index, queue->queue_type, queue->state,
+		queue->xcp_id);
 }
 
 static inline void
 trace_amdgpu_userq_destroy_end(struct amdgpu_usermode_queue *queue, int result)
 {
 	CTR6(KTR_DRM, "amdgpu_userq_destroy_end: queue=%p, doorbell=%llu, "
-		          "type=%d, state=%d, xcp_id=%u result=%d",
-				  queue, queue->doorbell_index, queue->queue_type,
-				  queue->state, queue->xcp_id, result);
+		"type=%d, state=%d, xcp_id=%u result=%d",
+		queue, queue->doorbell_index, queue->queue_type, queue->state,
+		queue->xcp_id, result);
+}
+
+static inline void
+trace_amdgpu_userq_emit_fence(struct device *device,
+	struct amdgpu_usermode_queue *queue, struct amdgpu_userq_fence *fence)
+{
+	CTR6(KTR_DRM, "amdgpu_userq_emit_fence: dev=%s, client_id=%llu, type=%u, "
+		"doorbell=%llu, fence=%llu:%llu",
+		dev_name(device), queue->userq_mgr->file->client_id, queue->queue_type,
+		queue->doorbell_index, fence->base.context, ence->base.seqno);
+}
+
+static inline void
+trace_amdgpu_userq_wait_deps(struct device *device,
+	struct amdgpu_usermode_queue *queue, struct amdgpu_userq_fence *fence)
+{
+	CTR4(KTR_DRM, "amdgpu_userq_wait_deps(1/2): dev=%s, client_id=%llu, "
+		"type=%u, doorbell=%llu",
+		dev_name(device), queue->userq_mgr->file->client_id,
+		queue->queue_type, queue->doorbell_index);
+	CTR4(KTR_DRM, "amdgpu_userq_wait_deps(2/2): dev=%s, context %llu depends "
+		"on fence %llu:%llu",
+		dev_name(device), queue->fence_drv->context, fence->base.context,
+		fence->base.seqno);
+}
+
+static inline void
+trace_amdgpu_userq_state_start(struct amdgpu_usermode_queue *queue)
+{
+	CTR4(KTR_DRM, "amdgpu_userq_state_start: client_id=%llu, type=%u, "
+		"doorbell=%llu, from=%d",
+		queue->userq_mgr->file->client_id, queue->queue_type,
+		queue->doorbell_index, queue->state);
+}
+
+static inline void
+trace_amdgpu_userq_state_changed(struct amdgpu_usermode_queue *queue,
+	enum amdgpu_userq_state new_state)
+{
+	CTR4(KTR_DRM, "amdgpu_userq_state_start: client_id=%llu, type=%u, "
+		"doorbell=%llu, to=%d",
+		queue->userq_mgr->file->client_id, queue->queue_type,
+		queue->doorbell_index, new_state);
 }
 
 #define	trace_amdgpu_cs_enabled()	true
