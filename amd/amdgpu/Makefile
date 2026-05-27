@@ -297,6 +297,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/soc_and_ip_translator \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn401 \
 	${SRCDIR}/display/dc/soc_and_ip_translator/dcn42 \
+	${SRCDIR}/display/dc/soc_and_ip_translator/dcn42b \
 	${SRCDIR}/display/dc/sspl \
 	${SRCDIR}/display/dmub/src \
 	${SRCDIR}/display/modules \
@@ -1265,7 +1266,8 @@ SRCS+=	color_gamma.c \
 # display/dc/soc_and_ip_translator
 SRCS+=	soc_and_ip_translator.c \
 	dcn401_soc_and_ip_translator.c \
-	dcn42_soc_and_ip_translator.c
+	dcn42_soc_and_ip_translator.c \
+	dcn42b_soc_and_ip_translator.c
 
 # display/dc
 SRCS+=	dc_helper.c \
