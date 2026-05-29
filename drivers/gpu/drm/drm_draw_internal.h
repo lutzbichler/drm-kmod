@@ -7,7 +7,6 @@
 #ifndef __DRM_DRAW_INTERNAL_H__
 #define __DRM_DRAW_INTERNAL_H__
 
-#include <linux/font.h>
 #include <linux/types.h>
 
 struct iosys_map;
