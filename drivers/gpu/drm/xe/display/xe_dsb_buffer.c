@@ -3,6 +3,8 @@
  * Copyright 2023, Intel Corporation.
  */
 
+#include <linux/page.h>
+
 #include "i915_vma.h"
 #include "intel_display_types.h"
 #include "intel_dsb_buffer.h"
@@ -76,4 +78,21 @@ void intel_dsb_buffer_flush_map(struct intel_dsb_buffer *dsb_buf)
 	 */
 	xe_device_wmb(xe);
 	xe_device_l2_flush(xe);
+
+#ifdef __FreeBSD__
+	/*
+	 * On FreeBSD, pmap_invalidate_cache_range() is a no-op on Intel CPUs
+	 * with Self-Snoop (CPUID_SS), so when TTM transitions pages from WB
+	 * to WC caching, stale WB cache lines may remain in the LLC. The DSB
+	 * engine reads through GGTT (snooped), and could pick up stale data
+	 * instead of the WC-written commands. Explicitly flush the DSB buffer
+	 * range to ensure coherency.
+	 *
+	 * Linux always does clflush_cache_range() in set_memory_wc() so it
+	 * doesn't have this problem.
+	 */
+	if (!dsb_buf->vma->bo->vmap.is_iomem)
+		clflush_cache_range(dsb_buf->vma->bo->vmap.vaddr,
+				    dsb_buf->buf_size);
+#endif
 }
