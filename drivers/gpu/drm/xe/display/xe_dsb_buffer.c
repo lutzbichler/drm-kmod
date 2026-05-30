@@ -59,6 +59,22 @@ bool intel_dsb_buffer_create(struct intel_crtc *crtc, struct intel_dsb_buffer *d
 	dsb_buf->vma = vma;
 	dsb_buf->buf_size = size;
 
+#ifdef __FreeBSD__
+	/*
+	 * On FreeBSD, pmap_invalidate_cache_range() is a no-op on Intel CPUs
+	 * with Self-Snoop (CPUID_SS). When TTM transitions pages from WB to
+	 * WC via set_pages_array_wc() → pmap_page_set_memattr(), stale dirty
+	 * WB cache lines (e.g. from page zeroing) remain in the LLC.
+	 *
+	 * We must flush these stale lines BEFORE writing DSB commands.
+	 * Otherwise, a later clflush (or GPU snoop) could see the stale data
+	 * instead of our WC-written commands. Flushing here evicts any dirty
+	 * lines so subsequent WC writes land cleanly in memory.
+	 */
+	if (!obj->vmap.is_iomem)
+		clflush_cache_range(obj->vmap.vaddr, PAGE_ALIGN(size));
+#endif
+
 	return true;
 }
 
@@ -78,21 +94,4 @@ void intel_dsb_buffer_flush_map(struct intel_dsb_buffer *dsb_buf)
 	 */
 	xe_device_wmb(xe);
 	xe_device_l2_flush(xe);
-
-#ifdef __FreeBSD__
-	/*
-	 * On FreeBSD, pmap_invalidate_cache_range() is a no-op on Intel CPUs
-	 * with Self-Snoop (CPUID_SS), so when TTM transitions pages from WB
-	 * to WC caching, stale WB cache lines may remain in the LLC. The DSB
-	 * engine reads through GGTT (snooped), and could pick up stale data
-	 * instead of the WC-written commands. Explicitly flush the DSB buffer
-	 * range to ensure coherency.
-	 *
-	 * Linux always does clflush_cache_range() in set_memory_wc() so it
-	 * doesn't have this problem.
-	 */
-	if (!dsb_buf->vma->bo->vmap.is_iomem)
-		clflush_cache_range(dsb_buf->vma->bo->vmap.vaddr,
-				    dsb_buf->buf_size);
-#endif
 }
