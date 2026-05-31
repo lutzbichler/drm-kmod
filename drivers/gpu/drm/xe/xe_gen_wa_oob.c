@@ -10,16 +10,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef __FreeBSD__
-static inline char *
-basename(char *path)
-{
-        char *t = strrchr(path, '/');
-        return t ? t + 1 : path;
-}
-#endif
-
-
 #define HEADER \
 	"// SPDX-License-Identifier: MIT\n" \
 	"\n" \
