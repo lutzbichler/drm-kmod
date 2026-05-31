@@ -19,7 +19,8 @@ int drmm_add_action(struct drm_device *, drmm_func_t, void *);
 int drmm_add_action_or_reset(struct drm_device *, drmm_func_t, void *);
 
 int drmm_mutex_init(struct drm_device *, struct mutex *);
-
+struct workqueue_struct * drmm_alloc_ordered_workqueue(struct drm_device *,
+				const char *, int);
 void __drmm_mutex_release(struct drm_device *, void *);
 void __drmm_workqueue_release(struct drm_device *, void *);
 
