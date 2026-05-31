@@ -17,9 +17,6 @@
 #include "xe_pm.h"
 #include "xe_sriov.h"
 #include "xe_trace.h"
-#ifdef __FreeBSD__
-#include "xe_vm.h"
-#endif
 #include "regs/xe_guc_regs.h"
 
 #define FENCE_STACK_BIT		DMA_FENCE_FLAG_USER_BITS
