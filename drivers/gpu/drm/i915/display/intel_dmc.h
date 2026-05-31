@@ -8,10 +8,6 @@
 
 #include <linux/types.h>
 
-#ifdef __FreeBSD__
-#include "intel_dmc_regs.h"
-#endif
-
 enum pipe;
 enum pipedmc_event_id;
 struct drm_printer;

@@ -714,7 +714,7 @@ i915_gem_object_create_shmem_from_data(struct drm_i915_private *i915,
 	struct file *file;
 	loff_t pos;
 #ifdef __linux__
-	int err;
+	ssize_t err;
 #endif
 
 	GEM_WARN_ON(IS_DGFX(i915));
