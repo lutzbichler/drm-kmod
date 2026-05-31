@@ -172,6 +172,22 @@ drmm_mutex_init(struct drm_device *dev, struct mutex *m)
     return drmm_add_action_or_reset(dev, __drmm_mutex_release, m);
 }
 
+struct workqueue_struct *
+drmm_alloc_ordered_workqueue(struct drm_device *dev, const char *fmt, int flags)
+{
+    struct workqueue_struct *wq;
+    int ret;
+
+    wq = alloc_ordered_workqueue(fmt, flags);
+    if (wq) {
+        ret = drmm_add_action_or_reset(dev, __drmm_workqueue_release, wq);
+        if (ret)
+            wq = ERR_PTR(ret);
+    }
+
+    return (wq);
+}
+
 void
 __drmm_mutex_release(struct drm_device *dev, void *p)
 {
