@@ -45,6 +45,7 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     drivers/dma-buf/sync_file.c \
     drivers/video/aperture.c \
     drivers/video/hdmi.c \
+    drivers/gpu/drm/xe/ \
     include/drm/*.h \
     include/drm/display/ \
     include/drm/intel/ \
