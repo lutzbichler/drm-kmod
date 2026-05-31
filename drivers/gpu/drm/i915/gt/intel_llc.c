@@ -5,7 +5,7 @@
 
 #include <asm/tsc.h>
 #include <linux/cpufreq.h>
-#if defined(__FreeBSD__)
+#ifdef __FreeBSD__
 #include <sys/types.h>
 #include <machine/clock.h>
 #endif

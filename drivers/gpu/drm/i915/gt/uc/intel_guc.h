@@ -22,7 +22,7 @@
 #include "i915_vma.h"
 
 #ifdef __FreeBSD__
-#include <drm/drm_util.h>
+#include <drm/drm_util.h> // drm_can_sleep
 #endif
 
 struct __guc_ads_blob;

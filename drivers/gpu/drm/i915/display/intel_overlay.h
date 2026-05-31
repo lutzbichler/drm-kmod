@@ -7,7 +7,7 @@
 #define __INTEL_OVERLAY_H__
 
 #ifdef __FreeBSD__
-#include <linux/kconfig.h>
+#include <linux/kconfig.h> // IS_ENABLED
 #endif
 #include <linux/types.h>
 
