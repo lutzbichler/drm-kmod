@@ -18,7 +18,7 @@
 #include <linux/workqueue.h>
 
 #ifdef __FreeBSD__
-#include <linux/seqlock.h>
+#include <linux/seqlock.h> // seqcount_t
 #endif
 
 #include "i915_gem.h"
