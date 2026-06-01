@@ -315,8 +315,6 @@ void xe_display_pm_suspend(struct xe_device *xe)
 		intel_display_driver_suspend(display);
 	}
 
-	intel_display_flush_cleanup_work(display);
-
 	intel_encoder_block_all_hpds(display);
 
 	intel_hpd_cancel_work(display);
@@ -347,7 +345,6 @@ void xe_display_pm_shutdown(struct xe_device *xe)
 		intel_display_driver_suspend(display);
 	}
 
-	intel_display_flush_cleanup_work(display);
 	intel_dp_mst_suspend(display);
 	intel_encoder_block_all_hpds(display);
 	intel_hpd_cancel_work(display);
