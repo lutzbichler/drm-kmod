@@ -308,6 +308,7 @@ SRCS+=	i915_gem_busy.c \
 	i915_gem_mman.c \
 	i915_gem_object.c \
 	i915_gem_pages.c \
+	i915_gem_panic.c \
 	i915_gem_phys.c \
 	i915_gem_pm.c \
 	i915_gem_region.c \
