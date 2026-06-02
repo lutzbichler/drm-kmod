@@ -46,7 +46,6 @@ SRCS=	\
 	i915_mmio_range.c \
 	i915_module.c \
 	i915_overlay.c \
-	i915_panic.c \
 	i915_params.c \
 	i915_pci.c \
 	i915_query.c \
