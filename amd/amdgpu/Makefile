@@ -427,6 +427,7 @@ SRCS+=	amdgpu_afmt.c \
 	amdgpu_vm_sdma.c \
 	amdgpu_vm_tlb_fence.c \
 	amdgpu_vram_mgr.c \
+	amdgpu_wb.c \
 	amdgpu_xcp.c \
 	amdgpu_xgmi.c \
 	arct_reg_init.c \
