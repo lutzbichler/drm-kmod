@@ -736,18 +736,22 @@ static int handle_gmdid(struct xe_device *xe,
 struct xe_probed_info {
 	u16 devid;
 	u8 revid;
+	struct xe_step_info step;
 };
 
 /*
  * Probe from the hardware the info required by xe_info_init_early().
  */
 static int xe_probe_info_early(struct xe_device *xe,
+			       const struct xe_device_desc *desc,
 			       struct xe_probed_info *probed_info)
 {
 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 
 	probed_info->devid = pdev->device;
 	probed_info->revid = pdev->revision;
+
+	xe_step_platform_get(desc->platform, probed_info->revid, &probed_info->step);
 
 	return 0;
 }
@@ -765,6 +769,7 @@ static int xe_info_init_early(struct xe_device *xe,
 
 	xe->info.devid = probed_info->devid;
 	xe->info.revid = probed_info->revid;
+	xe->info.step.platform = probed_info->step.platform;
 
 	xe->info.platform_name = desc->platform_name;
 	xe->info.platform = desc->platform;
@@ -814,8 +819,6 @@ static int xe_info_init_early(struct xe_device *xe,
 	xe_assert(xe, desc->max_gt_per_tile <= XE_MAX_GT_PER_TILE);
 	xe->info.max_gt_per_tile = desc->max_gt_per_tile;
 	xe->info.tile_count = 1 + desc->max_remote_tiles;
-
-	xe_step_platform_get(xe->info.platform, xe->info.revid, &xe->info.step);
 
 	err = xe_tile_init_early(xe_device_get_root_tile(xe), xe, 0);
 	if (err)
@@ -1175,7 +1178,7 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 
 	pci_set_master(pdev);
 
-	err = xe_probe_info_early(xe, &probed_info);
+	err = xe_probe_info_early(xe, desc, &probed_info);
 	if (err)
 		return err;
 
