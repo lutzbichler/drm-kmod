@@ -534,7 +534,8 @@ int xe_device_init_early(struct xe_device *xe)
 #elif defined(__FreeBSD__)
 				  NULL,
 #endif				  
-			      xe->drm.vma_offset_manager, 0);
+			      xe->drm.vma_offset_manager,
+			      TTM_ALLOCATION_POOL_BENEFICIAL_ORDER(get_order(SZ_2M)));
 	if (err)
 		return err;
 
