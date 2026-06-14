@@ -153,7 +153,6 @@ remove_conflicting_framebuffers(struct apertures_struct *a,
 	return (0);
 }
 
-#define	PCI_STD_NUM_BARS	6
 int
 remove_conflicting_pci_framebuffers(struct pci_dev *pdev, const char *name)
 {
