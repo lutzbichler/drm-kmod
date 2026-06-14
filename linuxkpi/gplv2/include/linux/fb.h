@@ -296,6 +296,11 @@ is_firmware_framebuffer(struct apertures_struct *a __unused)
 	return false;
 }
 
+static inline void
+fb_deferred_io_cleanup(struct linux_fb_info *info)
+{
+}
+
 /* updated FreeBSD fb_info */
 int linux_fb_get_options(const char *name, char **option);
 #define	fb_get_options	linux_fb_get_options
