@@ -56,12 +56,7 @@
 
 struct fb_fix_screeninfo {
 	char id[16];
-#ifdef __linux__
 	unsigned long smem_start;
-#elif defined(__FreeBSD__)
-	vm_paddr_t smem_start;
-#endif
-
 	uint32_t smem_len;
 	uint32_t type;
 	uint32_t type_aux;
@@ -71,10 +66,8 @@ struct fb_fix_screeninfo {
 	uint16_t ywrapstep;
 	uint32_t line_length;
 	unsigned long mmio_start;
-
 	uint32_t mmio_len;
 	uint32_t accel;
-
 	uint16_t capabilities;
 	uint16_t reserved[2];
 };
