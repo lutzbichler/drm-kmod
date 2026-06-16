@@ -2327,6 +2327,7 @@ static void intel_psr_disable_locked(struct intel_dp *intel_dp)
 	intel_dp->psr.psr2_sel_fetch_cff_enabled = false;
 	intel_dp->psr.active_non_psr_pipes = 0;
 	intel_dp->psr.pkg_c_latency_used = 0;
+	intel_dp->psr.dc3co_allowed = false;
 }
 
 /**
@@ -3117,9 +3118,12 @@ void intel_psr_post_plane_update(struct intel_atomic_state *state,
 	const struct intel_crtc_state *crtc_state =
 		intel_atomic_get_new_crtc_state(state, crtc);
 	struct intel_encoder *encoder;
+	bool dc3co_allowed;
 
 	if (!crtc_state->has_psr)
 		return;
+
+	dc3co_allowed = intel_display_power_dc3co_allowed(display);
 
 	verify_panel_replay_dsc_state(crtc_state);
 
@@ -3147,6 +3151,8 @@ void intel_psr_post_plane_update(struct intel_atomic_state *state,
 			psr->no_psr_reason = "Workaround #1136 for skl, bxt";
 			keep_disabled = true;
 		}
+
+		intel_dp->psr.dc3co_allowed = dc3co_allowed;
 
 		if (!psr->enabled && !keep_disabled)
 			intel_psr_enable_locked(intel_dp, crtc_state);
