@@ -157,6 +157,7 @@ SRCS+=	dvo_ch7017.c \
 	intel_dp_aux.c \
 	intel_dp_aux_backlight.c \
 	intel_dp_hdcp.c \
+	intel_dp_link_caps.c \
 	intel_dp_link_training.c \
 	intel_dp_mst.c \
 	intel_dp_test.c \
