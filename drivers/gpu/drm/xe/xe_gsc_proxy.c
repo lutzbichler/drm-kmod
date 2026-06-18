@@ -482,7 +482,11 @@ int xe_gsc_proxy_init(struct xe_gsc *gsc)
 
 	mutex_init(&gsc->proxy.mutex);
 
+#ifdef __linux__
 	if (!IS_ENABLED(CONFIG_INTEL_MEI_GSC_PROXY)) {
+#elif defined(__FreeBSD__)
+	if (true) {
+#endif
 		xe_gt_info(gt, "can't init GSC proxy due to missing mei component\n");
 		return -ENODEV;
 	}

@@ -250,6 +250,15 @@ int xe_huc_auth(struct xe_huc *huc, enum xe_huc_auth_types type)
 	if (!xe_uc_fw_is_loaded(&huc->fw))
 		return -ENOEXEC;
 
+#ifdef __FreeBSD__
+	/*
+	 * Firmware with GSC headers requires authentication via GSC.
+	 * GuC auth will not work for such firmware, so skip it.
+	 */
+	if (type == XE_HUC_AUTH_VIA_GUC && huc->fw.has_gsc_headers)
+		return 0;
+#endif
+
 	switch (type) {
 	case XE_HUC_AUTH_VIA_GUC:
 		ret = xe_guc_auth_huc(guc, xe_bo_ggtt_addr(huc->fw.bo) +

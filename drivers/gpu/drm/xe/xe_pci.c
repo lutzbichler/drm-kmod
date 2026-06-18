@@ -765,6 +765,17 @@ static int xe_info_init(struct xe_device *xe,
 		if (MEDIA_VER(xe) < 13 || !media_desc)
 			continue;
 
+#ifdef __FreeBSD__
+		/*
+		 * Skip standalone media GT on FreeBSD.
+		 * FreeBSD lacks MEI driver support needed for GSC proxy,
+		 * which causes GuC authentication to fail on the media GT.
+		 */
+		drm_info(&xe->drm,
+			 "Skipping media GT - MEI driver not available on FreeBSD\n");
+		continue;
+#endif
+
 		/*
 		 * Allocate and setup media GT for platforms with standalone
 		 * media.
