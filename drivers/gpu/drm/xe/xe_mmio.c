@@ -85,7 +85,11 @@ static void mmio_fini(void *arg)
 	struct xe_device *xe = arg;
 	struct xe_tile *root_tile = xe_device_get_root_tile(xe);
 
+#ifdef __FreeBSD__
+	iounmap(xe->mmio.regs);
+#else
 	pci_iounmap(to_pci_dev(xe->drm.dev), xe->mmio.regs);
+#endif
 	xe->mmio.regs = NULL;
 	root_tile->mmio.regs = NULL;
 }
@@ -101,7 +105,19 @@ int xe_mmio_probe_early(struct xe_device *xe)
 	 * registers (0-4MB), reserved space (4MB-8MB) and GGTT (8MB-16MB).
 	 */
 	xe->mmio.size = pci_resource_len(pdev, GTTMMADR_BAR);
+#ifdef __FreeBSD__
+	/*
+	 * On FreeBSD, pci_iomap() goes through bus_alloc_resource_any()
+	 * which can conflict with pre-existing BAR allocations from
+	 * EFI/VGA console boot code, resulting in an incomplete mapping.
+	 * Use ioremap() with the physical address directly, matching
+	 * what i915 does in intel_uncore_setup_mmio().
+	 */
+	xe->mmio.regs = ioremap(pci_resource_start(pdev, GTTMMADR_BAR),
+				xe->mmio.size);
+#else
 	xe->mmio.regs = pci_iomap(pdev, GTTMMADR_BAR, 0);
+#endif
 	if (!xe->mmio.regs) {
 		drm_err(&xe->drm, "failed to map registers\n");
 		return -EIO;
