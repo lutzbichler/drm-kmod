@@ -301,8 +301,11 @@ int intel_fbdev_driver_fbdev_probe(struct drm_fb_helper *helper,
 	 * We can't do this in register_framebuffer() anymore because the
 	 * values passed to register_fictitious_range() below are unavailable
 	 * from a generic structure set by both drivers.
+	 *
+	 * Skip if smem_start is 0 (system memory object with no BAR backing).
 	 */
-	register_fictitious_range(helper->dev, info->fix.smem_start, info->fix.smem_len);
+	if (info->fix.smem_start)
+		register_fictitious_range(helper->dev, info->fix.smem_start, info->fix.smem_len);
 #endif
 
 	drm_fb_helper_fill_info(info, display->drm->fb_helper, sizes);
