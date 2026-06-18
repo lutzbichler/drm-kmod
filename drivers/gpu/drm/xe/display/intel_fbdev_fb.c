@@ -41,7 +41,19 @@ struct intel_framebuffer *intel_fbdev_fb_alloc(struct drm_fb_helper *helper,
 	size = PAGE_ALIGN(size);
 	obj = ERR_PTR(-ENODEV);
 
+#ifdef __FreeBSD__
+	/*
+	 * On FreeBSD, register_fictitious_range() requires a valid BAR-backed
+	 * physical address for the framebuffer. System memory objects don't
+	 * have one, causing a crash. Always try stolen memory which is
+	 * accessible through BAR 2, regardless of Wa_22019338487_display.
+	 * This is analogous to the i915 MTL fix that ensures GMADR is
+	 * initialized for shmem framebuffers (intel_ggtt.c).
+	 */
+	if (!IS_DGFX(xe)) {
+#else
 	if (!IS_DGFX(xe) && !XE_GT_WA(xe_root_mmio_gt(xe), 22019338487_display)) {
+#endif
 		obj = xe_bo_create_pin_map_novm(xe, xe_device_get_root_tile(xe),
 						size,
 						ttm_bo_type_kernel, XE_BO_FLAG_SCANOUT |

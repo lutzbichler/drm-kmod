@@ -127,7 +127,9 @@ void xe_tile_debugfs_register(struct xe_tile *tile)
 	 * node so other tile specific attributes under that directory may
 	 * refer to it by looking at its parent node private data.
 	 */
+#ifdef __linux__
 	tile->debugfs->d_inode->i_private = tile;
+#endif
 
 	drm_debugfs_create_files(vf_safe_debugfs_list,
 				 ARRAY_SIZE(vf_safe_debugfs_list),
