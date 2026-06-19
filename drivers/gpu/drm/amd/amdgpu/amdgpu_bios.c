@@ -126,13 +126,6 @@ static bool amdgpu_read_bios_from_vram(struct amdgpu_device *adev)
 	return true;
 }
 
-#ifdef __FreeBSD__
-#define	pci_map_rom(pdev, sizep)					\
-	vga_pci_map_bios(device_get_parent(pdev->dev.bsddev), sizep)
-#define	pci_unmap_rom(pdev, bios)					\
-	vga_pci_unmap_bios(device_get_parent(pdev->dev.bsddev), bios)
-#endif
-
 bool amdgpu_read_bios(struct amdgpu_device *adev)
 {
 	uint8_t __iomem *bios;
