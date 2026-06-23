@@ -113,7 +113,7 @@ int dma_fence_add_callback(struct dma_fence *fence,
     struct dma_fence_cb *cb, dma_fence_func_t func);
 bool dma_fence_remove_callback(struct dma_fence *fence,
     struct dma_fence_cb *cb);
-void dma_fence_enable_sw_signaling(struct dma_fence *fence);
+void dma_fence_enable_signaling(struct dma_fence *fence);
 int dma_fence_get_status(struct dma_fence *fence);
 signed long dma_fence_wait_timeout(struct dma_fence *,
     bool intr, signed long timeout);

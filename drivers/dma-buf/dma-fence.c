@@ -223,7 +223,7 @@ dma_fence_wait_timeout(struct dma_fence *fence, bool intr, signed long timeout)
 	if (fence == NULL)
 		return (-EINVAL);
 
-	dma_fence_enable_sw_signaling(fence);
+	dma_fence_enable_signaling(fence);
 
 	if (fence->ops && fence->ops->wait != NULL)
 		rv = fence->ops->wait(fence, intr, timeout);
@@ -261,7 +261,7 @@ dma_fence_free(struct dma_fence *fence)
  * enable signaling on fence
  */
 void
-dma_fence_enable_sw_signaling(struct dma_fence *fence)
+dma_fence_enable_signaling(struct dma_fence *fence)
 {
 	bool was_enabled;
 
