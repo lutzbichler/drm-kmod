@@ -1885,6 +1885,9 @@ bool xe_guc_using_main_gamctrl_queues(struct xe_guc *guc)
 
 bool xe_guc_has_paging_engine(struct xe_guc *guc)
 {
+	struct xe_gt *gt = guc_to_gt(guc);
+	struct xe_device *xe = gt_to_xe(gt);
+
 	/*
 	 * On newer platforms the GuC now has a dedicated engine class for the
 	 * special PAGING engine, which is the driver reserved BCS engine used
@@ -1893,6 +1896,9 @@ bool xe_guc_has_paging_engine(struct xe_guc *guc)
 	 * engine here, this is purely a sw view in the GuC itself, which we
 	 * need to respect.
 	 */
+
+	if (IS_SRIOV_VF(xe))
+		return xe_gt_sriov_vf_paging_engines(gt);
 
 	/* TODO: Have some way to query this from the GuC? */
 	return false;
