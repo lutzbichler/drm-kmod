@@ -417,6 +417,18 @@ int xe_gsc_init(struct xe_gsc *gsc)
 		return 0;
 	}
 
+#ifdef __FreeBSD__
+	/*
+	 * On FreeBSD the media GT is skipped (no MEI driver), so
+	 * tile->media_gt is NULL and the check above doesn't trigger.
+	 * If this GT has no GSC engine, don't try to use GSC.
+	 */
+	if (!xe_gt_hw_engine(gt, XE_ENGINE_CLASS_OTHER, 0, true)) {
+		xe_uc_fw_change_status(&gsc->fw, XE_UC_FIRMWARE_NOT_SUPPORTED);
+		return 0;
+	}
+#endif
+
 	/*
 	 * Some platforms can have GuC but not GSC. That would cause
 	 * xe_uc_fw_init(gsc) to return a "not supported" failure code and abort

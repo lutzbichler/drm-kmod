@@ -274,7 +274,8 @@ static int intelfb_create(struct drm_fb_helper *helper,
 	 * values passed to register_fictitious_range() below are unavailable
 	 * from a generic structure set by both drivers.
 	 */
-	register_fictitious_range(dev, info->fix.smem_start, info->fix.smem_len);
+	if (info->fix.smem_start)
+		register_fictitious_range(dev, info->fix.smem_start, info->fix.smem_len);
 #endif
 
 	drm_fb_helper_fill_info(info, &ifbdev->helper, sizes);
