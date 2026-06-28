@@ -31,6 +31,9 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+__FBSDID("$FreeBSD$");
+
 #include <sys/reboot.h>
 #include <sys/fbio.h>
 #include <dev/vt/vt.h>
@@ -38,6 +41,8 @@
 #include <dev/vt/colors/vt_termcolors.h>
 
 #include <linux/fb.h>
+
+#include <drm/drm_fb_helper.h>
 
 /*
  * `drm_fb_helper.h` redefines `fb_info` to be `linux_fb_info` to manage the
@@ -53,7 +58,8 @@
 
 #include "vt_drmfb.h"
 
-#define	to_linux_fb_info(f)	container_of(f, struct linux_fb_info, fbio);
+#define	to_drm_fb_helper(fbio) ((struct drm_fb_helper *)fbio->fb_priv)
+#define	to_linux_fb_info(fbio) (to_drm_fb_helper(fbio)->info)
 
 static vd_init_t		vt_drmfb_init;
 static vd_fini_t		vt_drmfb_fini;
