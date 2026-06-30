@@ -396,6 +396,7 @@ int xe_userptr_setup(struct xe_userptr_vma *uvma, unsigned long start,
 		     unsigned long range)
 {
 	struct xe_userptr *userptr = &uvma->userptr;
+	struct xe_vm *vm = xe_vma_vm(&uvma->vma);
 #ifdef __linux__
 	int err;
 #endif
@@ -412,6 +413,7 @@ int xe_userptr_setup(struct xe_userptr_vma *uvma, unsigned long start,
 #endif
 
 	userptr->pages.notifier_seq = LONG_MAX;
+	userptr->pages.drm = &vm->xe->drm;
 
 	return 0;
 }
