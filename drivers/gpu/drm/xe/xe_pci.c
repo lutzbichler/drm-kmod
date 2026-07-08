@@ -37,6 +37,7 @@
 #include "xe_step.h"
 #include "xe_survivability_mode.h"
 #include "xe_tile.h"
+#include "xe_tile_printk.h"
 
 #ifdef __FreeBSD__
 #include "xe_guc_ct.h"
@@ -880,7 +881,7 @@ static struct xe_gt *alloc_primary_gt(struct xe_tile *tile,
 	struct xe_gt *gt;
 
 	if (!xe_configfs_primary_gt_allowed(to_pci_dev(xe->drm.dev))) {
-		xe_info(xe, "Primary GT disabled via configfs\n");
+		xe_tile_info(tile, "Primary GT disabled via configfs\n");
 		return NULL;
 	}
 
@@ -928,7 +929,7 @@ static struct xe_gt *alloc_media_gt(struct xe_tile *tile,
 	struct xe_gt *gt;
 
 	if (!xe_configfs_media_gt_allowed(to_pci_dev(xe->drm.dev))) {
-		xe_info(xe, "Media GT disabled via configfs\n");
+		xe_tile_info(tile, "Media GT disabled via configfs\n");
 		return NULL;
 	}
 
