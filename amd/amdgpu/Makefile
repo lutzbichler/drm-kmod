@@ -649,6 +649,7 @@ SRCS+=	amdgpu_dm_audio.c \
 	amdgpu_dm_connector.c \
 	amdgpu_dm_crc.c \
 	amdgpu_dm_crtc.c \
+	amdgpu_dm_cursor.c \
 	amdgpu_dm_debugfs.c \
 	amdgpu_dm_dmub.c \
 	amdgpu_dm_freesync.c \
