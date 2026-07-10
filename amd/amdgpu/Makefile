@@ -245,6 +245,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/display/dc/mmhubbub/dcn20 \
 	${SRCDIR}/display/dc/mmhubbub/dcn32 \
 	${SRCDIR}/display/dc/mmhubbub/dcn35 \
+	${SRCDIR}/display/dc/mmhubbub/dcn401 \
 	${SRCDIR}/display/dc/mmhubbub/dcn42 \
 	${SRCDIR}/display/dc/mpc/dcn10 \
 	${SRCDIR}/display/dc/mpc/dcn20 \
@@ -1004,6 +1005,7 @@ SRCS+=	dcn401_clk_mgr.c \
 	dcn401_hwseq.c \
 	dcn401_init.c \
 	dcn401_mpc.c \
+	dcn401_mmhubbub.c \
 	dcn401_optc.c \
 	dcn401_resource.c \
 	hw_factory_dcn401.c \
