@@ -24,6 +24,7 @@
 
 #include <linux/dma-mapping.h>
 #include <linux/cgroup_dmem.h>
+#include <linux/pm_runtime.h>
 #include <drm/ttm/ttm_range_manager.h>
 #include <drm/drm_drv.h>
 #include <drm/drm_buddy.h>
@@ -906,6 +907,40 @@ static const struct ttm_resource_manager_func amdgpu_vram_mgr_func = {
 	.debug	= amdgpu_vram_mgr_debug
 };
 
+#ifdef __linux__
+static const struct dmem_cgroup_ops amdgpu_vram_mgr_dmem_ops;
+
+static int amdgpu_vram_mgr_dmem_reclaim(struct dmem_cgroup_pool_state *pool,
+					u64 target_bytes, void *priv)
+{
+	struct ttm_resource_manager *man = priv;
+	struct amdgpu_device *adev = amdgpu_ttm_adev(man->bdev);
+	int ret, idx;
+
+	if (!drm_dev_enter(adev_to_drm(adev), &idx))
+		return -ENODEV;
+
+	ret = pm_runtime_get_sync(adev_to_drm(adev)->dev);
+	if (ret < 0) {
+		pm_runtime_put_autosuspend(adev_to_drm(adev)->dev);
+		goto out;
+	}
+
+	ret = ttm_resource_manager_dmem_reclaim(pool, target_bytes, priv);
+
+	pm_runtime_mark_last_busy(adev_to_drm(adev)->dev);
+	pm_runtime_put_autosuspend(adev_to_drm(adev)->dev);
+
+out:
+	drm_dev_exit(idx);
+	return ret;
+}
+
+static const struct dmem_cgroup_ops amdgpu_vram_mgr_dmem_ops = {
+	.reclaim = amdgpu_vram_mgr_dmem_reclaim,
+};
+#endif
+
 /**
  * amdgpu_vram_mgr_init - init VRAM manager and DRM MM
  *
@@ -917,6 +952,7 @@ int amdgpu_vram_mgr_init(struct amdgpu_device *adev)
 {
 	struct amdgpu_vram_mgr *mgr = &adev->mman.vram_mgr;
 	struct ttm_resource_manager *man = &mgr->manager;
+	struct dmem_cgroup_region *cg;
 	int err;
 
 	ttm_resource_manager_init(man, &adev->mman.bdev,
@@ -934,12 +970,20 @@ int amdgpu_vram_mgr_init(struct amdgpu_device *adev)
 		return err;
 
 #ifdef __linux__
-	man->cg = drmm_cgroup_register_region(adev_to_drm(adev), "vram",
-					      &(struct dmem_cgroup_init){
+	cg = dmem_cgroup_register_region(&(struct dmem_cgroup_init){
 						.size = adev->gmc.real_vram_size,
 					      });
-	if (IS_ERR(man->cg))
-		return PTR_ERR(man->cg);
+						.ops = &amdgpu_vram_mgr_dmem_ops,
+						.reclaim_priv = man,
+					 },
+					 "drm/%s/vram", adev_to_drm(adev)->unique);
+	if (IS_ERR(cg)) {
+		gpu_buddy_fini(&mgr->mm);
+		return PTR_ERR(cg);
+	}
+
+	mgr->cg_region = cg;
+	ttm_resource_manager_set_dmem_region(man, cg);
 #endif
 
 	ttm_set_driver_manager(&adev->mman.bdev, TTM_PL_VRAM, &mgr->manager);
@@ -965,6 +1009,19 @@ void amdgpu_vram_mgr_fini(struct amdgpu_device *adev)
 	ttm_resource_manager_set_used(man, false);
 
 	ret = ttm_resource_manager_evict_all(&adev->mman.bdev, man);
+
+	/*
+	 * Unregister the dmem cgroup region regardless of the evict_all()
+	 * result and before any further teardown.  This drains in-flight
+	 * reclaim callbacks and blocks new ones, so no reclaim can reference
+	 * the manager once we start freeing it.  It must run after evict_all()
+	 * so that ttm_resource_free() can still uncharge via man->cg during
+	 * eviction.  Clear man->cg afterwards.
+	 */
+	dmem_cgroup_unregister_region(mgr->cg_region);
+	mgr->cg_region = NULL;
+	ttm_resource_manager_set_dmem_region(man, NULL);
+
 	if (ret)
 		return;
 
