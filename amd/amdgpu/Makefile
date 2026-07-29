@@ -325,7 +325,7 @@ _dml=	${SRCDIR}/display/dc/dml \
 	${SRCDIR}/pm/swsmu/smu14 \
 	${SRCDIR}/pm/swsmu/smu15 \
 	${SRCDIR}/ras/ras_mgr \
-	${SRCDIR}/ras/rascore \
+	${SRCDIR}/ras/core \
 	${DRM}/scheduler
 
 # acp
@@ -1402,7 +1402,7 @@ SRCS+=	amd_powerplay.c \
 SRCS+=	amdgpu_pmu.c
 .endif
 
-# ras_mgr
+# ras/ras_mgr
 SRCS+= amdgpu_ras_cmd.c \
 	amdgpu_ras_eeprom_i2c.c \
 	amdgpu_ras_mgr.c \
@@ -1412,7 +1412,7 @@ SRCS+= amdgpu_ras_cmd.c \
 	amdgpu_ras_sys.c \
 	amdgpu_virt_ras_cmd.c
 
-# rascore
+# ras/core
 SRCS+=	ras_aca.c \
 	ras_aca_v1_0.c \
 	ras_cmd.c \
@@ -1519,7 +1519,7 @@ CFLAGS+= -I${SRCDIR}/pm/swsmu/smu13
 CFLAGS+= -I${SRCDIR}/pm/swsmu/smu14
 CFLAGS+= -I${SRCDIR}/pm/swsmu/smu15
 CFLAGS+= -I${SRCDIR}/ras/ras_mgr
-CFLAGS+= -I${SRCDIR}/ras/rascore
+CFLAGS+= -I${SRCDIR}/ras/core
 CFLAGS+= -I${DRM}/scheduler
 
 CFLAGS+= '-DKBUILD_MODNAME="${KMOD}"'
