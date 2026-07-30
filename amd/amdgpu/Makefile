@@ -1413,16 +1413,16 @@ SRCS+= amdgpu_ras_cmd.c \
 	amdgpu_virt_ras_cmd.c
 
 # ras/core
-SRCS+=	ras_aca.c \
-	ras_aca_v1_0.c \
-	ras_cmd.c \
-	ras_core.c \
+SRCS+=	aca.c \
+	aca_v1_0.c \
+	cmd.c \
+	core.c \
+	eeprom.c \
+	eeprom_fw.c \
+	log_ring.c \
 	ras_cper.c \
-	ras_eeprom.c \
-	ras_eeprom_fw.c \
 	ras_gfx.c \
 	ras_gfx_v9_0.c \
-	ras_log_ring.c \
 	ras_mp1.c \
 	ras_mp1_v13_0.c \
 	ras_nbio.c \
