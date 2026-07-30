@@ -1149,11 +1149,14 @@ int xe_device_probe(struct xe_device *xe)
 	if (err)
 		goto err_unregister_display;
 
-	err = devm_add_action_or_reset(xe->drm.dev, xe_device_sanitize, xe);
-	if (err)
-		goto err_unregister_display;
+	/*
+	 * Process and log any errors detected by hardware. Possible results can
+	 * include declaring the device as wedged, which must be done only after
+	 * xe_device_wedged_fini() is registered.
+	 */
+	xe_ras_process_errors(xe);
 
-	return 0;
+	return devm_add_action_or_reset(xe->drm.dev, xe_device_sanitize, xe);
 
 err_unregister_display:
 	xe_display_unregister(xe);
