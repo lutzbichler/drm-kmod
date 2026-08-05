@@ -380,6 +380,7 @@ CWARNFLAGS.xe_shrinker.c=		-Wno-unused-variable
 CWARNFLAGS.xe_step.c=			-Wno-initializer-overrides
 CWARNFLAGS.xe_ttm_vram_mgr.c=		-Wno-integer-overflow
 CWARNFLAGS.xe_wa.c=			-Wno-initializer-overrides
+CWARNFLAGS.xe_reg_whitelist.c=		-Wno-unused-but-set-variable
 CWARNFLAGS.intel_display_device.c=	-Wno-initializer-overrides -Wno-incompatible-pointer-types-discards-qualifiers
 CWARNFLAGS.intel_dp.c=          -Wno-unused-variable -Wno-sometimes-uninitialized -Wno-constant-logical-operand -Wno-incompatible-function-pointer-types
 CWARNFLAGS.intel_display_rpm.c=		-Wno-incompatible-pointer-types
