@@ -34,7 +34,8 @@ xe_device_wa_oob.h:	xe_device_wa_oob.rules xe_gen_wa_oob
 	./xe_gen_wa_oob ${SRCDIR}/xe_device_wa_oob.rules ${SRCDIR}/generated/xe_device_wa_oob.c ${SRCDIR}/generated/xe_device_wa_oob.h
 
 # xe
-SRCS=	xe_bb.c \
+SRCS=	xe_amc.c \
+	xe_bb.c \
 	xe_bo.c \
 	xe_bo_evict.c \
 	xe_dep_scheduler.c \
