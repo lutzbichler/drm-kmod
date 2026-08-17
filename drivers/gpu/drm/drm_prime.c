@@ -543,7 +543,7 @@ int drm_gem_prime_handle_to_fd(struct drm_device *dev,
 	}
 
 #ifdef __linux__
-	fd_install(fd, dmabuf->file);
+	dma_buf_fd_install(dmabuf, fd);
 #elif defined(__FreeBSD__)
 	fd = dma_buf_fd(dmabuf, flags);
 	if (fd < 0) {
