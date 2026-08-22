@@ -531,9 +531,7 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
 	struct drm_amdgpu_gem_userptr *args = data;
 	struct amdgpu_fpriv *fpriv = filp->driver_priv;
 	struct drm_gem_object *gobj;
-#ifdef __linux__
 	struct amdgpu_hmm_range *range;
-#endif
 	struct amdgpu_bo *bo;
 	uint32_t handle;
 	int r;
@@ -576,19 +574,14 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
 		goto release_object;
 
 	if (args->flags & AMDGPU_GEM_USERPTR_VALIDATE) {
-#ifdef __linux__
 		range = amdgpu_hmm_range_alloc(NULL);
 		if (unlikely(!range))
 			return -ENOMEM;
 		r = amdgpu_ttm_tt_get_user_pages(bo, range);
 		if (r) {
 			amdgpu_hmm_range_free(range);
-#elif defined(__FreeBSD__)
-		r = amdgpu_ttm_tt_get_user_pages(bo, bo->tbo.ttm->pages);
-#endif
-		if (r)
 			goto release_object;
-
+		}
 		r = amdgpu_bo_reserve(bo, true);
 		if (r)
 			goto user_pages_done;
@@ -611,11 +604,8 @@ int amdgpu_gem_userptr_ioctl(struct drm_device *dev, void *data,
 	args->handle = handle;
 
 user_pages_done:
-#ifdef __linux__
 	if (args->flags & AMDGPU_GEM_USERPTR_VALIDATE)
 		amdgpu_hmm_range_free(range);
-#endif
-
 release_object:
 	drm_gem_object_put(gobj);
 
