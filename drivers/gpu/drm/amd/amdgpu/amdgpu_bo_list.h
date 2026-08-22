@@ -38,9 +38,6 @@ struct amdgpu_bo_list_entry {
 	struct amdgpu_bo		*bo;
 	struct amdgpu_bo_va		*bo_va;
 	uint32_t			priority;
-#ifdef __FreeBSD__
-	struct page			**user_pages;
-#endif
 	struct amdgpu_hmm_range		*range;
 	bool				user_invalidated;
 };

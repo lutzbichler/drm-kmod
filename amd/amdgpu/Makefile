@@ -306,7 +306,6 @@ SRCS=	acp_hw.c
 
 # amdgpu
 # amdgpu_acp.c \ # not yet - need i2s
-# amdgpu_hmm.c \  # disabled
 
 SRCS+=	amdgpu_aca.c \
 	amdgpu_afmt.c \
@@ -585,6 +584,10 @@ SRCS+=	amdgpu_aca.c \
 
 .if !empty(KCONFIG:MCOMPAT)
 SRCS+=	amdgpu_ioc32.c
+.endif
+
+.if !empty(KCONFIG:MHMM_MIRROR)
+SRCS+=	amdgpu_hmm.c
 .endif
 
 # amdxcp

@@ -34,6 +34,8 @@
 struct amdgpu_hmm_range {
 #ifdef __linux__
 	struct hmm_range hmm_range;
+#elif defined(__FreeBSD__)
+	struct page **user_pages;
 #endif
 	struct amdgpu_bo *bo;
 };
