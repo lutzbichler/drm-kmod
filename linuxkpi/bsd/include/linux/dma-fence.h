@@ -136,6 +136,8 @@ ktime_t dma_fence_timestamp(struct dma_fence *fence);
 signed long dma_fence_wait(struct dma_fence *fence, bool intr);
 bool dma_fence_is_array(struct dma_fence *fence);
 bool dma_fence_is_chain(struct dma_fence *fence);
+bool dma_fence_check_and_signal_locked(struct dma_fence *fence);
+bool dma_fence_check_and_signal(struct dma_fence *fence);
 static inline bool
 dma_fence_is_container(struct dma_fence *fence)
 {
