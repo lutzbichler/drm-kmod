@@ -164,6 +164,35 @@ dma_fence_signal_locked(struct dma_fence *fence)
 }
 
 /*
+ * check fence was signaled
+ */
+bool
+dma_fence_check_and_signal_locked(struct dma_fence *fence)
+{
+	bool rv;
+
+	rv = dma_fence_test_signaled_flag(fence);
+	dma_fence_signal_locked(fence);
+
+	return (rv);
+}
+
+/*
+ * check fence was signaled
+ */
+bool
+dma_fence_check_and_signal(struct dma_fence *fence)
+{
+	bool rv;
+
+	spin_lock(fence->lock);
+	rv = dma_fence_check_and_signal_locked(fence);
+	spin_unlock(fence->lock);
+
+	return (rv);
+}
+
+/*
  * signal completion of a fence
  */
 int
