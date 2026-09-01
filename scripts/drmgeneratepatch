@@ -29,6 +29,7 @@ mkdir -p ${PATCH_DIR}
 
 cd ${LINUX_DIR}
 git format-patch -o ${PATCH_DIR} ${REV} \
+    drivers/gpu/buddy.c \
     drivers/gpu/drm/*.c \
     drivers/gpu/drm/*.h \
     drivers/gpu/drm/amd/ \
@@ -52,6 +53,7 @@ git format-patch -o ${PATCH_DIR} ${REV} \
     include/drm/ttm/ \
     include/uapi/drm/*.h \
     include/linux/aperture.h \
+    include/linux/gpu_buddy.h \
     include/linux/hdmi.h \
     include/linux/dma-fence.h \
     include/linux/dma-fence-array.h \
