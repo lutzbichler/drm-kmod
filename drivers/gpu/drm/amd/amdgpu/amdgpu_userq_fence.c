@@ -231,7 +231,7 @@ static int amdgpu_userq_fence_alloc(struct amdgpu_usermode_queue *userq,
 	unsigned long index;
 #endif
 
-	userq_fence = kmalloc(sizeof(*userq_fence), GFP_KERNEL);
+	userq_fence = kmalloc_obj(*userq_fence);
 	if (!userq_fence)
 		return -ENOMEM;
 
@@ -249,9 +249,7 @@ static int amdgpu_userq_fence_alloc(struct amdgpu_usermode_queue *userq,
 	} while (xas_retry(&xas, entry));
 	rcu_read_unlock();
 
-	userq_fence->fence_drv_array = kvmalloc_array(xas.xa_index,
-						      sizeof(fence_drv),
-						      GFP_KERNEL);
+	userq_fence->fence_drv_array = kvmalloc_objs(fence_drv, xas.xa_index);
 	if (!userq_fence->fence_drv_array) {
 		mutex_unlock(&userq->fence_drv_lock);
 		kfree(userq_fence);
