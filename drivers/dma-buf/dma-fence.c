@@ -496,15 +496,19 @@ dma_fence_set_deadline(struct dma_fence *fence, ktime_t deadline)
 const char *
 dma_fence_driver_name(struct dma_fence *fence)
 {
-
-	return (fence->ops->get_driver_name(fence));
+	if (!dma_fence_test_signaled_flag(fence) && fence->ops)
+		return (fence->ops->get_driver_name(fence));
+	else
+		return "detached-driver";
 }
 
 const char *
 dma_fence_timeline_name(struct dma_fence *fence)
 {
-
-	return (fence->ops->get_timeline_name(fence));
+	if (!dma_fence_test_signaled_flag(fence) && fence->ops)
+		return (fence->ops->get_timeline_name(fence));
+	else
+		return "signaled-timeline";
 }
 
 void
