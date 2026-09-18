@@ -26,10 +26,6 @@
 #include <linux/firmware.h>
 #include <drm/drm_drv.h>
 
-#ifdef __FreeBSD__
-#include <linux/cache.h>	/* L1_CACHE_BYTES */
-#endif
-
 #include "amdgpu.h"
 #include "amdgpu_psp.h"
 #include "amdgpu_ucode.h"
