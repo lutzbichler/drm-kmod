@@ -38,10 +38,6 @@
 #include "amdgpu_vm.h"
 #include "amdgpu_xcp.h"
 
-#ifdef __FreeBSD__
-struct mmu_interval_notifier;
-#endif
-
 extern uint64_t amdgpu_amdkfd_total_mem_size;
 
 enum TLB_FLUSH_TYPE {

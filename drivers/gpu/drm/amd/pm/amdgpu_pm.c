@@ -1627,8 +1627,12 @@ static ssize_t amdgpu_set_thermal_throttling_logging(struct device *dev,
 		return -EINVAL;
 
 	if (throttling_logging_interval > 0) {
+		/*
+		 * Reset the ratelimit timer internals.
+		 * This can effectively restart the timer.
+		 */
 		ratelimit_state_reset_interval(&adev->throttling_logging_rs,
-						   (throttling_logging_interval - 1) * HZ);
+					       (throttling_logging_interval - 1) * HZ);
 		atomic_set(&adev->throttling_logging_enabled, 1);
 	} else {
 		atomic_set(&adev->throttling_logging_enabled, 0);

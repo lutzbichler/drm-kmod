@@ -25,10 +25,6 @@
 
 #include "hdcp.h"
 
-#ifdef __FreeBSD__
-#undef MIN
-#endif
-
 #ifndef MIN
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #endif
