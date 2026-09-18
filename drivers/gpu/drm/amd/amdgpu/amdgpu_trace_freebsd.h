@@ -204,5 +204,7 @@ trace_amdgpu_cleaner_shader(struct amdgpu_ring *ring, struct dma_fence *fence)
 		(ring)->name, (fence)->seqno);
 }
 
+#define	trace_amdgpu_cs_enabled()	true
+
 #endif
 
