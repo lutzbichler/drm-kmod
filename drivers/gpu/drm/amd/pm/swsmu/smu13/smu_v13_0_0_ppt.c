@@ -47,10 +47,6 @@
 #include "smu_cmn.h"
 #include "amdgpu_ras.h"
 
-#ifdef __FreeBSD__
-#undef MAX
-#endif
-
 /*
  * DO NOT use these for err/warn/info/debug messages.
  * Use dev_err, dev_warn, dev_info and dev_dbg instead.

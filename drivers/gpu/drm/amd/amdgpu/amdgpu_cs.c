@@ -1029,10 +1029,8 @@ static void trace_amdgpu_cs_ibs(struct amdgpu_cs_parser *p)
 {
 	int i, j;
 
-#ifdef __linux__
 	if (!trace_amdgpu_cs_enabled())
 		return;
-#endif
 
 	for (i = 0; i < p->gang_size; ++i) {
 		struct amdgpu_job *job = p->jobs[i];
