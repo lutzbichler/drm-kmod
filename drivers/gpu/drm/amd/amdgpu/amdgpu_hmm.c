@@ -51,8 +51,6 @@
 #include "amdgpu_amdkfd.h"
 #include "amdgpu_hmm.h"
 
-#define MAX_WALK_BYTE	(2UL << 30)
-
 #ifdef __linux__
 /**
  * amdgpu_hmm_invalidate_gfx - callback to notify about mm change
