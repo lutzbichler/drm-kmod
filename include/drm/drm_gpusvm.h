@@ -11,9 +11,6 @@
 #include <linux/interval_tree.h>
 #include <linux/mmu_notifier.h>
 
-#ifdef __FreeBSD__
-struct dev_pagemap;
-#endif
 struct dev_pagemap_ops;
 struct drm_device;
 struct drm_gpusvm;
