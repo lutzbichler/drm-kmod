@@ -597,9 +597,10 @@ const struct drm_i915_gem_object_ops i915_gem_shmem_ops = {
 
 static int __create_shmem(struct drm_i915_private *i915,
 			  struct drm_gem_object *obj,
-			  resource_size_t size)
+			  resource_size_t size,
+			  unsigned int flags)
 {
-	const vma_flags_t flags = mk_vma_flags(VMA_NORESERVE_BIT);
+	const vma_flags_t shmem_flags = mk_vma_flags(VMA_NORESERVE_BIT);
 #ifdef __linux__
 	struct vfsmount *huge_mnt;
 #endif
@@ -628,10 +629,10 @@ static int __create_shmem(struct drm_i915_private *i915,
 	huge_mnt = drm_gem_get_huge_mnt(&i915->drm);
 	if (!(flags & I915_BO_ALLOC_NOTHP) && huge_mnt)
 		filp = shmem_file_setup_with_mnt(huge_mnt, "i915", size,
-						 flags);
+						 shmem_flags);
 	else
 #endif
-		filp = shmem_file_setup("i915", size, flags);
+		filp = shmem_file_setup("i915", size, shmem_flags);
 	if (IS_ERR(filp))
 		return PTR_ERR(filp);
 
@@ -664,7 +665,7 @@ static int shmem_object_init(struct intel_memory_region *mem,
 	gfp_t mask;
 	int ret;
 
-	ret = __create_shmem(i915, &obj->base, size);
+	ret = __create_shmem(i915, &obj->base, size, flags);
 	if (ret)
 		return ret;
 

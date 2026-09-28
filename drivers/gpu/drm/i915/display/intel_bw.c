@@ -3,6 +3,7 @@
  * Copyright © 2019 Intel Corporation
  */
 
+#include <drm/drm_atomic_state_helper.h>
 #include <drm/drm_print.h>
 #include <drm/intel/intel_pcode_regs.h>
 

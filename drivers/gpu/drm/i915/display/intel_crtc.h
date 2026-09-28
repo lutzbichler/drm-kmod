@@ -6,9 +6,6 @@
 #ifndef _INTEL_CRTC_H_
 #define _INTEL_CRTC_H_
 
-#ifdef __FreeBSD__
-#include <linux/kconfig.h> // IS_ENABLED
-#endif
 #include <linux/types.h>
 
 enum i9xx_plane_id;

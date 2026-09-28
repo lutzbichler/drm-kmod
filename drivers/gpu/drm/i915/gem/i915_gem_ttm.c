@@ -465,10 +465,10 @@ int i915_ttm_purge(struct drm_i915_gem_object *obj)
 			 */
 #ifdef __linux__
 			shmem_truncate_range(file_inode(i915_tt->filp),
-				     0, (loff_t)-1);
+					     0, (loff_t)-1);
 #elif defined(__FreeBSD__)
 			shmem_truncate_range(i915_tt->filp->f_shmem,
-				     0, (loff_t)-1);
+					     0, (loff_t)-1);
 #endif
 			fput(fetch_and_zero(&i915_tt->filp));
 		}

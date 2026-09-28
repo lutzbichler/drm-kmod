@@ -17,10 +17,6 @@
 #include <linux/types.h>
 #include <linux/workqueue.h>
 
-#ifdef __FreeBSD__
-#include <linux/seqlock.h> // seqcount_t
-#endif
-
 #include "i915_gem.h"
 #include "i915_pmu.h"
 #include "i915_priolist_types.h"
