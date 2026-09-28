@@ -530,7 +530,7 @@ int xe_device_init_early(struct xe_device *xe)
 #ifdef __linux__
 			      xe->drm.anon_inode->i_mapping,
 #elif defined(__FreeBSD__)
-				  NULL,
+			      NULL,
 #endif				  
 			      xe->drm.vma_offset_manager,
 			      TTM_ALLOCATION_POOL_BENEFICIAL_ORDER(get_order(SZ_2M)));

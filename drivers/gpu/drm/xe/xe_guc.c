@@ -20,9 +20,6 @@
 #include "xe_configfs.h"
 #include "xe_device.h"
 #include "xe_force_wake.h"
-#ifdef __FreeBSD__
-#include "xe_ggtt.h"
-#endif
 #include "xe_gt.h"
 #include "xe_gt_printk.h"
 #include "xe_gt_sriov_vf.h"

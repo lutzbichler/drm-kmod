@@ -7,10 +7,6 @@
 #define _XE_GGTT_TYPES_H_
 
 #include <linux/types.h>
-#ifdef __FreeBSD__
-//#include <linux/mutex.h>
-//#include <linux/workqueue.h>
-#endif
 #include <drm/drm_mm.h>
 
 struct xe_ggtt;
