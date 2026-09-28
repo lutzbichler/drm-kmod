@@ -48,10 +48,6 @@
 #endif
 #include <linux/types.h>
 
-#ifdef __FreeBSD__
-#include <linux/bitops.h>
-#endif
-
 struct drm_printer;
 
 #ifdef CONFIG_DRM_DEBUG_MM

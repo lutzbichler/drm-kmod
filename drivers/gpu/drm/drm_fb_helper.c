@@ -31,7 +31,6 @@
 
 #include <linux/console.h>
 #include <linux/export.h>
-#include <linux/sysrq.h>
 
 #include <drm/drm_atomic.h>
 #include <drm/drm_drv.h>

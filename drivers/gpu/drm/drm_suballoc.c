@@ -471,11 +471,6 @@ void drm_suballoc_free(struct drm_suballoc *suballoc,
 		return;
 	}
 
-	if (!suballoc->manager) {
-		kfree(suballoc);
-		return;
-	}
-
 	sa_manager = suballoc->manager;
 
 	spin_lock(&sa_manager->wq.lock);
