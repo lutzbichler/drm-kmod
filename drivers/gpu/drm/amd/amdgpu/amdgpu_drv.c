@@ -2664,7 +2664,6 @@ static int amdgpu_pmops_suspend(struct device *dev)
 	return amdgpu_device_suspend(drm_dev, true);
 }
 
-#ifdef __linux__
 static int amdgpu_pmops_suspend_noirq(struct device *dev)
 {
 	struct drm_device *drm_dev = dev_get_drvdata(dev);
@@ -2680,7 +2679,6 @@ static int amdgpu_pmops_suspend_noirq(struct device *dev)
 
 	return 0;
 }
-#endif
 
 static int amdgpu_pmops_resume(struct device *dev)
 {
@@ -3033,14 +3031,7 @@ static const struct dev_pm_ops amdgpu_pm_ops = {
 	.prepare = pm_sleep_ptr(amdgpu_pmops_prepare),
 	.complete = pm_sleep_ptr(amdgpu_pmops_complete),
 	.suspend = pm_sleep_ptr(amdgpu_pmops_suspend),
-#ifdef __linux__
-	/*
-	 * BSDFIXME: Not supported in lkpi.
-	 * This code must be run after AMD HDA codec is put in to D3.
-	 * See Linux commit 887f75cfd0da message.
-	 */
 	.suspend_noirq = pm_sleep_ptr(amdgpu_pmops_suspend_noirq),
-#endif
 	.resume = pm_sleep_ptr(amdgpu_pmops_resume),
 	.freeze = pm_sleep_ptr(amdgpu_pmops_freeze),
 	.thaw = pm_sleep_ptr(amdgpu_pmops_thaw),

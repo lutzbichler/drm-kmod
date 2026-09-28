@@ -6654,7 +6654,7 @@ static void amdgpu_device_cache_switch_state(struct amdgpu_device *adev)
 	r = pci_save_state(swus);
 	if (r)
 		return;
-	adev->pcie_reset_ctx.swds_pcistate = pci_store_saved_state(swus);
+	adev->pcie_reset_ctx.swus_pcistate = pci_store_saved_state(swus);
 
 	adev->pcie_reset_ctx.swus = swus;
 #elif defined(__FreeBSD__)

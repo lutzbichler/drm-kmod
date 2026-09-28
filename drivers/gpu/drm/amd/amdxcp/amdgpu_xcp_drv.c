@@ -131,6 +131,7 @@ static void free_xcp_dev(int8_t index)
 			kfree(xcp_dev[index]->pdev->name);
 		kfree(xcp_dev[index]->pdev);
 #endif
+
 		xcp_dev[index] = NULL;
 		pdev_num--;
 	}
