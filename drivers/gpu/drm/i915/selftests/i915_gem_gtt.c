@@ -59,7 +59,7 @@ static int fake_get_pages(struct drm_i915_gem_object *obj)
 	unsigned int sg_page_sizes;
 	typeof(obj->base.size) rem;
 
-	pages = kmalloc(sizeof(*pages), GFP);
+	pages = kmalloc_obj(*pages, GFP);
 	if (!pages)
 		return -ENOMEM;
 
@@ -1008,6 +1008,121 @@ err_purge:
 	i915_gem_object_put(purge);
 	memset(&vm->fault_attr, 0, sizeof(vm->fault_attr));
 	return err;
+}
+
+static int misaligned_case(struct i915_address_space *vm, struct intel_memory_region *mr,
+			   u64 addr, u64 size, unsigned long flags)
+{
+	struct drm_i915_gem_object *obj;
+	struct i915_vma *vma;
+	int err = 0;
+	u64 expected_vma_size, expected_node_size;
+	bool is_stolen = mr->type == INTEL_MEMORY_STOLEN_SYSTEM ||
+			 mr->type == INTEL_MEMORY_STOLEN_LOCAL;
+
+	obj = i915_gem_object_create_region(mr, size, 0, I915_BO_ALLOC_GPU_ONLY);
+	if (IS_ERR(obj)) {
+		/* if iGVT-g or DMAR is active, stolen mem will be uninitialized */
+		if (PTR_ERR(obj) == -ENODEV && is_stolen)
+			return 0;
+		return PTR_ERR(obj);
+	}
+
+	vma = i915_vma_instance(obj, vm, NULL);
+	if (IS_ERR(vma)) {
+		err = PTR_ERR(vma);
+		goto err_put;
+	}
+
+	err = i915_vma_pin(vma, 0, 0, addr | flags);
+	if (err)
+		goto err_put;
+	i915_vma_unpin(vma);
+
+	if (!drm_mm_node_allocated(&vma->node)) {
+		err = -EINVAL;
+		goto err_put;
+	}
+
+	if (i915_vma_misplaced(vma, 0, 0, addr | flags)) {
+		err = -EINVAL;
+		goto err_put;
+	}
+
+	/* make sure page_sizes_gtt has been populated before use */
+	if (i915_is_ggtt(vm) && intel_vm_no_concurrent_access_wa(vm->i915))
+		i915_vma_wait_for_bind(vma);
+
+	expected_vma_size = round_up(size, 1 << (ffs(vma->resource->page_sizes_gtt) - 1));
+	expected_node_size = expected_vma_size;
+
+	if (HAS_64K_PAGES(vm->i915) && i915_gem_object_is_lmem(obj)) {
+		expected_vma_size = round_up(size, I915_GTT_PAGE_SIZE_64K);
+		expected_node_size = round_up(size, I915_GTT_PAGE_SIZE_64K);
+	}
+
+	if (vma->size != expected_vma_size || vma->node.size != expected_node_size) {
+		err = i915_vma_unbind_unlocked(vma);
+		err = -EBADSLT;
+		goto err_put;
+	}
+
+	err = i915_vma_unbind_unlocked(vma);
+	if (err)
+		goto err_put;
+
+	GEM_BUG_ON(drm_mm_node_allocated(&vma->node));
+
+err_put:
+	i915_gem_object_put(obj);
+	cleanup_freed_objects(vm->i915);
+	return err;
+}
+
+static int misaligned_pin(struct i915_address_space *vm,
+			  u64 hole_start, u64 hole_end,
+			  unsigned long end_time)
+{
+	struct intel_memory_region *mr;
+	enum intel_region_id id;
+	unsigned long flags = PIN_OFFSET_FIXED | PIN_USER;
+	int err = 0;
+	u64 hole_size = hole_end - hole_start;
+
+	if (i915_is_ggtt(vm))
+		flags |= PIN_GLOBAL;
+
+	for_each_memory_region(mr, vm->i915, id) {
+		u64 min_alignment = i915_vm_min_alignment(vm, mr->type);
+		u64 size = min_alignment;
+		u64 addr = round_down(hole_start + (hole_size / 2), min_alignment);
+
+		/* avoid -ENOSPC on very small hole setups */
+		if (hole_size < 3 * min_alignment)
+			continue;
+
+		/* we can't test < 4k alignment due to flags being encoded in lower bits */
+		if (min_alignment != I915_GTT_PAGE_SIZE_4K) {
+			err = misaligned_case(vm, mr, addr + (min_alignment / 2), size, flags);
+			/* misaligned should error with -EINVAL*/
+			if (!err)
+				err = -EBADSLT;
+			if (err != -EINVAL)
+				return err;
+		}
+
+		/* test for vma->size expansion to min page size */
+		err = misaligned_case(vm, mr, addr, PAGE_SIZE, flags);
+		if (err)
+			return err;
+
+		/* test for intermediate size not expanding vma->size for large alignments */
+		err = misaligned_case(vm, mr, addr, size / 2, flags);
+		if (err)
+			return err;
+	}
+
+	return 0;
 }
 
 static int exercise_ppgtt(struct drm_i915_private *dev_priv,

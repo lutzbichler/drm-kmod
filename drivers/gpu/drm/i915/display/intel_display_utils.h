@@ -5,7 +5,6 @@
 #define __INTEL_DISPLAY_UTILS__
 
 #include <linux/bug.h>
-#include <linux/kernel.h>
 #include <linux/types.h>
 
 struct intel_display;
