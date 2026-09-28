@@ -59,7 +59,7 @@ initial_plane_phys(struct drm_i915_private *i915,
 	if (intel_memory_type_is_local(mem->type) != is_local) {
 #ifdef __linux__
 		drm_err(&i915->drm, "Initial plane FB PTE unsuitable for %s\n",
-				mem->region.name);
+			mem->region.name);
 #elif defined(__FreeBSD__)
 		drm_err(&i915->drm, "Initial plane FB PTE unsuitable (!LMEM)\n");
 #endif

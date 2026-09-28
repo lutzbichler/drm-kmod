@@ -6,6 +6,8 @@
 #include <linux/prime_numbers.h>
 #include <linux/sort.h>
 
+#include <linux/gpu_buddy.h>
+
 #include "../i915_selftest.h"
 
 #include "mock_drm.h"
@@ -281,6 +283,7 @@ static int igt_mock_splintered_region(void *arg)
 	struct intel_memory_region *mem = arg;
 	struct drm_i915_private *i915 = mem->i915;
 	struct drm_i915_gem_object *obj;
+	struct gpu_buddy *mm;
 	unsigned int expected_order;
 	LIST_HEAD(objects);
 	u64 size;
@@ -354,7 +357,9 @@ static int igt_mock_max_segment(void *arg)
 	struct intel_memory_region *mem = arg;
 	struct drm_i915_private *i915 = mem->i915;
 	struct drm_i915_gem_object *obj;
-	struct i915_buddy_block *block;
+	struct gpu_buddy_block *block;
+	struct gpu_buddy *mm;
+	struct list_head *blocks;
 	struct scatterlist *sg;
 	LIST_HEAD(objects);
 	u64 size;
@@ -379,9 +384,9 @@ static int igt_mock_max_segment(void *arg)
 	}
 
 	size = 0;
-	list_for_each_entry(block, &obj->mm.blocks, link) {
-		if (i915_buddy_block_size(&mem->mm, block) > size)
-			size = i915_buddy_block_size(&mem->mm, block);
+	list_for_each_entry(block, blocks, link) {
+		if (gpu_buddy_block_size(mm, block) > size)
+			size = gpu_buddy_block_size(mm, block);
 	}
 	if (size < max_segment) {
 		pr_err("%s: Failed to create a huge contiguous block [> %u], largest block %lld\n",
@@ -402,7 +407,148 @@ static int igt_mock_max_segment(void *arg)
 out_close:
 	close_objects(mem, &objects);
 out_put:
-	intel_memory_region_put(mem);
+	intel_memory_region_destroy(mem);
+	return err;
+}
+
+static u64 igt_object_mappable_total(struct drm_i915_gem_object *obj)
+{
+	struct intel_memory_region *mr = obj->mm.region;
+	struct i915_ttm_buddy_resource *bman_res =
+		to_ttm_buddy_resource(obj->mm.res);
+	struct gpu_buddy *mm = bman_res->mm;
+	struct gpu_buddy_block *block;
+	u64 total;
+
+	total = 0;
+	list_for_each_entry(block, &bman_res->blocks, link) {
+		u64 start = gpu_buddy_block_offset(block);
+		u64 end = start + gpu_buddy_block_size(mm, block);
+
+		if (start < resource_size(&mr->io))
+			total += min_t(u64, end, resource_size(&mr->io)) - start;
+	}
+
+	return total;
+}
+
+static int igt_mock_io_size(void *arg)
+{
+	struct intel_memory_region *mr = arg;
+	struct drm_i915_private *i915 = mr->i915;
+	struct drm_i915_gem_object *obj;
+	u64 mappable_theft_total;
+	u64 io_size;
+	u64 total;
+	u64 ps;
+	u64 rem;
+	u64 size;
+	I915_RND_STATE(prng);
+	LIST_HEAD(objects);
+	int err = 0;
+
+	ps = SZ_4K;
+	if (i915_prandom_u64_state(&prng) & 1)
+		ps = SZ_64K; /* For something like DG2 */
+
+	div64_u64_rem(i915_prandom_u64_state(&prng), SZ_8G, &total);
+	total = round_down(total, ps);
+	total = max_t(u64, total, SZ_1G);
+
+	div64_u64_rem(i915_prandom_u64_state(&prng), total - ps, &io_size);
+	io_size = round_down(io_size, ps);
+	io_size = max_t(u64, io_size, SZ_256M); /* 256M seems to be the common lower limit */
+
+	pr_info("%s with ps=%llx, io_size=%llx, total=%llx\n",
+		__func__, ps, io_size, total);
+
+	mr = mock_region_create(i915, 0, total, ps, 0, io_size);
+	if (IS_ERR(mr)) {
+		err = PTR_ERR(mr);
+		goto out_err;
+	}
+
+	mappable_theft_total = 0;
+	rem = total - io_size;
+	do {
+		div64_u64_rem(i915_prandom_u64_state(&prng), rem, &size);
+		size = round_down(size, ps);
+		size = max(size, ps);
+
+		obj = igt_object_create(mr, &objects, size,
+					I915_BO_ALLOC_GPU_ONLY);
+		if (IS_ERR(obj)) {
+			pr_err("%s TOPDOWN failed with rem=%llx, size=%llx\n",
+			       __func__, rem, size);
+			err = PTR_ERR(obj);
+			goto out_close;
+		}
+
+		mappable_theft_total += igt_object_mappable_total(obj);
+		rem -= size;
+	} while (rem);
+
+	pr_info("%s mappable theft=(%lluMiB/%lluMiB), total=%lluMiB\n",
+		__func__,
+		(u64)mappable_theft_total >> 20,
+		(u64)io_size >> 20,
+		(u64)total >> 20);
+
+	/*
+	 * Even if we allocate all of the non-mappable portion, we should still
+	 * be able to dip into the mappable portion.
+	 */
+	obj = igt_object_create(mr, &objects, io_size,
+				I915_BO_ALLOC_GPU_ONLY);
+	if (IS_ERR(obj)) {
+		pr_err("%s allocation unexpectedly failed\n", __func__);
+		err = PTR_ERR(obj);
+		goto out_close;
+	}
+
+	close_objects(mr, &objects);
+
+	rem = io_size;
+	do {
+		div64_u64_rem(i915_prandom_u64_state(&prng), rem, &size);
+		size = round_down(size, ps);
+		size = max(size, ps);
+
+		obj = igt_object_create(mr, &objects, size, 0);
+		if (IS_ERR(obj)) {
+			pr_err("%s MAPPABLE failed with rem=%llx, size=%llx\n",
+			       __func__, rem, size);
+			err = PTR_ERR(obj);
+			goto out_close;
+		}
+
+		if (igt_object_mappable_total(obj) != size) {
+			pr_err("%s allocation is not mappable(size=%llx)\n",
+			       __func__, size);
+			err = -EINVAL;
+			goto out_close;
+		}
+		rem -= size;
+	} while (rem);
+
+	/*
+	 * We assume CPU access is required by default, which should result in a
+	 * failure here, even though the non-mappable portion is free.
+	 */
+	obj = igt_object_create(mr, &objects, ps, 0);
+	if (!IS_ERR(obj)) {
+		pr_err("%s allocation unexpectedly succeeded\n", __func__);
+		err = -EINVAL;
+		goto out_close;
+	}
+
+out_close:
+	close_objects(mr, &objects);
+	intel_memory_region_destroy(mr);
+out_err:
+	if (err == -ENOMEM)
+		err = 0;
+
 	return err;
 }
 
