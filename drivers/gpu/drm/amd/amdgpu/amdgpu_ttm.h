@@ -208,10 +208,10 @@ uint64_t amdgpu_ttm_domain_start(struct amdgpu_device *adev, uint32_t type);
 
 #if IS_ENABLED(CONFIG_DRM_AMDGPU_USERPTR)
 int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-					struct amdgpu_hmm_range *range);
+				 struct amdgpu_hmm_range *range);
 #else
 static inline int amdgpu_ttm_tt_get_user_pages(struct amdgpu_bo *bo,
-					struct amdgpu_hmm_range *range)
+					       struct amdgpu_hmm_range *range)
 {
 	return -EPERM;
 }
