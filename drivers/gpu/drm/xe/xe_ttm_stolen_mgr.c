@@ -19,10 +19,8 @@
 #include "xe_device.h"
 #include "xe_gt_printk.h"
 #include "xe_mmio.h"
-#include "xe_res_cursor.h"
 #include "xe_sriov.h"
 #include "xe_ttm_stolen_mgr.h"
-#include "xe_ttm_vram_mgr.h"
 #include "xe_vram.h"
 #include "xe_wa.h"
 

@@ -8,10 +8,6 @@
 
 #include <linux/types.h>
 
-#ifdef __FreeBSD__
-#include <linux/llist.h>
-#endif
-
 #include "xe_page_reclaim.h"
 #include "xe_pt_walk.h"
 

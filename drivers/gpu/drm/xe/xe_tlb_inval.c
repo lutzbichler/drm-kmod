@@ -148,7 +148,7 @@ int xe_gt_tlb_inval_init_early(struct xe_gt *gt)
 	spin_lock_init(&tlb_inval->pending_lock);
 	spin_lock_init(&tlb_inval->lock);
 	INIT_DELAYED_WORK(&tlb_inval->fence_tdr, xe_tlb_inval_fence_timeout);
- 
+
 	err = drmm_mutex_init(&xe->drm, &tlb_inval->seqno_lock);
 	if (err)
 		return err;
@@ -186,7 +186,7 @@ void xe_tlb_inval_reset(struct xe_tlb_inval *tlb_inval)
 	 * we can get here before the backends are even initialized if we're
 	 * wedging very early, in which case there are not going to be any
 	 * pendind fences so we can bail immediately.
- 	 */
+	 */
 	if (!tlb_inval->ops->initialized(tlb_inval))
 		return;
 

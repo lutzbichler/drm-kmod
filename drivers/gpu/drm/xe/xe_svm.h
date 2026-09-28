@@ -7,7 +7,7 @@
 #define _XE_SVM_H_
 
 #ifdef __FreeBSD__
-#include <linux/kconfig.h>
+//#include <linux/kconfig.h>
 #endif
 
 #if IS_ENABLED(CONFIG_DRM_XE_GPUSVM)
