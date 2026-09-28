@@ -3,9 +3,6 @@
 #define _DRM_PAGEMAP_H_
 
 #include <linux/dma-direction.h>
-#ifdef __FreeBSD__
-#include <linux/dma-mapping.h>
-#endif
 #include <linux/hmm.h>
 #include <linux/memremap.h>
 #include <linux/types.h>
