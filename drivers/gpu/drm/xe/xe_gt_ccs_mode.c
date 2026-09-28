@@ -164,6 +164,7 @@ ccs_mode_store(struct device *kdev, struct device_attribute *attr,
 	xe_gt_info(gt, "Setting compute mode to %d\n", num_engines);
 	gt->ccs_mode = num_engines;
 	xe_gt_record_user_engines(gt);
+	guard(xe_pm_runtime)(xe);
 	xe_gt_reset(gt);
 
 	/* We may end PF lockdown once CCS mode is default again */

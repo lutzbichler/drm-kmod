@@ -19,9 +19,6 @@
 #include "xe_gt.h"
 #include "xe_gt_sriov_pf.h"
 #include "xe_gt_sriov_vf.h"
-#ifdef __FreeBSD__
-#include "xe_guc_exec_queue_types.h"
-#endif
 #include "xe_hw_engine_class_sysfs.h"
 #include "xe_hw_engine_group.h"
 #include "xe_irq.h"
@@ -29,9 +26,6 @@
 #include "xe_macros.h"
 #include "xe_migrate.h"
 #include "xe_pm.h"
-#ifdef __FreeBSD__
-#include "xe_sched_job.h"
-#endif
 #include "xe_trace.h"
 #include "xe_vm.h"
 #include "xe_pxp.h"
@@ -587,10 +581,10 @@ void xe_exec_queue_destroy(struct kref *ref)
 	struct xe_exec_queue *eq, *next;
 	int i;
 
+	xe_assert(gt_to_xe(q->gt), atomic_read(&q->job_cnt) == 0);
+
 	if (q->ufence_syncobj)
 		drm_syncobj_put(q->ufence_syncobj);
-
-	xe_assert(gt_to_xe(q->gt), atomic_read(&q->job_cnt) == 0);
 
 	if (xe_exec_queue_uses_pxp(q))
 		xe_pxp_exec_queue_remove(gt_to_xe(q->gt)->pxp, q);

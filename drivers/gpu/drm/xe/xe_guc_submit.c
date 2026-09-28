@@ -542,6 +542,11 @@ static void set_min_preemption_timeout(struct xe_guc *guc, struct xe_exec_queue 
 		       __guc_exec_queue_policy_action_size(&policy), 0, 0);
 }
 
+static bool vf_recovery(struct xe_guc *guc)
+{
+	return xe_gt_recovery_pending(guc_to_gt(guc));
+}
+
 static void xe_guc_exec_queue_trigger_cleanup(struct xe_exec_queue *q)
 {
 	struct xe_guc *guc = exec_queue_to_guc(q);
@@ -1021,11 +1026,6 @@ static void register_exec_queue(struct xe_exec_queue *q, int ctx_type)
 static u32 wq_space_until_wrap(struct xe_exec_queue *q)
 {
 	return (WQ_SIZE - q->guc->wqi_tail);
-}
-
-static bool vf_recovery(struct xe_guc *guc)
-{
-	return xe_gt_recovery_pending(guc_to_gt(guc));
 }
 
 static int wq_wait_for_space(struct xe_exec_queue *q, u32 wqi_size)
