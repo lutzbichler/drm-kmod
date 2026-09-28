@@ -1204,9 +1204,7 @@ static void gmc_v9_0_override_vm_pte_flags(struct amdgpu_device *adev,
 {
 #ifdef __linux__
 	int local_node, nid;
-#endif
 
-#ifdef __linux__
 	/* MTYPE_NC is the same default and can be overridden.
 	 * MTYPE_UC will be present if the memory is extended-coherent
 	 * and can also be overridden.

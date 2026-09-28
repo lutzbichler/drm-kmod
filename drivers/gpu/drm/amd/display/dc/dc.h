@@ -1273,13 +1273,13 @@ struct dc_debug_options {
 	bool enable_hblank_borrow;
 	bool force_subvp_df_throttle;
 	uint32_t acpi_transition_bitmasks[MAX_PIPES];
+	bool enable_pg_cntl_debug_logs;
 	unsigned int auxless_alpm_lfps_setup_ns;
 	unsigned int auxless_alpm_lfps_period_ns;
 	unsigned int auxless_alpm_lfps_silence_ns;
 	unsigned int auxless_alpm_lfps_t1t2_us;
 	short auxless_alpm_lfps_t1t2_offset_us;
 	bool disable_stutter_for_wm_program;
-	bool enable_pg_cntl_debug_logs;
 	bool enable_block_sequence_programming;
 	uint32_t custom_psp_footer_size;
 	bool disable_deferred_minimal_transitions;

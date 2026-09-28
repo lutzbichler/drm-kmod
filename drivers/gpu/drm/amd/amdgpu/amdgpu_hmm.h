@@ -44,7 +44,7 @@ struct amdgpu_hmm_range {
 int amdgpu_hmm_range_get_pages(struct mmu_interval_notifier *notifier,
 			       uint64_t start, uint64_t npages, bool readonly,
 			       void *owner,
-			       struct amdgpu_hmm_range *hmm_range);
+			       struct amdgpu_hmm_range *range);
 #endif
 
 #if defined(CONFIG_HMM_MIRROR)
