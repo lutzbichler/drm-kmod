@@ -242,11 +242,7 @@ int intel_display_driver_probe_noirq(struct intel_display *display)
 
 	display->wq.modeset = alloc_ordered_workqueue("i915_modeset", 0);
 	display->wq.flip = alloc_workqueue("i915_flip", WQ_HIGHPRI |
-#ifdef __linux__
 						WQ_UNBOUND, WQ_UNBOUND_MAX_ACTIVE);
-#elif defined(__FreeBSD__)
-						WQ_UNBOUND, 512);
-#endif
 	display->wq.cleanup = alloc_workqueue("i915_cleanup", WQ_HIGHPRI, 0);
 
 	intel_mode_config_init(display);
@@ -604,9 +600,7 @@ void intel_display_driver_remove_noirq(struct intel_display *display)
 	 */
 	intel_hpd_poll_fini(i915);
 
-#ifdef __linux__
 	intel_unregister_dsm_handler();
-#endif
 
 	/* flush any delayed tasks or pending work */
 	flush_workqueue(i915->unordered_wq);

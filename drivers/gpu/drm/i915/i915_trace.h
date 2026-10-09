@@ -449,4 +449,4 @@ trace_intel_engine_notify(struct intel_engine_cs *engine, bool waiters)
 	CTR2(KTR_DRM, "engine_notify engine %p waiters %x", engine, waiters);
 }
 
-#endif /* _I915_TRACE_H_ */
+#endif /* _I915_TRACE_FREEBSD_H_ */

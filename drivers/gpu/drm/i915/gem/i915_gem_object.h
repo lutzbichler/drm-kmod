@@ -837,15 +837,7 @@ bool i915_gem_object_placement_possible(struct drm_i915_gem_object *obj,
 
 bool i915_gem_object_needs_ccs_pages(struct drm_i915_gem_object *obj);
 
-#ifdef __FreeBSD__
-int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
-			 size_t size, struct intel_memory_region *mr,
-			 vm_object_t mapping,
-			 unsigned int max_segment);
-void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
-			 bool dirty, bool backup);
-void __shmem_writeback(size_t size, vm_object_t mapping);
-#else
+#ifdef __linux__
 int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 			 size_t size, struct intel_memory_region *mr,
 			 struct address_space *mapping,
@@ -853,6 +845,14 @@ int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
 void shmem_sg_free_table(struct sg_table *st, struct address_space *mapping,
 			 bool dirty, bool backup);
 void __shmem_writeback(size_t size, struct address_space *mapping);
+#elif defined(__FreeBSD__)
+int shmem_sg_alloc_table(struct drm_i915_private *i915, struct sg_table *st,
+			 size_t size, struct intel_memory_region *mr,
+			 vm_object_t mapping,
+			 unsigned int max_segment);
+void shmem_sg_free_table(struct sg_table *st, vm_object_t mapping,
+			 bool dirty, bool backup);
+void __shmem_writeback(size_t size, vm_object_t mapping);
 #endif
 
 #ifdef CONFIG_MMU_NOTIFIER
