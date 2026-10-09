@@ -19,10 +19,10 @@ struct drmm_node {
 };
 
 void *
-drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
+drmm_kmalloc(struct drm_device *dev, size_t size, int flags)
 {
 	void *p;
-	struct drmm_node *node = malloc(sizeof(*node), DRM_MEM_MANAGED, flags | M_ZERO);
+	struct drmm_node *node = malloc(sizeof(*node), DRM_MEM_MANAGED, flags);
 	if (node == NULL)
 		return NULL;
 	p = kzalloc(size, flags);
@@ -37,6 +37,12 @@ drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
 	list_add(&node->list, &dev->managed.resources);
 	spin_unlock(&dev->managed.lock);
 	return p;
+}
+
+void *
+drmm_kzalloc(struct drm_device *dev, size_t size, int flags)
+{
+	return (drmm_kmalloc(dev, size, M_ZERO | flags));
 }
 
 void *
@@ -157,4 +163,20 @@ void
 drmm_add_final_kfree(struct drm_device *dev, void *p)
 {
 	dev->managed.final_kfree = p;
+}
+
+int
+drmm_mutex_init(struct drm_device *dev, struct mutex *m)
+{
+    mutex_init(m);
+    drmm_add_action_or_reset(dev, drmm_mutex_release, m);
+    return drmm_add_action_or_reset(dev, drmm_mutex_release, m);
+}
+
+void
+drmm_mutex_release(struct drm_device *dev, void *p)
+{
+	struct mutex *m = p;
+
+	mutex_destroy(m);
 }
