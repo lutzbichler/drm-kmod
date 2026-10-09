@@ -64,6 +64,13 @@ ttm/i386
 ttm/x86
 ttm/machine
 ttm/export_syms
+xe/*.h
+xe/i386
+xe/machine
+xe/x86
+xe/export_syms
+xe/xe_gen_wa_oob
+drivers/gpu/drm/xe/generated
 vboxvideo/*.h
 vboxvideo/i386
 vboxvideo/x86
