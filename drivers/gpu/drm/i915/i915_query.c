@@ -510,11 +510,7 @@ static int query_memregion_info(struct drm_i915_private *i915,
 		else
 			info.probed_cpu_visible_size = mr->total;
 
-#ifdef __linux__
 		if (perfmon_capable()) {
-#elif defined(__FreeBSD__)
-		if (false) {
-#endif
 			intel_memory_region_avail(mr,
 						  &info.unallocated_size,
 						  &info.unallocated_cpu_visible_size);
