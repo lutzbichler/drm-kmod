@@ -156,7 +156,11 @@ static void mmio_fini(void *arg)
 	struct xe_device *xe = arg;
 	struct xe_tile *root_tile = xe_device_get_root_tile(xe);
 
+#ifdef __linux__
 	pci_iounmap(to_pci_dev(xe->drm.dev), xe->mmio.regs);
+#elif defined(__FreeBSD__)
+	iounmap(xe->mmio.regs);
+#endif
 	xe->mmio.regs = NULL;
 	root_tile->mmio.regs = NULL;
 }
@@ -172,7 +176,12 @@ int xe_mmio_init(struct xe_device *xe)
 	 * registers (0-4MB), reserved space (4MB-8MB) and GGTT (8MB-16MB).
 	 */
 	xe->mmio.size = pci_resource_len(pdev, GTTMMADR_BAR);
+#ifdef __linux__
 	xe->mmio.regs = pci_iomap(pdev, GTTMMADR_BAR, 0);
+elif defined(__FreeBSD__)
+	xe->mmio.regs = ioremap(pci_resource_start(pdev, GTTMMADR_BAR),
+		xe->mmio.size);
+#endif
 	if (xe->mmio.regs == NULL) {
 		drm_err(&xe->drm, "failed to map registers\n");
 		return -EIO;
