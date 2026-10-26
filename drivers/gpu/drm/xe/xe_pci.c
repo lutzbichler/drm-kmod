@@ -1201,6 +1201,7 @@ static int xe_pci_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
 		return -ENOMEM;
 #elif defined(__FreeBSD__)
 	group = NULL;
+	linuxkpi_pcim_want_to_use_bus_functions(pdev);
 #endif
 
 	err = pcim_enable_device(pdev);

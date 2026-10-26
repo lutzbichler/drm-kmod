@@ -23,6 +23,10 @@
 
 #include "generated/xe_device_wa_oob.h"
 
+#ifdef __FreeBSD__
+#include <sys/rman.h>
+#endif
+
 /*
  * On multi-tile devices, partition the BAR space for MMIO on each tile,
  * possibly accounting for register override on the number of tiles available.
@@ -84,10 +88,6 @@ static void mmio_fini(void *arg)
 {
 	struct xe_device *xe = arg;
 
-#ifdef __FreeBSD__
-	iounmap(xe->mmio.regs);
-#endif
-
 	xe->mmio.regs = NULL;
 }
 
@@ -107,18 +107,15 @@ int xe_mmio_probe_early(struct xe_device *xe)
 	struct xe_tile *root_tile = xe_device_get_root_tile(xe);
 	struct pci_dev *pdev = to_pci_dev(xe->drm.dev);
 
-#ifdef __linux__
 	xe->mmio.regs = pcim_iomap(pdev, GTTMMADR_BAR, 0);
-#elif defined(__FreeBSD__)
+#ifdef __FreeBSD__
 	/*
-	 * On FreeBSD, pci_iomap() goes through bus_alloc_resource_any()
-	 * which can conflict with pre-existing BAR allocations from
-	 * EFI/VGA console boot code, resulting in an incomplete mapping.
-	 * Use ioremap() with the physical address directly, matching
-	 * what i915 does in intel_uncore_setup_mmio().
+	 * We set the pdev->want_iomap_res flag for FreeBSD in xe_pci_probe.
+	 * This makes pcim_iomap return a "struct resource *" pointer. Here,
+	 * we need the virtual address as we later use readb/writeb etc.
+	 * Therefore, reassign xe->mmio.regs here.
 	 */
-	xe->mmio.regs = ioremap(pci_resource_start(pdev, GTTMMADR_BAR),
-				pci_resource_len(pdev, GTTMMADR_BAR));
+	xe->mmio.regs = rman_get_virtual((struct resource *)xe->mmio.regs);
 #endif
 	if (!xe->mmio.regs) {
 		xe_err(xe, "Failed to map GTTMMADR_BAR\n");
