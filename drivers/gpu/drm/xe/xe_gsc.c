@@ -412,7 +412,12 @@ int xe_gsc_init(struct xe_gsc *gsc)
 	spin_lock_init(&gsc->lock);
 
 	/* The GSC uC is only available on the media GT */
+#ifdef __linux__
 	if (tile->media_gt && (gt != tile->media_gt)) {
+#elif defined(__FreeBSD__) // no MEI driver
+	(void)tile;
+	if (!xe_gt_hw_engine(gt, XE_ENGINE_CLASS_OTHER, 0, true)) {
+#endif
 		xe_uc_fw_change_status(&gsc->fw, XE_UC_FIRMWARE_NOT_SUPPORTED);
 		return 0;
 	}

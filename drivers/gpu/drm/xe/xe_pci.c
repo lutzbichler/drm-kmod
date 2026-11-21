@@ -730,6 +730,11 @@ static int xe_info_init(struct xe_device *xe,
 		if (MEDIA_VER(xe) < 13 || !media_desc)
 			continue;
 
+#ifdef __FreeBSD__
+		drm_info(&xe->drm, "Skipping media GT - MEI driver not yet available on FreeBSD!\n");
+		continue;
+#endif
+
 		/*
 		 * Allocate and setup media GT for platforms with standalone
 		 * media.
